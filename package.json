@@ -4,7 +4,8 @@
   "description": "SLR API",
   "scripts": {
     "start": "node src/server.js",
-    "test": "jest --verbose"
+    "test": "jest --verbose",
+    "devstart": "nodemon src/server.js"
   },
   "repository": {
     "type": "git",
