@@ -1,62 +1,100 @@
-const { Pool } = require('pg');
+const {Pool} = require('pg');
 const promiseRetry = require('promise-retry');
-
 const config = require(__base + 'config');
 
+/*initial credentials were not used*/
 let credentials = {
-  database: config.db.database,
-  host: config.db.host,
-  port: config.db.port,
-  user: config.db.user,
-  password: config.db.password
+    database: config.db.database,
+    host: config.db.host,
+    port: config.db.port,
+    user: config.db.user,
+    password: config.db.password
 };
-
-if (config.db.url) {
-  // if a db URL is provided, we use it.
-  credentials = {
-    connectionString: config.db.url,
-    ssl: true
-  };
+/* if a db URL is provided, we use it to connect the database.*/
+if (config.db.url)
+{
+    credentials = {
+        connectionString: config.db.url,
+        ssl: true
+    };
 }
-
+/*create new pool of connections*/
 const pool = new Pool(credentials);
 
+
+/*is need to catch the possibily error generate by client of pool, 
+the client will be automatically terminated end removed from the pool
+ see https://node-postgres.com/api/pool#-code-pool-on-39-error-39-err-error-client-client-gt-void-gt-void-code-
+*/
 pool.on('error', (error, client) => {
-  // we add this listener to avoid exiting the process.
-  // see https://node-postgres.com/api/pool#-code-pool-on-39-error-39-err-error-client-client-gt-void-gt-void-code-
-  console.debug('[pool.on.error]', error.message);
+    console.debug('[pool.on.error]', error.message);
 });
 
-const TABLES = Object.freeze({
-  //User: 'user'
-});
+
 
 /**
  * Query wrapper to not use pg directly.
  *
- * @param {string} text
+ * @param {string} string sql
  * @param {any[]} params
  */
 const query = (text, params) => {
-  return promiseRetry({ retries: 15, randomize: true }, (retry, attempt) => {
-    return pool.query(text, params).catch(err => {
-      if (err.code === 'ECONNREFUSED') {
-        console.log(`retrying query, attempt #${attempt}`);
-        return retry(err);
-      } else {
-        return Promise.reject(err);
-      }
+    //retries the pool.query for 15 times with timeout random
+    return promiseRetry({retries: 15, randomize: true}, (retry, attempt) => {
+        return pool.query(text, params).catch(err => {
+            if (err.code === 'ECONNREFUSED')
+            {
+                console.log(`retrying query, attempt #${attempt}`);
+                //retry pool.query
+                return retry(err);
+            }
+            else
+            {
+                return Promise.reject(err);
+            }
+        });
     });
-  });
 };
 
 /**
- * End pool wrapper.
+ * Query wrapper to not use pg directly.
+ *  version haven't parameter
+ * @param {string} string sql
  */
+const queryNotParameter = (text) => {
+    //retries the pool.query for 15 times with timeout random
+    return promiseRetry({retries: 15, randomize: true}, (retry, attempt) => {
+        return pool.query(text).catch(err => {
+            if (err.code === 'ECONNREFUSED')
+            {
+                console.log(`retrying query, attempt #${attempt}`);
+                //retry pool.query
+                return retry(err);
+            }
+            else
+            {
+                return Promise.reject(err);
+            }
+        });
+    });
+};
+
+
+/*the function to close pool wrapper.*/
 const end = () => pool.end();
 
+
+/*object that contains all table names*/
+const TABLES = Object.freeze({
+    papers: 'papers'
+    
+    //it will be add the new table names
+});
+
+
 module.exports = {
-  TABLES,
-  query,
-  end
+    TABLES,
+    query,
+    queryNotParameter,
+    end
 };
