@@ -1,0 +1,206 @@
+swagger: '2.0'
+info:
+  version: 0.1.0
+  title: slr-api
+  description: 'basic [slr-api](https://github.com/TrentoCrowdAI/slr-api) calls'
+host: crowdai-slr-api-dev.herokuapp.com
+basePath: /v1
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+tags:
+  - name: Papers
+    description: Search or manage papers
+paths:
+  /search:
+    get:
+      summary: search for papers
+      description: >-
+        Using a natural language string. Or search for related papers given an
+        ID. Multiple options can be set for the search
+      tags:
+        - Papers
+      parameters:
+        - $ref: '#/parameters/Query_for_paper'
+        - $ref: '#/parameters/Option1_for_search'
+        - $ref: '#/parameters/Option2_for_search'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Papers_simple'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+  '/papers/{paper_id}':
+    get:
+      summary: access a specific paper
+      description: this works only with internals id
+      tags:
+        - Papers
+      parameters:
+        - $ref: '#/parameters/Paper_id_in_path'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Paper_complete'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+definitions:
+  Error:
+    properties:
+      code:
+        type: integer
+      message:
+        type: string
+  Paper_simple:
+    type: object
+    properties:
+      local_ID:
+        type: integer
+        description: the ID on the internal database
+        example: 1
+      global_ID:
+        type: integer
+        description: the EID of the paper
+        example: 2
+      title:
+        type: string
+        description: the title of the paper
+        example: x relations to y
+      authors:
+        type: array
+        description: list of authors
+        items:
+          type: string
+        example:
+          - Bygholm
+          - Hansen
+      type:
+        type: string
+        description: the type of article
+        example: article
+      abstract:
+        type: string
+        description: abstract of the paper
+        example: >-
+          A qualitative analysis of the focus groups for emerging themes was
+          conducted
+  Papers_simple:
+    type: array
+    items:
+      $ref: '#/definitions/Paper_simple'
+  Paper_complete:
+    type: object
+    properties:
+      local_ID:
+        type: integer
+        description: the ID on the internal database
+        example: 1
+      global_ID:
+        type: integer
+        description: the EID of the paper
+        example: 2
+      title:
+        type: string
+        description: the title of the paper
+        example: x relations to y
+      authors:
+        type: array
+        description: list of authors
+        items:
+          type: string
+        example:
+          - Bygholm
+          - Hansen
+      type:
+        type: string
+        description: the type of article
+        example: article
+      abstract:
+        type: string
+        description: abstract of the paper
+        example: >-
+          A qualitative analysis of the focus groups for emerging themes was
+          conducted
+      content:
+        type: string
+        description: full text of the paper
+        example: >-
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
+          magna, ultricies eu mauris at, vehicula elementum felis. Nunc
+          vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
+          lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
+          lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
+          eleifend[..]
+      notes:
+        type: string
+        description: paper notes
+        example: 'Integer orci libero, tincidunt id lobortis in, varius a ipsum.'
+parameters:
+  Query_for_paper:
+    in: query
+    name: query
+    type: string
+    description: can be a natural language text or an id
+    required: true
+  Option1_for_search:
+    in: query
+    name: opt1
+    type: string
+    description: option1
+  Option2_for_search:
+    in: query
+    name: opt2
+    type: integer
+    description: option2
+  Paper_id_in_path:
+    name: paper_id
+    description: the internal id of a paper
+    in: path
+    type: integer
+    required: true
+responses:
+  Unknown_error:
+    description: unhandled error
+    schema:
+      $ref: '#/definitions/Error'
+  200_ok_only:
+    description: OK
+  201_created:
+    description: Created
+  204_no_content:
+    description: No Content
+  400_bad_request:
+    description: Bad Request
+    schema:
+      $ref: '#/definitions/Error'
+  401_unauthorized:
+    description: 'Unauthorized, missing or invalid API Key'
+    schema:
+      $ref: '#/definitions/Error'
+  403_forbidden:
+    description: Forbidden
+    schema:
+      $ref: '#/definitions/Error'
+  404_not_found:
+    description: Not Found
+    schema:
+      $ref: '#/definitions/Error'
+  405_method_not_allowed:
+    description: Method Not Allowed
+    schema:
+      $ref: '#/definitions/Error'
+  409_conflict:
+    description: Conflict
+    schema:
+      $ref: '#/definitions/Error'
+  500_internal_server_error:
+    description: Internal Server Error
+    schema:
+      $ref: '#/definitions/Error'
