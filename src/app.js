@@ -5,7 +5,7 @@ const bodyParser = require('body-parser');
 const Boom = require('boom');
 
 const errorsHelper = require('./utils/errors');
-const jobsController = require('./controllers/jobs.controller');
+const papersController = require('./controllers/papers.controller'); //controller for search, access and management of papers
 
 const app = express();
 
@@ -19,8 +19,7 @@ app.get('/', (req, res) => {
 
 
 // define routes here
-app.use(jobsController);
-
+app.use(papersController);
 
 app.use((e, req, res, next) => {
   console.error('[Error]', e);
