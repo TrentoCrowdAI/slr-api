@@ -20,7 +20,7 @@ const createBusinessError = msg => {
  * to correctly perform the mapping from error to HTTP status code.
  */
 const createServiceError = e => {
-  if (e.name == 'business') {
+  if (e.name === 'business') {
     return Boom.badRequest(e.message);
   }
   return Boom.badImplementation();

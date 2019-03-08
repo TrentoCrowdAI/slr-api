@@ -35,8 +35,8 @@ pool.on('error', (error, client) => {
 /**
  * Query wrapper to not use pg directly.
  *
- * @param {string} string sql
- * @param {any[]} params
+ * @param {string} text string sql
+ * @param {any[]} params to insert into sql
  */
 const query = (text, params) => {
     //retries the pool.query for 15 times with timeout random
@@ -57,9 +57,8 @@ const query = (text, params) => {
 };
 
 /**
- * Query wrapper to not use pg directly.
  *  version haven't parameter
- * @param {string} string sql
+ * @param {string} text string sql
  */
 const queryNotParameter = (text) => {
     //retries the pool.query for 15 times with timeout random
