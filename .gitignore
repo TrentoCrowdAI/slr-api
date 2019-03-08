@@ -26,3 +26,6 @@ config.json
 createDB.js
 insertDB.js
 raw-loneliness-dataset-2018.csv
+
+#netbeans files
+.netbeans.xml
