@@ -4,7 +4,7 @@
   "description": "SLR API",
   "scripts": {
     "start": "node src/server.js",
-    "test": "jest --verbose",
+    "test": "jest --verbose --detectOpenHandles",
     "devstart": "nodemon src/server.js"
   },
   "repository": {
