@@ -109,7 +109,7 @@ async function selectById(id) {
     let res = await papersDao.selectById(id);
     if (res === undefined)
     {
-        throw errHandler.createBusinessError('Paper does not exist!');
+        throw errHandler.create40xError('Paper does not exist!');
     }
     return res;
 }

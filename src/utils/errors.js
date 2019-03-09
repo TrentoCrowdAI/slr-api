@@ -13,6 +13,15 @@ const createBusinessError = msg => {
   return e;
 };
 
+const create40xError = msg => {
+  let e = new Error(msg);
+  e.name = 'client_error';
+  if(msg === 'Paper does not exist!'){
+    e.code = 404;
+  }
+  return e;
+}
+
 /**
  * Creates an error that the service layer returns. It uses the boom library.
  *
@@ -23,10 +32,14 @@ const createServiceError = e => {
   if (e.name === 'business') {
     return Boom.badRequest(e.message);
   }
+  if(e.name === 'client_error' && e.code === 404) {
+    return Boom.notFound(e.message);
+  }
   return Boom.badImplementation();
 };
 
 module.exports = {
+  create40xError,
   createBusinessError,
   createServiceError
 };
