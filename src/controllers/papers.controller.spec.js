@@ -12,12 +12,29 @@ test('GET /search should return 400 if mandatory field is not present', async ()
   expect(response.status).toBe(400)
 });
 
-test('GET /papers/17 should return 200 and paper', async () => {
+test('GET /search should return 400 if no paper is found', async () => {
+  jest.setTimeout(10000);
+  let response = await request(app).get('/search?query=uaidafha');
+  expect(response.status).toBe(400)
+});
+
+
+test('GET /papers/:id should return 200 and paper if it finds something', async () => {
   jest.setTimeout(10000);
   let response = await request(app).get('/papers/17');
   expect(response.status).toBe(200)
   expect(response.body.id).toBeDefined();
 });
+
+test('GET /papers/:id should return 404 if it finds nothing', async () => {
+  jest.setTimeout(10000);
+  let response = await request(app).get('/papers/0');
+  expect(response.status).toBe(404)
+});
+
+/*afterAll(async done => {
+  done();
+});*/
 
 // test('POST /jobs should return 400 if mandatory fields are not present', async () => {
 //   let response = await request(app).post('/jobs');
