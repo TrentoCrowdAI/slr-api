@@ -27,7 +27,3 @@ test('GET / should return 200 (using supertest)', async () => {
   expect(response.statusCode).toBe(200);
 });
 
-// open handle fix -> https://github.com/visionmedia/supertest/issues/520#issuecomment-469044925
-afterAll(async () => {
-	await new Promise(resolve => setTimeout(() => resolve(), 500)); // avoid jest open handle error
-});
