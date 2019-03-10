@@ -15,7 +15,7 @@ tags:
   - name: Papers
     description: Search or manage papers
 paths:
-  /search:
+  '/search':
     get:
       summary: search for papers
       description: >-
@@ -25,19 +25,69 @@ paths:
         - Papers
       parameters:
         - $ref: '#/parameters/Query_for_paper'
-        - $ref: '#/parameters/Option1_for_search'
-        - $ref: '#/parameters/Option2_for_search'
+        - $ref: '#/parameters/Number'
+        - $ref: '#/parameters/Type_for_paper'
+        - $ref: '#/parameters/Subject_for_paper'
+        - $ref: '#/parameters/Year_for_paper'
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Papers_simple'
+            $ref: '#/definitions/Paper_search_results'
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+  '/papers':
+    get:
+      summary: Returns all papers
+      description: >-
+        Returns a list of papers(max 100)
+      tags:
+        - Papers
+      parameters:
+        - $ref: '#/parameters/Number'
+        - $ref: '#/parameters/Offset'
+        - $ref: '#/parameters/OrderBy'
+        - $ref: '#/parameters/Sort'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Papers'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+    post:
+      summary: Add new paper
+      description: >-
+        The paper will be stored in the papers database
+      tags:
+        - Papers
+      parameters:
+        - $ref: '#/parameters/Paper_post_put_body'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/Paper'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
         '500':
           $ref: '#/responses/500_internal_server_error'
   '/papers/{paper_id}':
     get:
       summary: access a specific paper
-      description: this works only with internals id
+      description: This works only with internals id
       tags:
         - Papers
       parameters:
@@ -46,91 +96,235 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Paper_complete'
+            $ref: '#/definitions/Paper'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
         '404':
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+    put:
+      summary: update a specific paper
+      description: Overwrites the existing paper
+      tags:
+        - Papers
+      parameters:
+        - $ref: '#/parameters/Paper_id_in_path'
+        - $ref: '#/parameters/Paper_post_put_body'
+      responses:
+        '200':
+          $ref: '#/responses/200_ok_only'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+    delete:
+      summary: delete a specific paper
+      tags:
+        - Papers
+      parameters:
+        - $ref: '#/parameters/Paper_id_in_path'
+      responses:
+        '204':
+          $ref: '#/responses/204_no_content'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+  
 definitions:
   Error:
     properties:
-      code:
+      statusCode:
         type: integer
-      message:
-        type: string
-  Paper_simple:
+      payload:
+        type: object
+        properties:
+          statusCode:
+            type: integer
+          error:
+            type: string
+          message: 
+            type: string
+      headers:
+        type: object
+  Paper:
     type: object
     properties:
-      local_ID:
+      ID:
         type: integer
         description: the ID on the internal database
         example: 1
-      global_ID:
-        type: integer
-        description: the EID of the paper
-        example: 2
-      title:
+      date_created:
         type: string
-        description: the title of the paper
-        example: x relations to y
-      authors:
-        type: array
-        description: list of authors
-        items:
-          type: string
-        example:
-          - Bygholm
-          - Hansen
-      type:
+        format: date-time
+        example:  "2017-07-21T17:32:28Z"
+      date_last_modified:
         type: string
-        description: the type of article
-        example: article
-      abstract:
-        type: string
-        description: abstract of the paper
-        example: >-
-          A qualitative analysis of the focus groups for emerging themes was
-          conducted
-  Papers_simple:
+        format: date-time
+        example:  "2017-09-24T18:38:00Z"
+      content:
+        type: object
+        properties:
+          Authors:
+            type: string
+            example: >-
+              Bygholm, Hansen
+          Title:
+            type: string
+            example: x relations to y
+          Year:
+            type: string
+            example: "2017"
+            format: date
+            pattern: "YYYY"
+          Source title:
+            type: string
+            example: Educations in y
+          Link:
+            type: string
+            example: "https://scopus.com/bla/inward?uri=2412414141"
+          Abstract:
+            type: string
+            example: >-
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
+              magna, ultricies eu mauris at, vehicula elementum felis. Nunc
+              vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
+              lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
+              lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
+              eleifend[..]
+          Document Type:
+            type: string
+            example: article
+          Source:
+            type: string
+            example: scopus
+          EID:
+            type: string
+            example: >-
+              2-s2.0-45252342358235
+          abstract_structured:
+            type: string
+            example: "0"
+          filter_OA_include:
+            type: string
+            example: "1"
+          filter_study_include:
+            type: string
+            example: "0"
+          notes:
+            type: string
+            example: "note"
+  Papers:
     type: array
     items:
-      $ref: '#/definitions/Paper_simple'
-  Paper_complete:
+      $ref: '#/definitions/Paper'
+  Paper_search_result:
     type: object
     properties:
-      local_ID:
+      ID:
         type: integer
         description: the ID on the internal database
         example: 1
-      global_ID:
-        type: integer
-        description: the EID of the paper
-        example: 2
-      title:
+      date_created:
         type: string
-        description: the title of the paper
-        example: x relations to y
-      authors:
-        type: array
-        description: list of authors
-        items:
-          type: string
-        example:
-          - Bygholm
-          - Hansen
-      type:
+        format: date-time
+        example:  "2017-07-21T17:32:28Z"
+      date_last_modified:
         type: string
-        description: the type of article
-        example: article
-      abstract:
+        format: date-time
+        example:  "2017-09-24T18:38:00Z"
+      confidence:
+        type: number
+        example: 0.95
+      reason: 
         type: string
-        description: abstract of the paper
         example: >-
-          A qualitative analysis of the focus groups for emerging themes was
-          conducted
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
       content:
+        type: object
+        properties:
+          Authors:
+            type: string
+            example: >-
+              Bygholm, Hansen
+          Title:
+            type: string
+            example: x relations to y
+          Year:
+            type: string
+            example: "2017"
+            format: date
+            pattern: "YYYY"
+          Source title:
+            type: string
+            example: Educations in y
+          Link:
+            type: string
+            example: "https://scopus.com/bla/inward?uri=2412414141"
+          Abstract:
+            type: string
+            example: >-
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
+              magna, ultricies eu mauris at, vehicula elementum felis. Nunc
+              vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
+              lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
+              lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
+              eleifend[..]
+          Document Type:
+            type: string
+            example: article
+          Source:
+            type: string
+            example: scopus
+          EID:
+            type: string
+            example: >-
+              2-s2.0-45252342358235
+          abstract_structured:
+            type: string
+            example: "0"
+          filter_OA_include:
+            type: string
+            example: "1"
+          filter_study_include:
+            type: string
+            example: "0"
+          notes:
+            type: string
+            example: "note "
+  Paper_search_results:
+    type: array
+    items:
+      $ref: '#/definitions/Paper_search_result'
+  Paper_for_post_put:
+    type: object
+    properties:
+      Authors:
         type: string
-        description: full text of the paper
+        example: >-
+          Bygholm, Hansen
+      Title:
+        type: string
+        example: x relations to y
+      Year:
+        type: string
+        example: "2017"
+        format: date
+        pattern: "YYYY"
+      Source title:
+        type: string
+        example: Educations in y
+      Abstract:
+        type: string
         example: >-
           Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
           magna, ultricies eu mauris at, vehicula elementum felis. Nunc
@@ -138,10 +332,16 @@ definitions:
           lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
           lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
           eleifend[..]
+      Document Type:
+        type: string
+        example: article
+      EID:
+        type: string
+        example: >-
+          2-s2.0-45252342358235
       notes:
         type: string
-        description: paper notes
-        example: 'Integer orci libero, tincidunt id lobortis in, varius a ipsum.'
+        example: "note"
 parameters:
   Query_for_paper:
     in: query
@@ -149,22 +349,83 @@ parameters:
     type: string
     description: can be a natural language text or an id
     required: true
-  Option1_for_search:
+  Type_for_paper:
     in: query
-    name: opt1
+    name: type
     type: string
-    description: option1
-  Option2_for_search:
+    enum:
+      - article
+      - review
+      - book chapter
+    description: the type of papers to search
+  Subject_for_paper:
     in: query
-    name: opt2
+    name: subject
+    type: string
+    enum:
+      - engineering
+      - computer science
+      - physics
+    description: the subject of the papers to search
+  Year_for_paper:
+    in: query
+    name: year
+    type: string
+    format: date
+    pattern: "YYYY"
+    description: the year when the papers to search were published
+  Number:
+    in: query
+    name: number
     type: integer
-    description: option2
+    minimum: 1
+    maximum: 100
+    description: select the maximum amount of papers you want to receive
+  Offset:
+    in: query
+    name: offset
+    type: integer
+    description: select the offset of the list you receive
+  OrderBy:
+    in: query
+    name: orderby
+    type: string
+    enum:
+     - id
+     - date_created
+     - date_last_modified
+     - date_deleted
+    description: the attribute for sorting the papers you want to receive
+  Sort:
+    in: query
+    name: sort
+    type: string
+    enum:
+     - asc
+     - desc
+    description: sort ascending or descending
   Paper_id_in_path:
+    in: path
     name: paper_id
     description: the internal id of a paper
-    in: path
     type: integer
     required: true
+  Paper_post_put_body:
+    in: body
+    name: body
+    description: content of the paper to be stored
+    required: true
+    schema:
+      $ref: "#/definitions/Paper_for_post_put"
+      required:
+        - Authors
+        - Title
+        - Year
+        - Source title
+        - Abstract
+        - Document Type
+        - EID
+        - notes
 responses:
   Unknown_error:
     description: unhandled error
@@ -181,7 +442,7 @@ responses:
     schema:
       $ref: '#/definitions/Error'
   401_unauthorized:
-    description: 'Unauthorized, missing or invalid API Key'
+    description: 'Unauthorized'
     schema:
       $ref: '#/definitions/Error'
   403_forbidden:
