@@ -19,7 +19,7 @@ const create400Error = msg => {
  */
 const create404Error = msg => {
     let e = new Error(msg);
-    e.code = 400;
+    e.code = 404;
     return e;
 };
 
@@ -46,6 +46,8 @@ const createServiceError = e => {
     }
     
     //to add the other cases of error
+    
+
     
     return errorBoom;
 };

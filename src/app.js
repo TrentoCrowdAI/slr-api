@@ -29,7 +29,7 @@ app.use((e, req, res, next) => {
   
     
   console.error('[Error]', e);
-  
+ 
   let error = errorsHelper.createServiceError(e);
 
   res.status(error.output.statusCode).send(error.output);

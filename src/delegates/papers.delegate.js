@@ -23,6 +23,7 @@ async function insert(paper) {
     }
 
     let res = await papersDao.insert(paper);
+
     return  res;
 }
 
@@ -40,6 +41,10 @@ async function update(paper) {
     if (paper.id === undefined)
     {
         throw errHandler.create400Error('Paper id  is not defined!');
+    }
+    if (!Number.isInteger(paper.id))
+    {
+        throw errHandler.create400Error('Paper id  is not a integer!');
     }
     if (paper.date_created === undefined)
     {
@@ -125,7 +130,7 @@ async function selectById(id) {
  */
 async function selectAll(number, offset, orderBy, sort) {
 
-    if (number === undefined || offset === undefined || orderBy === undefined || sort === undefined )
+    if (number === undefined || offset === undefined || orderBy === undefined || sort === undefined)
     {
         throw errHandler.create400Error('the paramters are not defined!');
     }
@@ -133,10 +138,12 @@ async function selectAll(number, offset, orderBy, sort) {
     {
         throw errHandler.create400Error('the number or offset is not a integer!');
     }
-    if(!(orderBy === "id" || orderBy === "date_created" || orderBy === "date_last_modified" || orderBy === "date_deleted") ){
+    if (!(orderBy === "id" || orderBy === "date_created" || orderBy === "date_last_modified" || orderBy === "date_deleted"))
+    {
         throw errHandler.create400Error('the orderBy is not valid!');
     }
-    if(!(sort === "ASC" || sort === "DESC") ){
+    if (!(sort === "ASC" || sort === "DESC"))
+    {
         throw errHandler.create400Error('the sort is not valid!');
     }
 
@@ -161,21 +168,24 @@ async function selectAll(number, offset, orderBy, sort) {
  */
 async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
 
-    if (keyword === undefined || number === undefined || offset === undefined || orderBy === undefined || sort === undefined )
+    if (keyword === undefined || number === undefined || offset === undefined || orderBy === undefined || sort === undefined)
     {
         throw errHandler.create400Error('the paramters are not defined!');
     }
-    if(keyword === ""){
+    if (keyword === "")
+    {
         throw errHandler.create400Error('the keyword is empty!');
     }
     if (!Number.isInteger(number) || !Number.isInteger(offset))
     {
         throw errHandler.create400Error('the number or offset is not a integer!');
     }
-    if(!(orderBy === "id" || orderBy === "date_created" || orderBy === "date_last_modified" || orderBy === "date_deleted") ){
+    if (!(orderBy === "id" || orderBy === "date_created" || orderBy === "date_last_modified" || orderBy === "date_deleted"))
+    {
         throw errHandler.create400Error('the orderBy is not valid!');
     }
-    if(!(sort === "ASC" || sort === "DESC") ){
+    if (!(sort === "ASC" || sort === "DESC"))
+    {
         throw errHandler.create400Error('the sort is not valid!');
     }
 
