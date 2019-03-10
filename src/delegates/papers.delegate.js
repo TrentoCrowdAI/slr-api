@@ -15,11 +15,11 @@ async function insert(paper) {
 
     if (!(paper instanceof Object))
     {
-        throw errHandler.createBusinessError('Paper is not a object!');
+        throw errHandler.create400Error('Paper is not a object!');
     }
     if (paper.content === undefined)
     {
-        throw errHandler.createBusinessError('Paper content  is not defined!');
+        throw errHandler.create400Error('Paper content  is not defined!');
     }
 
     let res = await papersDao.insert(paper);
@@ -35,33 +35,33 @@ async function update(paper) {
 
     if (!(paper instanceof Object))
     {
-        throw errHandler.createBusinessError('Paper is not a object!');
+        throw errHandler.create400Error('Paper is not a object!');
     }
     if (paper.id === undefined)
     {
-        throw errHandler.createBusinessError('Paper id  is not defined!');
+        throw errHandler.create400Error('Paper id  is not defined!');
     }
     if (paper.date_created === undefined)
     {
-        throw errHandler.createBusinessError('Paper date_created  is not defined!');
+        throw errHandler.create400Error('Paper date_created  is not defined!');
     }
     if (paper.date_last_modified === undefined)
     {
-        throw errHandler.createBusinessError('Paper date_last_modified  is not defined!');
+        throw errHandler.create400Error('Paper date_last_modified  is not defined!');
     }
     if (paper.date_deleted === undefined)
     {
-        throw errHandler.createBusinessError('Paper date_deleted  is not defined!');
+        throw errHandler.create400Error('Paper date_deleted  is not defined!');
     }
     if (paper.content === undefined)
     {
-        throw errHandler.createBusinessError('Paper content  is not defined!');
+        throw errHandler.create400Error('Paper content  is not defined!');
     }
 
     let numberRow = await papersDao.update(paper);
     if (numberRow === 0)
     {
-        throw errHandler.createBusinessError('Paper does not exist!');
+        throw errHandler.create404Error('Paper does not exist!');
     }
 
 }
@@ -73,19 +73,19 @@ async function update(paper) {
  */
 async function deletes(id) {
 
-    if (typeof id === undefined)
+    if (id === undefined)
     {
-        throw errHandler.createBusinessError('Paper id is not defined!');
+        throw errHandler.create400Error('Paper id is not defined!');
     }
     if (!Number.isInteger(id))
     {
-        throw errHandler.createBusinessError('Paper id  is not a integer!');
+        throw errHandler.create400Error('Paper id  is not a integer!');
     }
 
     let numberRow = await papersDao.deletes(id);
     if (numberRow === 0)
     {
-        throw errHandler.createBusinessError('Paper does not exist!');
+        throw errHandler.create404Error('Paper does not exist!');
     }
 }
 
@@ -97,19 +97,19 @@ async function deletes(id) {
  */
 async function selectById(id) {
 
-    if (typeof id === undefined)
+    if (id === undefined)
     {
-        throw errHandler.createBusinessError('Paper id is not defined!');
+        throw errHandler.create400Error('Paper id is not defined!');
     }
     if (!Number.isInteger(id))
     {
-        throw errHandler.createBusinessError('Paper id  is not a integer!');
+        throw errHandler.create400Error('Paper id  is not a integer!');
     }
 
     let res = await papersDao.selectById(id);
     if (res === undefined)
     {
-        throw errHandler.create40xError('Paper does not exist!');
+        throw errHandler.create404Error('Paper does not exist!');
     }
     return res;
 }
@@ -125,25 +125,25 @@ async function selectById(id) {
  */
 async function selectAll(number, offset, orderBy, sort) {
 
-    if (typeof number === undefined || typeof offset === undefined || typeof orderBy === undefined || typeof sort === undefined )
+    if (number === undefined || offset === undefined || orderBy === undefined || sort === undefined )
     {
-        throw errHandler.createBusinessError('the paramters are not defined!');
+        throw errHandler.create400Error('the paramters are not defined!');
     }
     if (!Number.isInteger(number) || !Number.isInteger(offset))
     {
-        throw errHandler.createBusinessError('the number or offset is not a integer!');
+        throw errHandler.create400Error('the number or offset is not a integer!');
     }
     if(!(orderBy === "id" || orderBy === "date_created" || orderBy === "date_last_modified" || orderBy === "date_deleted") ){
-        throw errHandler.createBusinessError('the orderBy is not valid!');
+        throw errHandler.create400Error('the orderBy is not valid!');
     }
     if(!(sort === "ASC" || sort === "DESC") ){
-        throw errHandler.createBusinessError('the sort is not valid!');
+        throw errHandler.create400Error('the sort is not valid!');
     }
 
     let res = await papersDao.selectAll(number, offset, orderBy, sort);
     if (res.length === 0)
     {
-        throw errHandler.createBusinessError('the list is empty!');
+        throw errHandler.create404Error('the list is empty!');
     }
     return res;
 }
@@ -161,28 +161,28 @@ async function selectAll(number, offset, orderBy, sort) {
  */
 async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
 
-    if (typeof keyword === undefined || typeof number === undefined || typeof offset === undefined || typeof orderBy === undefined || typeof sort === undefined )
+    if (keyword === undefined || number === undefined || offset === undefined || orderBy === undefined || sort === undefined )
     {
-        throw errHandler.createBusinessError('the paramters are not defined!');
+        throw errHandler.create400Error('the paramters are not defined!');
     }
     if(keyword === ""){
-        throw errHandler.createBusinessError('the keyword is empty!');
+        throw errHandler.create400Error('the keyword is empty!');
     }
     if (!Number.isInteger(number) || !Number.isInteger(offset))
     {
-        throw errHandler.createBusinessError('the number or offset is not a integer!');
+        throw errHandler.create400Error('the number or offset is not a integer!');
     }
     if(!(orderBy === "id" || orderBy === "date_created" || orderBy === "date_last_modified" || orderBy === "date_deleted") ){
-        throw errHandler.createBusinessError('the orderBy is not valid!');
+        throw errHandler.create400Error('the orderBy is not valid!');
     }
     if(!(sort === "ASC" || sort === "DESC") ){
-        throw errHandler.createBusinessError('the sort is not valid!');
+        throw errHandler.create400Error('the sort is not valid!');
     }
 
     let res = await papersDao.selectBySingleKeyword(keyword, number, offset, orderBy, sort);
     if (res.length === 0)
     {
-        throw errHandler.createBusinessError('the list is empty!');
+        throw errHandler.create404Error('the list is empty!');
     }
     return res;
 }

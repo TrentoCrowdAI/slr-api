@@ -1,26 +1,29 @@
+//HTTP-friendly error objects
 const Boom = require('boom');
 
 /**
- * Returns a business error. The name property
- * of the error object is set to "business".
- *
- * @param {String} msg
- * @returns {Error}
+ * Creates and returns 400 error object. 
+ * @param {String} msg error message
+ * @returns {Error} object error
  */
-const createBusinessError = msg => {
-  let e = new Error(msg);
-  e.name = 'business';
-  return e;
+const create400Error = msg => {
+    let e = new Error(msg);
+    e.code = 400;
+    return e;
 };
 
-const create40xError = msg => {
-  let e = new Error(msg);
-  e.name = 'client_error';
-  if(msg === 'Paper does not exist!'){
-    e.code = 404;
-  }
-  return e;
-}
+/**
+ * Creates and returns 404 error object. 
+ * @param {String} msg error message
+ * @returns {Error} object error
+ */
+const create404Error = msg => {
+    let e = new Error(msg);
+    e.code = 400;
+    return e;
+};
+
+
 
 /**
  * Creates an error that the service layer returns. It uses the boom library.
@@ -29,17 +32,26 @@ const create40xError = msg => {
  * to correctly perform the mapping from error to HTTP status code.
  */
 const createServiceError = e => {
-  if (e.name === 'business') {
-    return Boom.badRequest(e.message);
-  }
-  if(e.name === 'client_error' && e.code === 404) {
-    return Boom.notFound(e.message);
-  }
-  return Boom.badImplementation();
+    
+    //default errorBoom
+    var errorBoom =Boom.badImplementation();
+    
+    if (e.code === 400)
+    {
+        errorBoom = Boom.badRequest(e.message);
+    }
+   else if (e.code === 404)
+    {
+        errorBoom = Boom.notFound(e.message);
+    }
+    
+    //to add the other cases of error
+    
+    return errorBoom;
 };
 
 module.exports = {
-  create40xError,
-  createBusinessError,
-  createServiceError
+    create400Error,
+    create404Error,
+    createServiceError
 };
