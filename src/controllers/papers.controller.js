@@ -11,19 +11,13 @@ const router = express.Router();
 
 
 
-//search for a word in the papers content
+//search for a word in the papers
 router.get('/search', async (req, res, next) => {
     try
     {
         let query = req.query.query;
         //for now it returns the first ten matched papers(sorted by id)
         let papers = await papersDelegate.selectBySingleKeyword(query, 10, 0, "id", "ASC");
-
-        //parses the value of property content of each paper by json
-        for (let i = 0; i < papers.length; i++)
-        {
-            papers[i].content = JSON.parse(papers[i].content);
-        }
 
         res.status(200).json(papers);
     }
@@ -41,12 +35,6 @@ router.get('/papers', async (req, res, next) => {
     {
         //for now it returns a list of 10 papers(sorted by id asc)
         let papers = await papersDelegate.selectAll(10, 0, "id", "ASC");
-
-        //parses the value of property content of each paper by json
-        for (let i = 0; i < papers.length; i++)
-        {
-            papers[i].content = JSON.parse(papers[i].content);
-        }
         res.status(200).json(papers);
     }
     catch (e)
@@ -61,12 +49,9 @@ router.get('/papers', async (req, res, next) => {
 router.post('/papers', async (req, res, next) => {
     try
     {
-        //the value of new paper to insert
-        let newpaper = req.body;
-        let paper = await papersDelegate.insert(newpaper);
-        //parses the value of property content by json
-        paper.content = JSON.parse(paper.content);
-
+        //the data of new paper to insert
+        let newPaperData = req.body;
+        let paper = await papersDelegate.insert(newPaperData);
         res.status(201).json(paper);
     }
     catch (e)
@@ -84,8 +69,6 @@ router.get('/papers/:id', async (req, res, next) => {
     {
         let paper_id = Number(req.params.id);
         let paper = await papersDelegate.selectById(paper_id);
-        //parses the value of property content by json
-        paper.content = JSON.parse(paper.content);
         res.status(200).json(paper);
     }
     catch (e)
@@ -102,11 +85,10 @@ router.put('/papers/:id', async (req, res, next) => {
         
         let paper_id = Number(req.params.id);
         
-        //the new value of paper to update
-        let newpaper = req.body;
-        newpaper.id = paper_id;
+        //the new data of paper to update
+        let newPaperData = req.body;
         
-        await papersDelegate.update(newpaper);
+        await papersDelegate.update(paper_id,newPaperData);
         res.sendStatus(204);
     }
     catch (e)
