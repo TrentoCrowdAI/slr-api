@@ -1,4 +1,8 @@
-/*file to initialize DB temp for test*/
+/*file to initialize DB*/
+global.__base = __dirname + '/../src/';
+
+//set environmental variables by env file
+require('dotenv').config();
 
 const fs = require("fs");
 const db = require(__base + "db/index");
@@ -31,15 +35,16 @@ function returnData(data) {
     return data;
 }
 /**
- * function to create the DB tmp and insert the data for test
+ * function to create the DB tmp and insert the full data
  
  */
 async function createDB() {
     
+     console.log("database initialize start-------------------------------------------");
     //get init sql
     var initSql = await read('src/db/init.sql').then(returnData);
     //get data sql
-    var dataSql = await read('src/db/test.data.sql').then(returnData);
+    var dataSql = await read('src/db/data.sql').then(returnData);
     //excute init sql
     await db.queryNotParameter(initSql).catch (function(error){
         console.error(error);
@@ -49,8 +54,8 @@ async function createDB() {
         console.error(error);
     }) ;
     
-    console.log("database initiated-------------------------------------------");
+    console.log("database initialize end-------------------------------------------");
     
 }
 
-module.exports = createDB;
+createDB();

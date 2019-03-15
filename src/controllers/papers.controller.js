@@ -67,7 +67,7 @@ router.post('/papers', async (req, res, next) => {
 router.get('/papers/:id', async (req, res, next) => {
     try
     {
-        let paper_id = Number(req.params.id);
+        let paper_id = req.params.id;
         let paper = await papersDelegate.selectById(paper_id);
         res.status(200).json(paper);
     }
@@ -83,8 +83,7 @@ router.put('/papers/:id', async (req, res, next) => {
     try
     {
         
-        let paper_id = Number(req.params.id);
-        
+        let paper_id = req.params.id;
         //the new data of paper to update
         let newPaperData = req.body;
         
@@ -102,7 +101,7 @@ router.put('/papers/:id', async (req, res, next) => {
 router.delete('/papers/:id', async (req, res, next) => {
     try
     {
-        let paper_id = Number(req.params.id);
+        let paper_id = req.params.id;
         await papersDelegate.deletes(paper_id);
         res.sendStatus(204);
     }

@@ -1,3 +1,4 @@
+/*file to destory DB temp for test*/
 
 const fs = require("fs");
 const db = require(__base + "db/index");

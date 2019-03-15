@@ -7,8 +7,10 @@ const Boom = require('boom');
 
 //management error
 const errorsHelper = require('./utils/errors');
-//controller for search, access and management of papers
+//controller for papers
 const papersController = require('./controllers/papers.controller'); 
+//controller for projects
+const projectsController = require('./controllers/projects.controller'); 
 
 const app = express();
 
@@ -23,6 +25,7 @@ app.get('/', (req, res) => {
 
 // define routes here
 app.use(papersController);
+app.use(projectsController);
 
 //manages the object error threw by level delegate
 app.use((e, req, res, next) => {

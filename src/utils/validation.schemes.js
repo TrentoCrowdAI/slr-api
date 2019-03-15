@@ -46,7 +46,22 @@ const paper = {
     "required": ["Authors", "Title", "Year", "Source title", "Link", "Abstract", "Document Type", "Source", "EID", "abstract_structured", "filter_OA_include", "filter_study_include", "notes"]
 };
 
+//scheme of project, has 2 attributes
+const project = {
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string"
+        },
+        "description": {
+            "type": "string"
+        }
+    },
+    "required": ["name", "description"]
+};
+
 
 module.exports = {
-    paper
+    paper,
+    project
 };
