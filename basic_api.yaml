@@ -14,6 +14,10 @@ produces:
 tags:
   - name: Papers
     description: Search or manage papers
+  - name: Projects
+    description: Manage the projects
+  - name: Projects Papers
+    description: Manage the papers of a project
 paths:
   '/search':
     get:
@@ -139,7 +143,205 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
-  
+  '/projects':
+    get:
+      summary: Returns all projects
+      description: >-
+        Returns a list of projects(max 10)
+      tags:
+        - Projects
+      parameters:
+        - $ref: '#/parameters/Number'
+        - $ref: '#/parameters/Offset'
+        - $ref: '#/parameters/OrderBy'
+        - $ref: '#/parameters/Sort'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Projects'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+    post:
+      summary: Add new project
+      description: >-
+        Add an empty project with a given title and description
+      tags:
+        - Projects
+      parameters:
+        - $ref: '#/parameters/Project_post_put_body'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/Project'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+  '/projects/{project_id}':
+    get:
+      summary: access a specific project
+      description: Get the basic data of a project
+      tags:
+        - Projects
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Project'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+    put:
+      summary: update a specific project
+      description: Overwrites the existing project
+      tags:
+        - Projects
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/Project_post_put_body'
+      responses:
+        '200':
+          $ref: '#/responses/200_ok_only'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+    delete:
+      summary: delete a specific project
+      tags:
+        - Projects
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+      responses:
+        '204':
+          $ref: '#/responses/204_no_content'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+  '/projects/{project_id}/papers':
+    get:
+      summary: access papers of a project
+      description: Get a list of projectPapers associated with a project
+      tags:
+        - Projects Papers
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Papers'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+  '/projects/{project_id}/papers/{paper_id}':
+    post:
+      summary: add new paper to specific project
+      description: (?)
+      tags:
+        - Projects Papers
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/Paper_id_in_path'
+        - $ref: '#/parameters/Paper_post_put_body'
+      responses:
+        '200':
+          $ref: '#/responses/200_ok_only'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+    get:
+      summary: access papers of a project
+      description: Get a list of projectPapers associated with a project
+      tags:
+        - Projects Papers
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/Paper_id_in_path'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Paper'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+    put:
+      summary: update a specific paper of a project
+      description: Overwrites the existing paper
+      tags:
+        - Projects Papers
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/Paper_id_in_path'
+        - $ref: '#/parameters/Paper_post_put_body'
+      responses:
+        '200':
+          $ref: '#/responses/200_ok_only'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+    delete:
+      summary: delete a specific paper of a project
+      tags:
+        - Projects Papers
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/Paper_id_in_path'
+      responses:
+        '204':
+          $ref: '#/responses/204_no_content'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
 definitions:
   Error:
     properties:
@@ -342,6 +544,49 @@ definitions:
       notes:
         type: string
         example: "note"
+  Project:
+    type: object
+    properties:
+      ID:
+        type: integer
+        description: the ID on the internal database
+        example: 1
+      date_created:
+        type: string
+        format: date-time
+        example:  "2017-07-21T17:32:28Z"
+      date_last_modified:
+        type: string
+        format: date-time
+        example:  "2017-09-24T18:38:00Z"
+      data:
+        type: object
+        properties:
+          name:
+            type: string
+            example: "robots research"
+          description:
+            type: string
+            example: >-
+              orem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
+              magna, ultricies eu mauris at, vehicula elementum felis. Nunc
+              vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
+  Projects:
+    type: array
+    items:
+      $ref: '#/definitions/Project'
+  Project_for_post_put:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "robots research"
+      description:
+        type: string
+        example: >-
+          orem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
+          magna, ultricies eu mauris at, vehicula elementum felis. Nunc
+          vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
 parameters:
   Query_for_paper:
     in: query
@@ -410,6 +655,12 @@ parameters:
     description: the internal id of a paper
     type: integer
     required: true
+  Project_id_in_path:
+    in: path
+    name: project_id
+    description: the internal id of a project
+    type: integer
+    required: true
   Paper_post_put_body:
     in: body
     name: body
@@ -426,6 +677,16 @@ parameters:
         - Document Type
         - EID
         - notes
+  Project_post_put_body:
+    in: body
+    name: body
+    description: basic content of the project to be stored
+    required: true
+    schema:
+      $ref: "#/definitions/Project_for_post_put"
+      required:
+        - name
+        - description
 responses:
   Unknown_error:
     description: unhandled error
