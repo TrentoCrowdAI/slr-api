@@ -34,26 +34,26 @@ async function update(project_id, newProjectData) {
 
 /**
  *  * delete a project
- * @param {integer} id project id
+ * @param {integer} project_id
  * @returns {integer} number of row affected , 1 if ok, 0 if failed
  */
-async function deletes(id) {
+async function deletes(project_id) {
     let res = await db.query(
             'DELETE FROM public.' + db.TABLES.projects + ' WHERE id = $1',
-            [id]
+            [project_id]
             );
     return res.rowCount;
 }
 
 /**
  * select a project
- * @param {integer} id project id
+ * @param {integer} project_id
  * @returns {object} project found
  */
-async function selectById(id) {
+async function selectById(project_id) {
     let res = await db.query(
             'SELECT * FROM public.' + db.TABLES.projects + ' WHERE id = $1',
-            [id]
+            [project_id]
             );
     
     return res.rows[0];

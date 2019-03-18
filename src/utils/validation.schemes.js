@@ -46,6 +46,9 @@ const paper = {
     "required": ["Authors", "Title", "Year", "Source title", "Link", "Abstract", "Document Type", "Source", "EID", "abstract_structured", "filter_OA_include", "filter_study_include", "notes"]
 };
 
+//is the same with paper object
+const projectPaper = paper;
+
 //scheme of project, has 2 attributes
 const project = {
     "type": "object",
@@ -61,7 +64,11 @@ const project = {
 };
 
 
+
+
+
 module.exports = {
     paper,
-    project
+    project,
+    projectPaper
 };

@@ -75,42 +75,37 @@ test('dummy test', () => {
 /* good cases*/
 describe('good cases', () => {
 
-    test('GET /search should return 200 if find any papers', async () => {
+
+    test('GET /projects/1/papers should return 200 if it finds something', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/search?query=2015');
+        let response = await request(app).get('/projects/1/papers');
         expect(response.status).toBe(200);
     });
 
-    test('GET /papers should return 200 if it finds something', async () => {
+    test('GET /projects/1/papers/1 should return 200 and paper if projectPaper exists', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/papers');
+        let response = await request(app).get('/projects/1/papers/1');
         expect(response.status).toBe(200);
     });
 
-    test('GET /papers/20 should return 200 and paper if paper exists', async () => {
+    test('POST /projects/2/papers/5 should return 201', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/papers/20');
-        expect(response.status).toBe(200);
-    });
-
-    test('POST  /papers/ should return 201', async () => {
-        jest.setTimeout(10000);
-        let response = await request(app).post('/papers').send(validExample1).set('Accept', 'application/json');
+        let response = await request(app).post('/projects/5/papers/5').send(validExample1).set('Accept', 'application/json');
         expect(response.status).toBe(201);
         //let result = await response.body;
     });
 
 
-    test('PUT /papers/22 should return 204 if paper exists', async () => {
+    test('PUT /projects/1/papers/1 should return 204 if projectPaper exists', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).put('/papers/22').send(validExample2).set('Accept', 'application/json');
+        let response = await request(app).put('/projects/1/papers/1').send(validExample2).set('Accept', 'application/json');
         expect(response.status).toBe(204);
     });
 
 
-    test('DELETE /papers/25 should return 204 if paper exists', async () => {
+    test('DELETE /projects/1/papers/1 should return 204 if projectPaper exists', async () => {
         jest.setTimeout(10000);
-        response = await request(app).delete('/papers/25');
+        response = await request(app).delete('/projects/1/papers/1');
         expect(response.status).toBe(204);
     });
 
@@ -125,52 +120,42 @@ describe('good cases', () => {
 describe('bad cases', () => {
 
 
-    test('GET /search should return 400 if mandatory field is not present', async () => {
+    test('GET /projects/9999/papers/9999 should return 404 if it finds nothing', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/search');
-        expect(response.status).toBe(400)
-    });
-    test('GET /search should return 404 if it finds nothing', async () => {
-        jest.setTimeout(10000);
-        let response = await request(app).get('/search?query=uaidafha');
-        expect(response.status).toBe(404)
-    });
-    test('GET /papers/9999 should return 404 if it finds nothing', async () => {
-        jest.setTimeout(10000);
-        let response = await request(app).get('/papers/9999');
+        let response = await request(app).get('/projects/9999/papers/9999');
         expect(response.status).toBe(404)
     });
 
 
-    test('POST /papers/ should return 400 if mandatory field is not valid', async () => {
+    test('POST /projects/1/papers/99 should return 400 if mandatory field is not valid', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/papers').send(notValidExampleForInsert).set('Accept', 'application/json');
+        let response = await request(app).post('/projects/1/papers/99').send(notValidExampleForInsert).set('Accept', 'application/json');
         expect(response.status).toBe(400);
     });
 
 
-    test('PUT /papers/21 should return 400 if mandatory field is not valid', async () => {
+    test('PUT /projects/1/papers/2 should return 400 if mandatory field is not valid', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).put('/papers/21').send(notValidExampleForUpdate).set('Accept', 'application/json');
+        let response = await request(app).put('/projects/1/papers/2').send(notValidExampleForUpdate).set('Accept', 'application/json');
         expect(response.status).toBe(400);
     });
 
-    test('PUT /papers/9999 should return 404 if papers is not present', async () => {
+    test('PUT /projects/1/papers/100 should return 404 if projectPaper is not present', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).put('/papers/9999').send(validExample2).set('Accept', 'application/json');
+        let response = await request(app).put('/projects/1/papers/100').send(validExample2).set('Accept', 'application/json');
         expect(response.status).toBe(404);
     });
 
 
-    test('DELETE /papers/abc should return 400 if id is not integer', async () => {
+    test('DELETE /projects/1/papers/3.55 should return 400 if paper id is not integer', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).delete('/papers/abc');
+        let response = await request(app).delete('/projects/1/papers/3.55');
         expect(response.status).toBe(400);
     });
 
-    test('DELETE /papers/9999 should return 404 if papers is not present', async () => {
+    test('DELETE /projects/1/papers/9999 should return 404 if projectPaper is not present', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).delete('/papers/9999');
+        let response = await request(app).delete('/projects/1/papers/9999');
         expect(response.status).toBe(404);
     });
 

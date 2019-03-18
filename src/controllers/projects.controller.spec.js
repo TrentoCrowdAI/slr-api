@@ -79,14 +79,14 @@ describe('bad cases', () => {
         expect(response.status).toBe(404)
     });
 
-    test('POST /projects/ should return 400 if mandatory field is not present', async () => {
+    test('POST /projects/ should return 400 if mandatory field is not valid', async () => {
         jest.setTimeout(10000);
         let response = await request(app).post('/projects').send(notValidExampleForInsert).set('Accept', 'application/json');
         expect(response.status).toBe(400);
     });
 
 
-    test('PUT /projects/2 should return 400 if mandatory field is not present', async () => {
+    test('PUT /projects/2 should return 400 if mandatory field is not valid', async () => {
         jest.setTimeout(10000);
         let response = await request(app).put('/projects/2').send(notValidExampleForUpdate).set('Accept', 'application/json');
         expect(response.status).toBe(400);

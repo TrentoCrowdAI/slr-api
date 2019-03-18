@@ -34,26 +34,26 @@ async function update(paper_id, newPaperData) {
 
 /**
  *  * delete a paper
- * @param {integer} id paper id
+ * @param {integer} paper id
  * @returns {integer} number of row affected , 1 if ok, 0 if failed
  */
-async function deletes(id) {
+async function deletes(paper_id) {
     let res = await db.query(
             'DELETE FROM public.' + db.TABLES.papers + ' WHERE id = $1',
-            [id]
+            [paper_id]
             );
     return res.rowCount;
 }
 
 /**
  * select a paper
- * @param {integer} id paper id
+ * @param {integer} paper_id
  * @returns {object} paper found
  */
-async function selectById(id) {
+async function selectById(paper_id) {
     let res = await db.query(
             'SELECT * FROM public.' + db.TABLES.papers + ' WHERE id = $1',
-            [id]
+            [paper_id]
             );
     
     return res.rows[0];

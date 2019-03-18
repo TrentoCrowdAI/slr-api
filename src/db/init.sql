@@ -8,7 +8,7 @@ DROP TABLE IF EXISTS "public"."projects";
 --	date_created: <timestamp>, //creation date of paper
 --	date_last_modified: <timestamp>,  // last modified date of paper
 --	date_deleted: <timestamp>,  // date of elimination of paper
---	data: <jsonb>,        // json field that stores all paper
+--	data: <jsonb>,        // json field that stores the paper data
 -- }
 
 
@@ -48,9 +48,11 @@ WITH (OIDS=FALSE)
 --	date_created: <timestamp>, //creation date of paper
 --	date_last_modified: <timestamp>,  // last modified date of paper
 --	date_deleted: <timestamp>,  // date of elimination of paper
---	data: <jsonb>,        // json field that stores the project name and description
+--	data: <jsonb>,        // json field that stores the paper data
 -- project_id: <integer>, //project associated, foreign key with casacade option
 -- }
+
+
 
 
 CREATE TABLE "public"."project_papers" (
@@ -60,11 +62,9 @@ CREATE TABLE "public"."project_papers" (
 "date_deleted" timestamptz,
 "data" jsonb NOT NULL,
 "project_id" int8 NOT NULL,
-PRIMARY KEY ("id"),
+PRIMARY KEY ("id", "project_id"),
 CONSTRAINT "project_id" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 )
 WITH (OIDS=FALSE)
 ;
-
-
 
