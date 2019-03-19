@@ -4,13 +4,13 @@ const db = require(__base + "db/index");
 
 /**
  * insert a paper
- * @param {object} paper
+ * @param {object} newPaperData
  * @returns {object} paper created
  */
-async function insert(paper) {
+async function insert(newPaperData) {
     let res = await db.query(
-            'INSERT INTO public.' + db.TABLES.papers + '("date_created", "date_last_modified", "date_deleted", "content") VALUES($1,$2,$3,$4) RETURNING *',
-            [new Date(), new Date(), null, paper.content]
+            'INSERT INTO public.' + db.TABLES.papers + '("date_created", "date_last_modified", "date_deleted", "data") VALUES($1,$2,$3,$4) RETURNING *',
+            [new Date(), new Date(), null, newPaperData]
             );
     return res.rows[0];
 }
@@ -19,13 +19,14 @@ async function insert(paper) {
 
 /**
  *  * update a paper
- * @param {object} paper
+ * @param {integer}  paper_id
+ * @param {object} newPaperData
  * @returns {integer} number of row affected , 1 if ok, 0 if failed
  */
-async function update(paper) {
+async function update(paper_id, newPaperData) {
     let res = await db.query(
-            'UPDATE public.' + db.TABLES.papers + ' SET "date_created" = $1, "date_last_modified" = $2, "date_deleted" = $3, "content" = $4 WHERE "id" = $5',
-            [paper.date_created, paper.date_last_modified, paper.date_deleted, paper.content, paper.id]
+            'UPDATE public.' + db.TABLES.papers + ' SET "date_last_modified" = $1,  "data" = $2 WHERE "id" = $3',
+            [new Date(), newPaperData, paper_id]
             );
     return res.rowCount;
 }
@@ -33,26 +34,26 @@ async function update(paper) {
 
 /**
  *  * delete a paper
- * @param {integer} id paper id
+ * @param {integer} paper id
  * @returns {integer} number of row affected , 1 if ok, 0 if failed
  */
-async function deletes(id) {
+async function deletes(paper_id) {
     let res = await db.query(
             'DELETE FROM public.' + db.TABLES.papers + ' WHERE id = $1',
-            [id]
+            [paper_id]
             );
     return res.rowCount;
 }
 
 /**
  * select a paper
- * @param {integer} id paper id
+ * @param {integer} paper_id
  * @returns {object} paper found
  */
-async function selectById(id) {
+async function selectById(paper_id) {
     let res = await db.query(
             'SELECT * FROM public.' + db.TABLES.papers + ' WHERE id = $1',
-            [id]
+            [paper_id]
             );
     
     return res.rows[0];
@@ -88,7 +89,7 @@ async function selectAll(number, offset, orderBy, sort) {
  */
 async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
     let res = await db.query(
-            'SELECT * FROM public.' + db.TABLES.papers + ' WHERE content LIKE $1  ORDER BY '+orderBy+' '+sort+' LIMIT $2 OFFSET $3',
+            'SELECT * FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1  ORDER BY '+orderBy+' '+sort+' LIMIT $2 OFFSET $3',
             ["%" + keyword + "%", number, offset]
             );
 

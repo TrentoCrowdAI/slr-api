@@ -10,6 +10,7 @@ let credentials = {
     user: config.db.user,
     password: config.db.password
 };
+
 /* if a db URL is provided, we use it to connect the database.*/
 if (config.db.url)
 {
@@ -85,7 +86,9 @@ const end = () => pool.end();
 
 /*object that contains all table names*/
 const TABLES = Object.freeze({
-    papers: 'papers'
+    papers: 'papers',
+    projects: 'projects',
+    projectPapers: 'project_papers'
     
     //it will be add the new table names
 });

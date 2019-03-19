@@ -1,48 +1,61 @@
 //HTTP-friendly error objects
 const Boom = require('boom');
 
+//object that contains all the error names
+const errorNames = {
+    badRequest : "badRequest",
+    notFound : "notFound"
+     //to add the other error names
+    
+};
+
 /**
- * Creates and returns 400 error object. 
+ * Creates and returns a error object with error.name "bad request". 
  * @param {String} msg error message
  * @returns {Error} object error
  */
-const create400Error = msg => {
+const createBadRequestError = msg => {
     let e = new Error(msg);
-    e.code = 400;
+    e.name = errorNames.badRequest;
     return e;
 };
 
 /**
- * Creates and returns 404 error object. 
+ * Creates and returns a error object with error.name "not found". 
  * @param {String} msg error message
  * @returns {Error} object error
  */
-const create404Error = msg => {
+const createNotFoundError = msg => {
     let e = new Error(msg);
-    e.code = 404;
+    e.name = errorNames.notFound;
     return e;
 };
 
 
 
 /**
- * Creates an error that the service layer returns. It uses the boom library.
+ * Creates an boom error object that the service layer returns. It uses the boom library.
  *
  * @param {Error} e An error object. The property name should be set
  * to correctly perform the mapping from error to HTTP status code.
  */
-const createServiceError = e => {
+const createBoomErrorForService = e => {
     
     //default errorBoom
     var errorBoom =Boom.badImplementation();
     
-    if (e.code === 400)
+    if (e.name === errorNames.badRequest)
     {
         errorBoom = Boom.badRequest(e.message);
     }
-   else if (e.code === 404)
+   else if (e.name === errorNames.notFound)
     {
         errorBoom = Boom.notFound(e.message);
+    }
+    //when the error isn't threw by delegate level
+    else if(e.status === 401){
+        const message = 'Not authorized to perform the request';
+        errorBoom = Boom.unauthorized(message);
     }
     
     //to add the other cases of error
@@ -53,7 +66,7 @@ const createServiceError = e => {
 };
 
 module.exports = {
-    create400Error,
-    create404Error,
-    createServiceError
+    createBadRequestError,
+    createNotFoundError,
+    createBoomErrorForService
 };
