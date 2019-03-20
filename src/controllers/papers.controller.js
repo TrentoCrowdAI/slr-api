@@ -8,9 +8,6 @@ const errHandler = require(__base + 'utils/errors');
 const router = express.Router();
 
 
-
-
-
 //search for a word in the papers
 router.get('/search', async (req, res, next) => {
     try
@@ -28,7 +25,10 @@ router.get('/search', async (req, res, next) => {
     }
 });
 
-
+/*
+ * 
+ * router deprecated-------------------------------------------------------------------------------
+ * 
 //get a list of papers without keywords
 router.get('/papers', async (req, res, next) => {
     try
@@ -112,7 +112,7 @@ router.delete('/papers/:id', async (req, res, next) => {
     }
 });
 
-
+*/
 
 
 module.exports = router;

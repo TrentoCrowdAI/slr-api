@@ -81,6 +81,9 @@ describe('good cases', () => {
         expect(response.status).toBe(200);
     });
 
+    /* deprecated ----------------------------------
+     * 
+
     test('GET /papers should return 200 if it finds something', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/papers');
@@ -113,6 +116,7 @@ describe('good cases', () => {
         response = await request(app).delete('/papers/25');
         expect(response.status).toBe(204);
     });
+    */
 
 });
 
@@ -135,6 +139,10 @@ describe('bad cases', () => {
         let response = await request(app).get('/search?query=uaidafha');
         expect(response.status).toBe(404)
     });
+    
+        /* deprecated ----------------------------------
+     * 
+    
     test('GET /papers/9999 should return 404 if it finds nothing', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/papers/9999');
@@ -173,6 +181,6 @@ describe('bad cases', () => {
         let response = await request(app).delete('/papers/9999');
         expect(response.status).toBe(404);
     });
-
+    */
 
 });
