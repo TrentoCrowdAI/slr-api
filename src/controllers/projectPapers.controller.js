@@ -31,8 +31,8 @@ router.get('/papers', async (req, res, next) => {
 router.post('/papers', async (req, res, next) => {
     try
     {
-        let paper_id = req.query.paper_id;
-        let project_id = req.query.project_id;
+        let paper_id = req.body.paper_id;
+        let project_id = req.body.project_id;
         
         let projectPaper = await projectPapersDelegate.insertFromPaper(paper_id, project_id);
         res.status(201).json(projectPaper);
