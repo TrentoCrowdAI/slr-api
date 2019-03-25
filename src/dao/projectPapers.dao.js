@@ -25,7 +25,7 @@ const db = require(__base + "db/index");
  */
 async function insertFromPaper(paper_id, project_id) {
     let res = await db.query(
-            'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", $1 FROM public.' + db.TABLES.projectPapers + ' WHERE id = $2 ) RETURNING *',
+            'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", $1 FROM public.' + db.TABLES.papers + ' WHERE id = $2 ) RETURNING *',
             [project_id, paper_id]
             );
     return res.rows[0];
