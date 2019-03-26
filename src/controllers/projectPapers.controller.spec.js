@@ -19,6 +19,11 @@ var validExample = {"Authors": "aa",
 
 };
 
+var validExampleForPost = {
+    "paper_id": 1,
+    "project_id": 1
+}
+
 //not valid examples
 var notValidExampleForUpdate = {
     "Authors": "Momeni M., oshinfard F.",
@@ -35,6 +40,11 @@ var notValidExampleForUpdate = {
     "filter_study_include": "0",
     "notes2": ""
 };
+
+var notValidExampleForPost = {
+    "paper_id": 1
+}
+
 
 
 test('dummy test', () => {
@@ -57,9 +67,9 @@ describe('good cases', () => {
         expect(response.status).toBe(200);
     });
 
-    test('POST /papers?paper_id=1&project_id=1 should return 201', async () => {
+    test('POST /papers should return 201', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/papers?paper_id=1&project_id=1');
+        let response = await request(app).post('/papers').send(validExampleForPost).set('Accept', 'application/json');
         expect(response.status).toBe(201);
         //let result = await response.body;
     });
@@ -101,9 +111,9 @@ describe('bad cases', () => {
     });
 
 
-    test('POST /papers?paper_id=1 should return 400 if mandatory field is not valid', async () => {
+    test('POST /papers should return 400 if mandatory field is not valid', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/papers?paper_id=1');
+        let response = await request(app).post('/papers').send(notValidExampleForPost).set('Accept', 'application/json');;
         expect(response.status).toBe(400);
     });
 
