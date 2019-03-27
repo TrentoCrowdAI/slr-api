@@ -13,8 +13,10 @@ router.get('/search', async (req, res, next) => {
     try
     {
         let query = req.query.query;
+        let page = req.query.page;
+        let pagesize = req.query.pagesize;
         //for now it returns the first ten matched papers(sorted by id)
-        let papers = await papersDelegate.selectBySingleKeyword(query, 10, 0, "id", "ASC");
+        let papers = await papersDelegate.selectBySingleKeyword(query, pagesize, page, "id", "ASC");
 
         res.status(200).json(papers);
     }

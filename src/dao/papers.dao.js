@@ -88,12 +88,13 @@ async function selectAll(number, offset, orderBy, sort) {
  * @returns {Array[Object]} array of papers 
  */
 async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
+    //I select all the results and then I slice(it's kinda inefficient)
     let res = await db.query(
-            'SELECT * FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1  ORDER BY '+orderBy+' '+sort+' LIMIT $2 OFFSET $3',
-            ["%" + keyword + "%", number, offset]
+            'SELECT * FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1  ORDER BY '+orderBy+' '+sort,
+            ["%" + keyword + "%"]
             );
-
-    return res.rows;
+    //another idea could be to use two queries, one for counting and one for returning with LIMIT OFFSET
+    return {"results" : res.rows.slice(offset, offset+number), "total" : res.rows.length};
 }
 
 
