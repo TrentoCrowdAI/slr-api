@@ -177,7 +177,7 @@ async function selectByProject(project_id, number, offset, orderBy, sort) {
     offset = Number(offset);
 
     //will return not empty string if they are not valid 
-    let errorMessage = support.areValidListParameters(number, offset, orderBy, sort);
+    let errorMessage = support.areValidListParameters(number, 1, orderBy, sort);//temporary fix for pagination
     if (errorMessage !== "")
     {
         throw errHandler.createBadRequestError(errorMessage);

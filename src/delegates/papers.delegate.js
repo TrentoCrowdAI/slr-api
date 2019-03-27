@@ -140,7 +140,7 @@ async function selectAll(number, offset, orderBy, sort) {
     offset = Number(offset);
 
     //will return not empty string if they are not valid 
-    let errorMessage = support.areValidListParameters(number, offset, orderBy, sort);
+    let errorMessage = support.areValidListParameters(number, 1, orderBy, sort);//temporary fix for pagination
     if (errorMessage !== "")
     {
         throw errHandler.createBadRequestError(errorMessage);
@@ -173,7 +173,6 @@ async function selectBySingleKeyword(keyword, number, page, orderBy, sort) {
     number = Number(number || 10);
     //cast offset to integer type
     page = Number(page || 1);
-    console.log("PapersDelegate] number : " + number + ", page : " + page);
     //will return not empty string if they are not valid 
     let errorMessage = support.areValidListParameters(number, page, orderBy, sort);
     if (errorMessage !== "")
