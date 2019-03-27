@@ -134,29 +134,31 @@ async function selectById(project_id) {
  * 
  * select all project
  * @param {integer} number number of projects
- * @param {integer} offset position where we begin to get
+ * @param {integer} after the next one for the next page
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} list of projects 
  */
-async function selectAll(number, offset, orderBy, sort) {
+async function selectAll(number, after, orderBy, sort) {
 
     //cast number to integer type
-    number = Number(number);
-    //cast offset to integer type
-    offset = Number(offset);
+    number = Number(number || 10);
+    //cast page to integer type
+    after = Number(after || 0);
 
     //will return not empty string if they are not valid 
-    let errorMessage = support.areValidListParameters(number, 1, orderBy, sort);//temporary fix for pagination
+    let errorMessage = support.areValidProjectsListParameters(number, after, orderBy, sort);
     if (errorMessage !== "")
     {
         throw errHandler.createBadRequestError(errorMessage);
     }
 
     //check DAO layer
-    let res = await projectsDao.selectAll(number, offset, orderBy, sort);
+    if(after === 0){after = -1}//so we include the item with id 0 when starting
+    let res = await projectsDao.selectAll(number, after, orderBy, sort);
+    
     //error check
-    if (res.length === 0)
+    if (res.data.length === 0)
     {
         throw errHandler.createNotFoundError('the list is empty!');
     }

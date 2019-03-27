@@ -62,18 +62,18 @@ async function selectById(project_id) {
 /**
  * select all project
  * @param {integer} number number of projects
- * @param {integer} offset position where we begin to get
+ * @param {integer} after position where we begin to get
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of projects 
  */
-async function selectAll(number, offset, orderBy, sort) {
+async function selectAll(number, after, orderBy, sort) {
     let res = await db.query(
-            'SELECT * FROM public.' + db.TABLES.projects + ' ORDER BY '+orderBy+' '+sort+' LIMIT $1 OFFSET $2',
-            [number, offset]
+            'SELECT * FROM public.' + db.TABLES.projects + ' WHERE id > $1 ORDER BY '+orderBy+' '+sort+' LIMIT $2',
+            [after, number+1]
             );
-
-    return res.rows;
+    console.log(res.rows[number]);
+    return {"data" : res.rows.slice(0,number), "continues" : (res.rows[number] ? true : false)};
 }
 
 

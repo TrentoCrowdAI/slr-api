@@ -14,8 +14,10 @@ const router = express.Router();
 router.get('/projects', async (req, res, next) => {
     try
     {
+        let pagesize = req.query.pagesize;
+        let after = req.query.after;
         //for now it returns a list of 10 projects(sorted by id asc)
-        let projects = await projectsDelegate.selectAll(10, 0, "id", "ASC");
+        let projects = await projectsDelegate.selectAll(pagesize, after, "id", "ASC");
         res.status(200).json(projects);
     }
     catch (e)
