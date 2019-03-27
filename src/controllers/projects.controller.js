@@ -15,8 +15,7 @@ router.get('/projects', async (req, res, next) => {
     try
     {
         let pagesize = req.query.pagesize;
-        let after = req.query.after;
-        //for now it returns a list of 10 projects(sorted by id asc)
+        let after = req.query.after; //select projects with id greater than the value of after
         let projects = await projectsDelegate.selectAll(pagesize, after, "id", "ASC");
         res.status(200).json(projects);
     }

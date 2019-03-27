@@ -158,7 +158,7 @@ async function selectAll(number, after, orderBy, sort) {
     let res = await projectsDao.selectAll(number, after, orderBy, sort);
     
     //error check
-    if (res.data.length === 0)
+    if (res.results.length === 0)
     {
         throw errHandler.createNotFoundError('the list is empty!');
     }

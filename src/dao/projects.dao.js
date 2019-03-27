@@ -72,8 +72,7 @@ async function selectAll(number, after, orderBy, sort) {
             'SELECT * FROM public.' + db.TABLES.projects + ' WHERE id > $1 ORDER BY '+orderBy+' '+sort+' LIMIT $2',
             [after, number+1]
             );
-    console.log(res.rows[number]);
-    return {"data" : res.rows.slice(0,number), "continues" : (res.rows[number] ? true : false)};
+    return {"results" : res.rows.slice(0,number), "continues" : (res.rows[number] ? true : false)};
 }
 
 

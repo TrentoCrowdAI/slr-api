@@ -198,7 +198,7 @@ async function selectBySingleKeyword(keyword, number, page, orderBy, sort) {
         throw errHandler.createNotFoundError('the list is empty!');
     }
 
-    return {"page": page, "of": Math.ceil(res.total/number), "data": res.results};
+    return {"page": page, "of": Math.ceil(res.total/number), "results": res.results};
 }
 
 
