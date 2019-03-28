@@ -61,6 +61,12 @@ describe('good cases', () => {
         expect(response.status).toBe(200);
     });
 
+    test('GET /papers?project_id=1&pagesize=12 should return 200 if it has correct pagination params and finds something', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&pagesize=12');
+        expect(response.status).toBe(200);
+    });
+
     test('GET /papers/1 should return 200 if projectPaper exists', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/papers/1');
@@ -102,6 +108,18 @@ describe('bad cases', () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/papers?project_id=9999');
         expect(response.status).toBe(404)
+    });
+
+    test('GET /papers?project_id=1&pagesize=2 should return 400 if it has wrong pagination parameters', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&pagesize=2');
+        expect(response.status).toBe(400);
+    });
+
+    test('GET /papers?project_id=1&after=9822 should return 404 if there are no papers after the id', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&after=9822');
+        expect(response.status).toBe(404);
     });
 
     test('GET /papers/9999 should return 404 if it finds nothing', async () => {
