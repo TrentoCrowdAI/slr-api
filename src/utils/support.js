@@ -42,7 +42,7 @@ function areValidListParameters(number, page, orderBy, sort) {
  * @param {string} sort {ASC or DESC}
  * @returns {string} error message. if isn't error will return empty string 
  */
-function areValidProjectsListParameters(number, after, orderBy, sort) {
+function areValidPaginationParameters(number, after, orderBy, sort) {
     let errorMessage = "";
     if (number === undefined || after === undefined || orderBy === undefined || sort === undefined || number === null || after === null || orderBy === null || sort === null)
     {
@@ -88,4 +88,4 @@ function areValidProjectsListParameters(number, after, orderBy, sort) {
 
 
 
-module.exports = { areValidListParameters, areValidProjectsListParameters};
+module.exports = { areValidListParameters, areValidPaginationParameters};

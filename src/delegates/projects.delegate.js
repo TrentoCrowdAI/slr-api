@@ -147,7 +147,7 @@ async function selectAll(number, after, orderBy, sort) {
     after = Number(after || 0);
 
     //will return not empty string if they are not valid 
-    let errorMessage = support.areValidProjectsListParameters(number, after, orderBy, sort);
+    let errorMessage = support.areValidPaginationParameters(number, after, orderBy, sort);
     if (errorMessage !== "")
     {
         throw errHandler.createBadRequestError(errorMessage);
