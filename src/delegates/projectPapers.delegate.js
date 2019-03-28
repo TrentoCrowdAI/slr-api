@@ -151,12 +151,12 @@ async function selectById(projectPaper_id)  {
  * select all projectPaper associated with a project
  * @param {integer} project_id
  * @param {integer} number number of projectPapers
- * @param {integer} offset position where we begin to get
+ * @param {integer} after id where we begin to get
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of projectPapers 
  */
-async function selectByProject(project_id, number, offset, orderBy, sort) {
+async function selectByProject(project_id, number, after, orderBy, sort) {
 
     //error check
     if (project_id === undefined || project_id === null)
@@ -172,21 +172,21 @@ async function selectByProject(project_id, number, offset, orderBy, sort) {
     }
 
     //cast number to integer type
-    number = Number(number);
-    //cast offset to integer type
-    offset = Number(offset);
+    number = Number(number || 10);
+    //cast 'after' to integer type
+    after = Number(after || 0);
 
     //will return not empty string if they are not valid 
-    let errorMessage = support.areValidListParameters(number, 1, orderBy, sort);//temporary fix for pagination
+    let errorMessage = support.areValidPaginationParameters(number, after, orderBy, sort);//temporary fix for pagination
     if (errorMessage !== "")
     {
         throw errHandler.createBadRequestError(errorMessage);
     }
 
     //call DAO layer
-    let res = await projectPapersDao.selectByProject(project_id, number, offset, orderBy, sort);
+    let res = await projectPapersDao.selectByProject(project_id, number, after, orderBy, sort);
     //error check
-    if (res.length === 0)
+    if (res.results.length === 0)
     {
         throw errHandler.createNotFoundError('the list is empty!');
     }

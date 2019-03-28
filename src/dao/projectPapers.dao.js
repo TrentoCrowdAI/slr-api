@@ -77,18 +77,18 @@ async function selectById(projectPaper_id) {
  * select all projectPaper associated with a project
  * @param {integer} project_id
  * @param {integer} number number of projectPapers
- * @param {integer} offset position where we begin to get
+ * @param {integer} after the id of the first element to get
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of projectPapers 
  */
-async function selectByProject(project_id, number, offset, orderBy, sort) {
+async function selectByProject(project_id, number, after, orderBy, sort) {
     let res = await db.query(
-            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $2 OFFSET $3',
-            [project_id, number, offset]
+            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND id > $2 ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $3',
+            [project_id, after, number+1]
             );
 
-    return res.rows;
+    return {"results" : res.rows.slice(0,number), "continues" : (res.rows[number] ? true : false)};
 }
 
 
