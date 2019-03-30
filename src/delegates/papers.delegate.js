@@ -10,6 +10,7 @@ const support = require(__base + 'utils/support');
 const validationSchemes = require(__base + 'utils/validation.schemes');
 const Ajv = require('ajv');
 const ajv = new Ajv();
+const fetch = require("node-fetch");
 
 /**
  * insert a paper
@@ -201,7 +202,51 @@ async function selectBySingleKeyword(keyword, number, page, orderBy, sort) {
     return {"page": page, "of": Math.ceil(res.total/number), "results": res.results};
 }
 
-
+/**
+ * 
+ * find papers by searching with the Scopus APIs
+ * @param {string} keyword to search
+ * @returns {Array[Object]} array of papers 
+ */
+async function scopusSearch(keyword) {
+    //error check
+    if (keyword === undefined || keyword === null)
+    {
+        throw errHandler.createBadRequestError('the keyword is not defined!');
+    }
+    try{
+        const key = "&apiKey=2c386a9c54c36a16afbb829ecc51ac16";
+        const config = {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json',
+                'Content-Type': 'application/json',
+            }
+        }
+        const url = "https://api.elsevier.com/content/search/scopus?start=0&count=25&query="+keyword+key;
+        let response = await fetch(url, config);
+        let json = await response.json();
+        const res = json['search-results'].entry.map(async (element) => {
+            let response = await fetch(element['prism:url']+'?field=description,authors'+key, config);
+            let json = await response.json();
+            return {
+                    "DOI" : element['prism:doi'],
+                    "Link" : element.link[1]['@href'],
+                    "Url" : element['prism:url'],
+                    "Date" : element['prism:coverDate'],
+                    "Title" : element['dc:title'],
+                    "Authors" : json['abstracts-retrieval-response'].authors.author.map(function (x) {return x['preferred-name']['ce:indexed-name']}),
+                    "Abstract" : json['abstracts-retrieval-response'].coredata['dc:description'],
+                    "Document Type" : element.subtypeDescription
+                }
+            });
+        return {"results" : await Promise.all(res)}
+    }catch(e){
+        console.log(e);
+        throw e;
+    }
+    
+}
 
 
 module.exports = {
@@ -210,5 +255,6 @@ module.exports = {
     deletes,
     selectById,
     selectAll,
-    selectBySingleKeyword
+    selectBySingleKeyword,
+    scopusSearch
 };
