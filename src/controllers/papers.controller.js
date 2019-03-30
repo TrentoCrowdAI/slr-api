@@ -28,6 +28,22 @@ router.get('/search', async (req, res, next) => {
     }
 });
 
+//search with scopus api
+router.get('/search-scopus', async (req, res, next) => {
+    try
+    {
+        let query = req.query.query;
+        let papers = await papersDelegate.scopusSearch(query);
+
+        res.status(200).json(papers);
+    }
+    catch (e)
+    {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
 /*
  * 
  * router deprecated-------------------------------------------------------------------------------
