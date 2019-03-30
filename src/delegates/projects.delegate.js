@@ -135,27 +135,37 @@ async function selectById(project_id) {
  * select all project
  * @param {integer} number number of projects
  * @param {integer} after the next one for the next page
+ * @param {integer} before position where to begin to get backwards
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} list of projects 
  */
-async function selectAll(number, after, orderBy, sort) {
+async function selectAll(number, after, before, orderBy, sort) {
 
     //cast number to integer type
     number = Number(number || 10);
-    //cast page to integer type
-    after = Number(after || 0);
-
+    console.log("DLGT] before : " + before + ", after : " + after);
+    if(after === undefined && before === undefined){//if 'before' and 'after' elements are not defined I set 'after' to 0 as default value
+        after = 0;
+    }else{
+        //cast 'after' to integer type
+        after = Number(after);
+        //cast 'before' to integer type
+        before = Number(before);
+    }
+    //set orderBy
+    orderBy = orderBy || "id";
     //will return not empty string if they are not valid 
-    let errorMessage = support.areValidPaginationParameters(number, after, orderBy, sort);
+    let errorMessage = support.areValidPaginationParameters(number, after, before, orderBy, sort, "projects");
     if (errorMessage !== "")
     {
         throw errHandler.createBadRequestError(errorMessage);
     }
 
     //check DAO layer
-    if(after === 0){after = -1}//so we include the item with id 0 when starting
-    let res = await projectsDao.selectAll(number, after, orderBy, sort);
+    console.log("DLGT] before : " + before + ", after : " + after);
+    if(after === 0){after = -1}//if after has default value we put it to -1 we include the item with id 0 when starting
+    let res = await projectsDao.selectAll(number, after, before, orderBy, sort);
     
     //error check
     if (res.results.length === 0)

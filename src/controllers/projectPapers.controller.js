@@ -17,7 +17,8 @@ router.get('/papers', async (req, res, next) => {
         let project_id = req.query.project_id;
         let pagesize = req.query.pagesize;
         let after = req.query.after; //select projects with id greater than the value of after
-        let projectPapers = await projectPapersDelegate.selectByProject(project_id, pagesize, after, "id", "ASC");
+        let before = req.query.before; //select projects with id lower than the value of before
+        let projectPapers = await projectPapersDelegate.selectByProject(project_id, pagesize, after, before, "id", "ASC");
         res.status(200).json(projectPapers);
     }
     catch (e)
