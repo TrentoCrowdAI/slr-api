@@ -183,14 +183,14 @@ async function selectByProject(project_id, number, after, before, orderBy, sort)
     }
 
     //will return not empty string if they are not valid 
-    let errorMessage = support.areValidPaginationParameters(number, after, before, orderBy, sort);//temporary fix for pagination
+    let errorMessage = support.areValidPaginationParameters(number, after, before, orderBy, sort, "projectPapers");
     if (errorMessage !== "")
     {
         throw errHandler.createBadRequestError(errorMessage);
     }
 
     //call DAO layer
-    let res = await projectPapersDao.selectByProject(project_id, number, after, orderBy, sort);
+    let res = await projectPapersDao.selectByProject(project_id, number, after, before, orderBy, sort);
     //error check
     if (res.results.length === 0)
     {
