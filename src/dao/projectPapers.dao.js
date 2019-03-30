@@ -17,7 +17,7 @@ const db = require(__base + "db/index");
  return res.rows[0];
  }*/
 /**
- * insert a projectPaper by copie from fake_paper table
+ * insert a projectPaper by copy from fake_paper table
  * @param {integer} paper_id
  * @param {integer} project_id
  * @param {object} newProjectPaperData
@@ -114,14 +114,25 @@ async function selectByProject(project_id, number, after, before, orderBy, sort)
     }
 }
 
-
-
+/*=== INTERNAL_FUNCTIONS(not accessible through apis) ===*/
+async function selectByIdAndProjectId(paper_id, project_id){
+    let paper_eid = await db.query(//I retrieve the eid of the paper to add
+        'SELECT data->>\'EID\' as eid FROM public.' + db.TABLES.papers + ' WHERE id = $1',
+        [paper_id]
+    );
+    paper_eid = paper_eid.rows[0].eid;
+    let res = await db.query(//I check if the paper with the current eid is already in the project
+        'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND data ->>\'EID\' = $2',
+        [project_id, paper_eid]
+    );
+    return res.rows[0];//this will be defined only if the paper is already in the project
+}
 
 module.exports = {
     insertFromPaper,
     update,
     deletes,
     selectById,
-    selectByProject
-
+    selectByProject,
+    selectByIdAndProjectId
 };

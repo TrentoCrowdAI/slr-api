@@ -43,7 +43,10 @@ async function insertFromPaper(paper_id, project_id) {
     {
         throw errHandler.createBadRequestError('Project id is not a integer!');
     }
-
+    let paper = await projectPapersDao.selectByIdAndProjectId(paper_id, project_id); 
+    if(paper){
+        throw errHandler.createBadRequestError('The selected paper is already in the project');
+    }
     //call DAO layer
     let res = await projectPapersDao.insertFromPaper(paper_id, project_id);
     return  res;
