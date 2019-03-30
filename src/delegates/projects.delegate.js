@@ -10,7 +10,13 @@ const support = require(__base + 'utils/support');
 const validationSchemes = require(__base + 'utils/validation.schemes');
 const Ajv = require('ajv');
 const ajv = new Ajv();
-
+ajv.addKeyword('isNotEmpty', {//keyword for empty string
+    type: 'string',
+    validate: function (schema, data) {
+      return typeof data === 'string' && data.trim() !== ''
+    },
+    errors: false
+})
 /**
  * insert a project
  * @param {object} newProjectData

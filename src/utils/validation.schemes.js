@@ -54,10 +54,12 @@ const project = {
     "type": "object",
     "properties": {
         "name": {
-            "type": "string"
+            "type": "string",
+            "isNotEmpty": true
         },
         "description": {
-            "type": "string"
+            "type": "string",
+            "isNotEmpty": true
         }
     },
     "required": ["name", "description"]

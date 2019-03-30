@@ -11,8 +11,11 @@ var validExample2 = {"name": "bb",
 };
 
 //not valid examples
-var notValidExampleForInsert = {"name": "aa"};
+var notValidExampleForInsert1 = {"name": "aa"};
 
+var notValidExampleForInsert2 = {"name": "",
+    "description": "aaa"
+};
 //not valid examples
 var notValidExampleForUpdate = {"names": "bb",
     "description": "aaa"
@@ -124,7 +127,13 @@ describe('bad cases', () => {
 
     test('POST /projects/ should return 400 if mandatory field is not valid', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/projects').send(notValidExampleForInsert).set('Accept', 'application/json');
+        let response = await request(app).post('/projects').send(notValidExampleForInsert1).set('Accept', 'application/json');
+        expect(response.status).toBe(400);
+    });
+
+    test('POST /projects/ should return 400 if mandatory field is empty string', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).post('/projects').send(notValidExampleForInsert1).set('Accept', 'application/json');
         expect(response.status).toBe(400);
     });
 
