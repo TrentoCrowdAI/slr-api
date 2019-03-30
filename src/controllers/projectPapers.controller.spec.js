@@ -41,10 +41,13 @@ var notValidExampleForUpdate = {
     "notes2": ""
 };
 
-var notValidExampleForPost = {
+var notValidExampleForPost1 = {
     "paper_id": 1
 }
-
+var notValidExampleForPost2 = {
+    "paper_id": 1,
+    "project_id": 1
+}
 
 
 test('dummy test', () => {
@@ -163,7 +166,13 @@ describe('bad cases', () => {
 
     test('POST /papers should return 400 if mandatory field is not valid', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/papers').send(notValidExampleForPost).set('Accept', 'application/json');;
+        let response = await request(app).post('/papers').send(notValidExampleForPost1).set('Accept', 'application/json');;
+        expect(response.status).toBe(400);
+    });
+
+    test('POST /papers should return 400 if paper is alredy in project', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).post('/papers').send(notValidExampleForPost2).set('Accept', 'application/json');;
         expect(response.status).toBe(400);
     });
 
