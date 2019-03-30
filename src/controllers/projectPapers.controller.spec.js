@@ -67,6 +67,20 @@ describe('good cases', () => {
         expect(response.status).toBe(200);
     });
 
+    //actually, the dao checks for elements with greater id, so maybe the element doesn't exists because it was deleted
+    test('GET /papers?project_id=1&after=3 should return 200 if it finds something after ""exisiting"" given element', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&after=3');
+        expect(response.status).toBe(200);
+    });
+
+    //here it's the same, the dao checks simply for elements with lower id, it doesn't bother seraching if the element at given id exists
+    test('GET /papers?project_id=1&before=100 should return 200 if it finds something before ""exisiting"" given element', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&before=100');
+        expect(response.status).toBe(200);
+    });
+
     test('GET /papers/1 should return 200 if projectPaper exists', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/papers/1');
@@ -120,6 +134,24 @@ describe('bad cases', () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/papers?project_id=1&after=9822');
         expect(response.status).toBe(404);
+    });
+
+    test('GET /papers?project_id=1&before=1 should return 404 if it finds nothing before the given id element', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&before=1');
+        expect(response.status).toBe(404);
+    });
+
+    test('GET /papers?project_id=1&before=10&after=1 should return 400 if both "after" and "before" elements are defined', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&before=10&after=1');
+        expect(response.status).toBe(400);
+    });
+
+    test('GET /papers?project_id=1&before=as should return 400 if parameters are of wrong type', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&before=as');
+        expect(response.status).toBe(400);
     });
 
     test('GET /papers/9999 should return 404 if it finds nothing', async () => {
