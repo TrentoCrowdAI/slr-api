@@ -167,17 +167,19 @@ async function selectAll(number, offset, orderBy, sort) {
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of papers 
  */
-async function selectBySingleKeyword(keyword, number, page, orderBy, sort) {
+async function selectBySingleKeyword(keyword, number, after, before, orderBy, sort) {
 
+    //set orderBy
+    orderBy = orderBy || "id";
     //cast number to integer type
     number = Number(number || 10);
-    //cast offset to integer type
-    page = Number(page || 1);
-    //will return not empty string if they are not valid 
-    let errorMessage = support.areValidListParameters(number, page, orderBy, sort);
-    if (errorMessage !== "")
-    {
-        throw errHandler.createBadRequestError(errorMessage);
+    if(after === undefined && before === undefined){//if 'before' and 'after' elements are not defined I set 'after' to 0 as default value
+        after = 0;
+    }else{
+        //cast 'after' to integer type
+        after = Number(after);
+        //cast 'before' to integer type
+        before = Number(before);
     }
     //error check
     if (keyword === undefined || keyword === null)
@@ -191,14 +193,14 @@ async function selectBySingleKeyword(keyword, number, page, orderBy, sort) {
     }
 
     //call DAO layer
-    let res = await papersDao.selectBySingleKeyword(keyword, number, number*(page-1), orderBy, sort);
+    let res = await papersDao.selectBySingleKeyword(keyword, number, after, before, orderBy, sort);
     //error check
     if (res.results.length === 0)
     {
         throw errHandler.createNotFoundError('the list is empty!');
     }
 
-    return {"page": page, "of": Math.ceil(res.total/number), "results": res.results};
+    return res;
 }
 
 

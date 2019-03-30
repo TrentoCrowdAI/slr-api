@@ -13,10 +13,11 @@ router.get('/search', async (req, res, next) => {
     try
     {
         let query = req.query.query;
-        let page = req.query.page;
         let pagesize = req.query.pagesize;
+        let after = req.query.after; //select projects with id greater than the value of after
+        let before = req.query.before; //select projects with id lower than the value of before
         //for now it returns the first ten matched papers(sorted by id)
-        let papers = await papersDelegate.selectBySingleKeyword(query, pagesize, page, "id", "ASC");
+        let papers = await papersDelegate.selectBySingleKeyword(query,  pagesize, after, before, "id", "ASC");
 
         res.status(200).json(papers);
     }
