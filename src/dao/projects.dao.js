@@ -110,13 +110,35 @@ async function selectAll(number, after, before, orderBy, sort) {//orderBy and so
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of projects 
  */
-async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
-    let res = await db.query(
-            'SELECT * FROM public.' + db.TABLES.projects + ' WHERE CAST(data AS TEXT) LIKE $1  ORDER BY '+orderBy+' '+sort+' LIMIT $2 OFFSET $3',
-            ["%" + keyword + "%", number, offset]
+async function selectBySingleKeyword(keyword, number, after, before, orderBy, sort) {//orderBy and sort aren't currently used for lists of projects
+    let res = undefined;
+    if(isNaN(before)){//if 'before' is not defined it means we should check for 'after'
+        res = await db.query(//I get the elements plus one extra one
+            'SELECT * FROM public.' + db.TABLES.projects + ' WHERE id > $1 AND CAST(data AS TEXT) LIKE $2 ORDER BY '+"id"+' '+"ASC"+' LIMIT $3',
+            [after,"%" + keyword + "%", number+1]
             );
-
-    return res.rows;
+        let before = await db.query(//I check if there are elements before
+            'SELECT id FROM public.' + db.TABLES.projects + ' WHERE id <= $1 AND CAST(data AS TEXT) LIKE $2 LIMIT 1',
+            [after, "%" + keyword + "%"]
+        );
+        return {"results" : res.rows.slice(0,number), "hasbefore" : (before.rows[0] ? true: false), "continues" : (res.rows.length > number)};
+    }else{
+        res = await db.query(//I get the elements before plus one extra one
+            'SELECT * FROM public.' + db.TABLES.projects + ' WHERE id < $1 AND CAST(data AS TEXT) LIKE $2 ORDER BY '+"id"+' '+"DESC"+' LIMIT $3',
+            [before, "%" + keyword + "%", number+1]
+        );
+        let after =  await db.query(//I check if there are elements after the passed id
+            'SELECT id FROM public.' + db.TABLES.projects + ' WHERE id >= $1 AND CAST(data AS TEXT) LIKE $2 LIMIT 1',
+            [before, "%" + keyword + "%"]
+        );
+        hasbefore =  (res.rows.length > number);//if I retrieved one extra element it means there's still something before the results
+        let array = res.rows.slice(0, number);//I remove the extra element since the client doesn't need it
+        array.sort(function(a, b) { //I sort the array in ASC again to be printed
+            var x = Number(a['id']); var y = Number(b['id']);
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+        return {"results" : array, "hasbefore" : hasbefore ,"continues" : (after.rows[0] ? true : false)};
+    }
 }
 
 

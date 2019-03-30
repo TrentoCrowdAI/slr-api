@@ -14,10 +14,16 @@ const router = express.Router();
 router.get('/projects', async (req, res, next) => {
     try
     {
+        let projects = undefined;
         let pagesize = req.query.pagesize;
         let after = req.query.after; //select projects with id greater than the value of after
         let before = req.query.before; //select projects with id lower than the value of before
-        let projects = await projectsDelegate.selectAll(pagesize, after, before, "id", "ASC");
+        let query = req.query.query;
+        if(query === undefined){
+            projects = await projectsDelegate.selectAll(pagesize, after, before, "id", "ASC");
+        }else{
+            projects = await projectsDelegate.selectBySingleKeyword(query, pagesize, after, before, "id", "ASC");
+        }
         res.status(200).json(projects);
     }
     catch (e)

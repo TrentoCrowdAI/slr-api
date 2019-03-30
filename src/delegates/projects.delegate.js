@@ -185,20 +185,28 @@ async function selectAll(number, after, before, orderBy, sort) {
  * select project by a single keyword
  * @param {string} keyword to search
  * @param {integer} number number of projects
- * @param {integer} offset position where we begin to get
+ * @param {integer} after the next one for the next page
+ * @param {integer} before position where to begin to get backwards
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of projects 
  */
-async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
+async function selectBySingleKeyword(keyword, number, after, before, orderBy, sort) {
 
     //cast number to integer type
-    number = Number(number);
-    //cast offset to integer type
-    offset = Number(offset);
-
+    number = Number(number || 10);
+    if(after === undefined && before === undefined){//if 'before' and 'after' elements are not defined I set 'after' to 0 as default value
+        after = 0;
+    }else{
+        //cast 'after' to integer type
+        after = Number(after);
+        //cast 'before' to integer type
+        before = Number(before);
+    }
+    //set orderBy
+    orderBy = orderBy || "id";
     //will return not empty string if they are not valid 
-    let errorMessage = support.areValidListParameters(number, offset, orderBy, sort);
+    let errorMessage = support.areValidPaginationParameters(number, after, before, orderBy, sort, "projects");
     if (errorMessage !== "")
     {
         throw errHandler.createBadRequestError(errorMessage);
@@ -215,9 +223,9 @@ async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
     }
 
     //call DAO layer
-    let res = await projectsDao.selectBySingleKeyword(keyword, number, offset, orderBy, sort);
+    let res = await projectsDao.selectBySingleKeyword(keyword, number, after, before, orderBy, sort);
     //error check
-    if (res.length === 0)
+    if (res.results.length === 0)
     {
         throw errHandler.createNotFoundError('the list is empty!');
     }
