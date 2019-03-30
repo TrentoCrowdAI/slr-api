@@ -50,9 +50,15 @@ describe('good cases', () => {
         expect(response.status).toBe(200);
     });
 
-    test('GET /projects/1 should return 200 and project if project exists', async () => {
+    test('GET /projects/2 should return 200 and project if project exists', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/projects/2');
+        expect(response.status).toBe(200);
+    });
+
+    test('GET /projects?query=a should return 200 if it finds something', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?query=a');
         expect(response.status).toBe(200);
     });
 
@@ -123,6 +129,12 @@ describe('bad cases', () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/projects?after=as');
         expect(response.status).toBe(400);
+    });
+
+    test('GET /projects?query=d1s+]2sda should return 404 if it finds nothing', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?query=d1s+]2sda');
+        expect(response.status).toBe(404);
     });
 
     test('POST /projects/ should return 400 if mandatory field is not valid', async () => {
