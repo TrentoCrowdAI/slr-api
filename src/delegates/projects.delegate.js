@@ -144,7 +144,6 @@ async function selectAll(number, after, before, orderBy, sort) {
 
     //cast number to integer type
     number = Number(number || 10);
-    console.log("DLGT] before : " + before + ", after : " + after);
     if(after === undefined && before === undefined){//if 'before' and 'after' elements are not defined I set 'after' to 0 as default value
         after = 0;
     }else{
@@ -163,7 +162,6 @@ async function selectAll(number, after, before, orderBy, sort) {
     }
 
     //check DAO layer
-    console.log("DLGT] before : " + before + ", after : " + after);
     if(after === 0){after = -1}//if after has default value we put it to -1 we include the item with id 0 when starting
     let res = await projectsDao.selectAll(number, after, before, orderBy, sort);
     

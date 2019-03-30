@@ -76,7 +76,6 @@ function areValidPaginationParameters(number, after, before, orderBy, sort) {
     {
         errorMessage = "the sort is not valid!";
     }
-    console.log("E_MSG : " + errorMessage);
     return errorMessage;
 }
 

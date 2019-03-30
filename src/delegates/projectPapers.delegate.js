@@ -172,7 +172,6 @@ async function selectByProject(project_id, number, after, before, orderBy, sort)
     }
 
     //cast number to integer type
-    console.log("DLGT] before : " + before + ", after : " + after);
     number = Number(number || 10);
     if(after === undefined && before === undefined){//if 'before' and 'after' elements are not defined I set 'after' to 0 as default value
         after = 0;

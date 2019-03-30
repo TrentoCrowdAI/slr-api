@@ -71,7 +71,6 @@ async function selectById(project_id) {
 async function selectAll(number, after, before, orderBy, sort) {//orderBy and sort aren't used for lists of projects
     let res = undefined;
     if(isNaN(before)){//if 'before' is not defined it means we should check for 'after'
-        console.log("DB] checking for after elements");
         res = await db.query(//I get the elements plus one extra one
             'SELECT * FROM public.' + db.TABLES.projects + ' WHERE id > $1 ORDER BY '+"id"+' '+"ASC"+' LIMIT $2',
             [after, number+1]
@@ -82,7 +81,6 @@ async function selectAll(number, after, before, orderBy, sort) {//orderBy and so
         );
         return {"results" : res.rows.slice(0,number), "hasbefore" : (before.rows[0] ? true: false), "continues" : (res.rows.length > number)};
     }else{
-        console.log("DB] checking for before elements");
         res = await db.query(//I get the elements before plus one extra one
             'SELECT * FROM public.' + db.TABLES.projects + ' WHERE id < $1 ORDER BY '+"id"+' '+"DESC"+' LIMIT $2',
             [before, number+1]
