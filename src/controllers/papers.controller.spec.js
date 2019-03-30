@@ -134,11 +134,11 @@ describe('bad cases', () => {
         let response = await request(app).get('/search');
         expect(response.status).toBe(400)
     });
-    test('GET /search should return 400 if optional field has illegal value', async () => {
+  /*  test('GET /search should return 400 if optional field has illegal value', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/search?query=a&page=-1');
         expect(response.status).toBe(400)
-    });
+    });*/
     test('GET /search should return 404 if it finds nothing', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/search?query=uaidafha');
