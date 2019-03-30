@@ -84,6 +84,12 @@ describe('good cases', () => {
         expect(response.status).toBe(200);
     });
 
+    test('GET /papers?project_id=1&query=a should return 200 if it finds something', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&query=a');
+        expect(response.status).toBe(200);
+    });
+
     test('GET /papers/1 should return 200 if projectPaper exists', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/papers/1');
@@ -149,6 +155,12 @@ describe('bad cases', () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/papers?project_id=1&before=10&after=1');
         expect(response.status).toBe(400);
+    });
+
+    test('GET /papers?project_id=1&query=zazaxaxa should return 404 if it finds nothing', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&query=zazaxaxa');
+        expect(response.status).toBe(404);
     });
 
     test('GET /papers?project_id=1&before=as should return 400 if parameters are of wrong type', async () => {
