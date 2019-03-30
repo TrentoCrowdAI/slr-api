@@ -12,13 +12,13 @@ const Ajv = require('ajv');
 const ajv = new Ajv();
 
 /**
- * insert a projectPaper
+ * insert a projectPaper by copie from fake_paper table
  * @param {integer} paper_id
  * @param {integer} project_id
  * @param {object} newProjectPaperData
  * @returns {object} projectPaper created
  */
-async function insert(paper_id, project_id, newProjectPaperData) {
+async function insertFromPaper(paper_id, project_id) {
     //error check
     if (paper_id === undefined || paper_id === null)
     {
@@ -44,51 +44,30 @@ async function insert(paper_id, project_id, newProjectPaperData) {
         throw errHandler.createBadRequestError('Project id is not a integer!');
     }
 
-    //check input format
-    let valid = ajv.validate(validationSchemes.projectPaper, newProjectPaperData);
-    //if is not a valid input
-    if (!valid)
-    {
-        throw errHandler.createBadRequestError('the new projectPaper data is not valid!');
-    }
     //call DAO layer
-    let res = await projectPapersDao.insert(paper_id, project_id, newProjectPaperData);
-
+    let res = await projectPapersDao.insertFromPaper(paper_id, project_id);
     return  res;
 }
 
 
 /**
  *  * update a projectPaper
- * @param {integer} paper_id
- * @param {integer}  project_id
+ * @param {integer} projectPaper_id
  * @param {object} newProjectPaperData
- 
+ * @returns {integer} number of row affected , 1 if ok, 0 if failed
  */
-async function update(paper_id, project_id, newProjectPaperData) {
+async function update(projectPaper_id, newProjectPaperData) {
     //error check
-    if (paper_id === undefined || paper_id === null)
+    if (projectPaper_id === undefined || projectPaper_id === null)
     {
-        throw errHandler.createBadRequestError('Paper id is not defined!');
+        throw errHandler.createBadRequestError('Project paper id is not defined!');
     }
     //cast projectPaper_id to integer type
-    paper_id = Number(paper_id);
+    projectPaper_id = Number(projectPaper_id);
     //error check
-    if (!Number.isInteger(paper_id))
+    if (!Number.isInteger(projectPaper_id))
     {
-        throw errHandler.createBadRequestError('Paper id  is not a integer!');
-    }
-    //error check
-    if (project_id === undefined || project_id === null)
-    {
-        throw errHandler.createBadRequestError('Project id is not defined!');
-    }
-    //cast project_id to integer type
-    project_id = Number(project_id);
-    //error check
-    if (!Number.isInteger(project_id))
-    {
-        throw errHandler.createBadRequestError('Project id is not a integer!');
+        throw errHandler.createBadRequestError('Project paper id  is not a integer!');
     }
     
     //check input format
@@ -99,7 +78,7 @@ async function update(paper_id, project_id, newProjectPaperData) {
         throw errHandler.createBadRequestError('the new projectPaper data for update is not valid!');
     }
     //call DAO layer
-    let numberRow = await projectPapersDao.update(paper_id, project_id, newProjectPaperData);
+    let numberRow = await projectPapersDao.update(projectPaper_id, newProjectPaperData);
     //error check
     if (numberRow === 0)
     {
@@ -111,38 +90,25 @@ async function update(paper_id, project_id, newProjectPaperData) {
 
 /**
  *  * delete a projectPaper
- * @param {integer} paper_id
- * @param {integer} project_id
+ * @param {integer} projectPaper_id
  * @returns {integer} number of row affected , 1 if ok, 0 if failed
  */
-async function deletes(paper_id, project_id) {
+async function deletes(projectPaper_id) {
     //error check
-    if (paper_id === undefined || paper_id === null)
+    if (projectPaper_id === undefined || projectPaper_id === null)
     {
-        throw errHandler.createBadRequestError('Paper id is not defined!');
+        throw errHandler.createBadRequestError('Project paper id is not defined!');
     }
     //cast projectPaper_id to integer type
-    paper_id = Number(paper_id);
+    projectPaper_id = Number(projectPaper_id);
     //error check
-    if (!Number.isInteger(paper_id))
+    if (!Number.isInteger(projectPaper_id))
     {
-        throw errHandler.createBadRequestError('Paper id  is not a integer!');
-    }
-    //error check
-    if (project_id === undefined || project_id === null)
-    {
-        throw errHandler.createBadRequestError('Project id is not defined!');
-    }
-    //cast project_id to integer type
-    project_id = Number(project_id);
-    //error check
-    if (!Number.isInteger(project_id))
-    {
-        throw errHandler.createBadRequestError('Project id is not a integer!');
+        throw errHandler.createBadRequestError('Project paper id  is not a integer!');
     }
     
     //call DAO layer
-    let numberRow = await projectPapersDao.deletes(paper_id, project_id);
+    let numberRow = await projectPapersDao.deletes(projectPaper_id);
     //error check
     if (numberRow === 0)
     {
@@ -153,38 +119,26 @@ async function deletes(paper_id, project_id) {
 
 /**
  * select a projectPaper
- * @param {integer} paper_id
- * @param {integer} project_id
+ * @param {integer} projectPaper_id
  * @returns {object} projectPaper found
  */
-async function selectById(paper_id, project_id)  {
+async function selectById(projectPaper_id)  {
     //error check
-    if (paper_id === undefined || paper_id === null)
+    if (projectPaper_id === undefined || projectPaper_id === null)
     {
-        throw errHandler.createBadRequestError('Paper id is not defined!');
+        throw errHandler.createBadRequestError('Project paper id is not defined!');
     }
     //cast projectPaper_id to integer type
-    paper_id = Number(paper_id);
+    projectPaper_id = Number(projectPaper_id);
     //error check
-    if (!Number.isInteger(paper_id))
+    if (!Number.isInteger(projectPaper_id))
     {
-        throw errHandler.createBadRequestError('Paper id  is not a integer!');
+        throw errHandler.createBadRequestError('Project paper id  is not a integer!');
     }
-    //error check
-    if (project_id === undefined || project_id === null)
-    {
-        throw errHandler.createBadRequestError('Project id is not defined!');
-    }
-    //cast project_id to integer type
-    project_id = Number(project_id);
-    //error check
-    if (!Number.isInteger(project_id))
-    {
-        throw errHandler.createBadRequestError('Project id is not a integer!');
-    }
+
     
     //call DAO layer
-    let res = await projectPapersDao.selectById(paper_id, project_id);
+    let res = await projectPapersDao.selectById(projectPaper_id);
     //error check
     if (res === undefined)
     {
@@ -223,7 +177,7 @@ async function selectByProject(project_id, number, offset, orderBy, sort) {
     offset = Number(offset);
 
     //will return not empty string if they are not valid 
-    let errorMessage = support.areValidListParameters(number, offset, orderBy, sort);
+    let errorMessage = support.areValidListParameters(number, 1, orderBy, sort);//temporary fix for pagination
     if (errorMessage !== "")
     {
         throw errHandler.createBadRequestError(errorMessage);
@@ -243,7 +197,7 @@ async function selectByProject(project_id, number, offset, orderBy, sort) {
 
 
 module.exports = {
-    insert,
+    insertFromPaper,
     update,
     deletes,
     selectById,

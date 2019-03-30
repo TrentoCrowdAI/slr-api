@@ -11,10 +11,10 @@ const router = express.Router();
 
 
 //get a list of projectPapers associated with a project
-router.get('/projects/:project_id/papers', async (req, res, next) => {
+router.get('/papers', async (req, res, next) => {
     try
     {
-        let project_id = req.params.project_id;
+        let project_id = req.query.project_id;
         //for now it returns a list of 10 projectPapers(sorted by id asc)
         let projectPapers = await projectPapersDelegate.selectByProject(project_id, 10, 0, "id", "ASC");
         res.status(200).json(projectPapers);
@@ -28,14 +28,13 @@ router.get('/projects/:project_id/papers', async (req, res, next) => {
 
 
 //insert a new projectPaper
-router.post('/projects/:project_id/papers/:paper_id', async (req, res, next) => {
+router.post('/papers', async (req, res, next) => {
     try
     {
-        let project_id = req.params.project_id;
-        let paper_id = req.params.paper_id;
-        //the data of new projectPaper to insert
-        let newProjectPaperData = req.body;
-        let projectPaper = await projectPapersDelegate.insert(paper_id, project_id, newProjectPaperData);
+        let paper_id = req.body.paper_id;
+        let project_id = req.body.project_id;
+        
+        let projectPaper = await projectPapersDelegate.insertFromPaper(paper_id, project_id);
         res.status(201).json(projectPaper);
     }
     catch (e)
@@ -48,12 +47,11 @@ router.post('/projects/:project_id/papers/:paper_id', async (req, res, next) => 
 
 
 //get a projectPaper 
-router.get('/projects/:project_id/papers/:paper_id', async (req, res, next) => {
+router.get('/papers/:projectPaper_id', async (req, res, next) => {
     try
     {
-        let project_id = req.params.project_id;
-        let paper_id = req.params.paper_id;
-        let projectPaper = await projectPapersDelegate.selectById(paper_id, project_id);
+        let projectPaper_id = req.params.projectPaper_id;
+        let projectPaper = await projectPapersDelegate.selectById(projectPaper_id);
         res.status(200).json(projectPaper);
     }
     catch (e)
@@ -64,16 +62,15 @@ router.get('/projects/:project_id/papers/:paper_id', async (req, res, next) => {
 });
 
 //update a projectPaper
-router.put('/projects/:project_id/papers/:paper_id', async (req, res, next) => {
+router.put('/papers/:projectPaper_id', async (req, res, next) => {
     try
     {
 
-        let project_id = req.params.project_id;
-        let paper_id = req.params.paper_id;
+        let projectPaper_id = req.params.projectPaper_id;
         //the new data of projectPaper to update
         let newProjectPaperData = req.body;
 
-        await projectPapersDelegate.update(paper_id, project_id, newProjectPaperData);
+        await projectPapersDelegate.update(projectPaper_id, newProjectPaperData);
         res.sendStatus(204);
     }
     catch (e)
@@ -84,12 +81,11 @@ router.put('/projects/:project_id/papers/:paper_id', async (req, res, next) => {
 });
 
 //delete a projectPaper
-router.delete('/projects/:project_id/papers/:paper_id', async (req, res, next) => {
+router.delete('/papers/:projectPaper_id', async (req, res, next) => {
     try
     {
-        let project_id = req.params.project_id;
-        let paper_id = req.params.paper_id;
-        await projectPapersDelegate.deletes(paper_id, project_id);
+        let projectPaper_id = req.params.projectPaper_id;
+        await projectPapersDelegate.deletes(projectPaper_id);
         res.sendStatus(204);
     }
     catch (e)

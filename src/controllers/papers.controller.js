@@ -8,16 +8,15 @@ const errHandler = require(__base + 'utils/errors');
 const router = express.Router();
 
 
-
-
-
 //search for a word in the papers
 router.get('/search', async (req, res, next) => {
     try
     {
         let query = req.query.query;
+        let page = req.query.page;
+        let pagesize = req.query.pagesize;
         //for now it returns the first ten matched papers(sorted by id)
-        let papers = await papersDelegate.selectBySingleKeyword(query, 10, 0, "id", "ASC");
+        let papers = await papersDelegate.selectBySingleKeyword(query, pagesize, page, "id", "ASC");
 
         res.status(200).json(papers);
     }
@@ -28,7 +27,10 @@ router.get('/search', async (req, res, next) => {
     }
 });
 
-
+/*
+ * 
+ * router deprecated-------------------------------------------------------------------------------
+ * 
 //get a list of papers without keywords
 router.get('/papers', async (req, res, next) => {
     try
@@ -112,7 +114,7 @@ router.delete('/papers/:id', async (req, res, next) => {
     }
 });
 
-
+*/
 
 
 module.exports = router;

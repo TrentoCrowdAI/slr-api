@@ -140,7 +140,7 @@ async function selectAll(number, offset, orderBy, sort) {
     offset = Number(offset);
 
     //will return not empty string if they are not valid 
-    let errorMessage = support.areValidListParameters(number, offset, orderBy, sort);
+    let errorMessage = support.areValidListParameters(number, 1, orderBy, sort);//temporary fix for pagination
     if (errorMessage !== "")
     {
         throw errHandler.createBadRequestError(errorMessage);
@@ -162,20 +162,19 @@ async function selectAll(number, offset, orderBy, sort) {
  * select paper by a single keyword
  * @param {string} keyword to search
  * @param {integer} number number of papers
- * @param {integer} offset position where we begin to get
+ * @param {integer} page the page we return(pages start from 1)
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of papers 
  */
-async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
+async function selectBySingleKeyword(keyword, number, page, orderBy, sort) {
 
     //cast number to integer type
-    number = Number(number);
+    number = Number(number || 10);
     //cast offset to integer type
-    offset = Number(offset);
-
+    page = Number(page || 1);
     //will return not empty string if they are not valid 
-    let errorMessage = support.areValidListParameters(number, offset, orderBy, sort);
+    let errorMessage = support.areValidListParameters(number, page, orderBy, sort);
     if (errorMessage !== "")
     {
         throw errHandler.createBadRequestError(errorMessage);
@@ -183,7 +182,7 @@ async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
     //error check
     if (keyword === undefined || keyword === null)
     {
-        throw errHandler.createBadRequestError('the keyword is not define!');
+        throw errHandler.createBadRequestError('the keyword is not defined!');
     }
     //error check
     if (keyword === "")
@@ -192,13 +191,14 @@ async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
     }
 
     //call DAO layer
-    let res = await papersDao.selectBySingleKeyword(keyword, number, offset, orderBy, sort);
+    let res = await papersDao.selectBySingleKeyword(keyword, number, number*(page-1), orderBy, sort);
     //error check
-    if (res.length === 0)
+    if (res.results.length === 0)
     {
         throw errHandler.createNotFoundError('the list is empty!');
     }
-    return res;
+
+    return {"page": page, "of": Math.ceil(res.total/number), "results": res.results};
 }
 
 
