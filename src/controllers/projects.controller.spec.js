@@ -41,6 +41,12 @@ describe('good cases', () => {
         expect(response.status).toBe(200);
     });
 
+    test('GET /projects?before=100 should return 200 if it finds something before ""exisiting"" given element', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?before=100');
+        expect(response.status).toBe(200);
+    });
+
     test('GET /projects/1 should return 200 and project if project exists', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/projects/2');
@@ -90,6 +96,24 @@ describe('bad cases', () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/projects?after=1001');
         expect(response.status).toBe(404);
+    });
+
+    test('GET /projects?before=1 should return 404 if it finds nothing before the given id element', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?before=1');
+        expect(response.status).toBe(404);
+    });
+
+    test('GET /projects?before=10&after=1 should return 400 if both "after" and "before" elements are defined', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?before=10&after=1');
+        expect(response.status).toBe(400);
+    });
+
+    test('GET /projects?before=as should return 400 if parameters are of wrong type', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?before=as');
+        expect(response.status).toBe(400);
     });
 
     test('GET /projects?after=as should return 400 if parameter is of wrong type', async () => {
