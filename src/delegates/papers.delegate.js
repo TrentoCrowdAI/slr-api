@@ -225,11 +225,13 @@ async function scopusSearch(keyword) {
                 'Content-Type': 'application/json',
             }
         }
+        //const url = "https://api.elsevier.com/content/search/scopus?start=0&count=25&view=complete&query="+keyword+key;(I don't have access to complete view)
         const url = "https://api.elsevier.com/content/search/scopus?start=0&count=25&query="+keyword+key;
         let response = await fetch(url, config);
         let json = await response.json();
+        console.log(json);console.log("#############################################################")
         const res = json['search-results'].entry.map(async (element) => {
-            let response = await fetch(element['prism:url']+'?field=description,authors'+key, config);
+            let response = await fetch(element['prism:url']+'?field=description,authors'+key, config);//doesn't allow me to access desription field anymore
             let json = await response.json();
             return {
                     "DOI" : element['prism:doi'],
@@ -238,7 +240,7 @@ async function scopusSearch(keyword) {
                     "Date" : element['prism:coverDate'],
                     "Title" : element['dc:title'],
                     "Authors" : json['abstracts-retrieval-response'].authors.author.map(function (x) {return x['preferred-name']['ce:indexed-name']}),
-                    "Abstract" : json['abstracts-retrieval-response'].coredata['dc:description'],
+                    //"Abstract" : json['abstracts-retrieval-response'].coredata['dc:description'],
                     "Document Type" : element.subtypeDescription
                 }
             });
