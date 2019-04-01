@@ -29,8 +29,10 @@ paths:
       tags:
         - Papers
       parameters:
-        - $ref: '#/parameters/Query_for_paper'
+        - $ref: '#/parameters/Query'
         - $ref: '#/parameters/Number'
+        - $ref: '#/parameters/After'
+        - $ref: '#/parameters/Before'
         - $ref: '#/parameters/Type_for_paper'
         - $ref: '#/parameters/Subject_for_paper'
         - $ref: '#/parameters/Year_for_paper'
@@ -56,15 +58,17 @@ paths:
       tags:
         - Projects
       parameters:
+        - $ref: '#/parameters/Query_optional'
         - $ref: '#/parameters/Number'
-        - $ref: '#/parameters/Offset'
+        - $ref: '#/parameters/After'
+        - $ref: '#/parameters/Before'
         - $ref: '#/parameters/OrderBy'
         - $ref: '#/parameters/Sort'
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Projects'
+            $ref: '#/definitions/Result_projects'
         '400':
           $ref: '#/responses/400_bad_request'
         '401':
@@ -157,8 +161,10 @@ paths:
         - Projects Papers
       parameters:
         - $ref: '#/parameters/Project_id'
+        - $ref: '#/parameters/Query_optional'
         - $ref: '#/parameters/Number'
-        - $ref: '#/parameters/Offset'
+        - $ref: '#/parameters/After'
+        - $ref: '#/parameters/Before'
         - $ref: '#/parameters/OrderBy'
         - $ref: '#/parameters/Sort'
 
@@ -418,9 +424,16 @@ definitions:
             example: "note "
 
   Paper_search_results:
-    type: array
-    items:
-      $ref: '#/definitions/Paper_search_result'
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Paper_search_result'
+      hasbefore:
+        type: boolean
+      continues: 
+        type: boolean
 
   Paper_for_post_put:
     type: object
@@ -492,6 +505,16 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Project'
+  
+  Result_projects:
+    type: object
+    properties:
+      results:
+        $ref : '#/definitions/Projects'
+      hasbefore:
+        type: boolean
+      continues: 
+        type: boolean
 
   Project_for_post_put:
     type: object
@@ -602,12 +625,17 @@ definitions:
 
 
 parameters:
-  Query_for_paper:
+  Query:
     in: query
     name: query
     type: string
     description: can be a natural language text or an id
     required: true
+  Query_optional:
+    in: query
+    name: query
+    type: string
+    description: can be a natural language text or an id(optional)
   Type_for_paper:
     in: query
     name: type
@@ -640,6 +668,16 @@ parameters:
     minimum: 1
     maximum: 100
     description: select the maximum amount of papers you want to receive
+  After:
+    in: query
+    name: after
+    type: integer
+    description: the ids of the papers will be greater than this one
+  Before:
+    in: query
+    name: before
+    type: integer
+    description: the ids of the papers will be lower than this one
   Offset:
     in: query
     name: offset
