@@ -33,7 +33,10 @@ router.get('/search-scopus', async (req, res, next) => {
     try
     {
         let query = req.query.query;
-        let papers = await papersDelegate.scopusSearch(query);
+        let pagesize = req.query.pagesize;
+        let after = req.query.after; //select projects with id greater than the value of after
+        let before = req.query.before; //select projects with id lower than the value of before
+        let papers = await papersDelegate.scopusSearch(query, pagesize, after, before);
 
         res.status(200).json(papers);
     }

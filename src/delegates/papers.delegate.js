@@ -126,7 +126,7 @@ async function selectById(paper_id) {
 
 /**
  * 
- * select all paper
+ * select all paper(not used right now)
  * @param {integer} number number of papers
  * @param {integer} offset position where we begin to get
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
@@ -163,7 +163,8 @@ async function selectAll(number, offset, orderBy, sort) {
  * select paper by a single keyword
  * @param {string} keyword to search
  * @param {integer} number number of papers
- * @param {integer} page the page we return(pages start from 1)
+ * @param {integer} after id where we begin to get
+ * @param {integer} before id where we begin to get backwards
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of papers 
@@ -192,7 +193,12 @@ async function selectBySingleKeyword(keyword, number, after, before, orderBy, so
     {
         throw errHandler.createBadRequestError('the keyword is empty!');
     }
-
+    //error check
+    let errorMessage = support.areValidPaginationParameters(number, after, before, "id", "ASC");//the last ones are not used yet
+    if (errorMessage !== "")
+    {
+        throw errHandler.createBadRequestError(errorMessage);
+    }
     //call DAO layer
     let res = await papersDao.selectBySingleKeyword(keyword, number, after, before, orderBy, sort);
     //error check
@@ -208,13 +214,40 @@ async function selectBySingleKeyword(keyword, number, after, before, orderBy, so
  * 
  * find papers by searching with the Scopus APIs
  * @param {string} keyword to search
+ * @param {integer} number number of papers
+ * @param {integer} after id where we begin to get
+ * @param {integer} before id where we begin to get backwards
  * @returns {Array[Object]} array of papers 
  */
-async function scopusSearch(keyword) {
+async function scopusSearch(keyword, number, after, before) {//the pagination checks are the same for every call so there are no tests for this one since the results will be the same
+    //cast number to integer type
+    number = Number(number || 10);
+    if(after === undefined && before === undefined){//if 'before' and 'after' elements are not defined I set 'after' to 0 as default value
+        after = 0;
+    }else{
+        //cast 'after' to integer type
+        after = Number(after);
+        //cast 'before' to integer type
+        before = Number(before);
+    }
     //error check
     if (keyword === undefined || keyword === null)
     {
         throw errHandler.createBadRequestError('the keyword is not defined!');
+    }
+    //error check
+    let errorMessage = support.areValidPaginationParameters(number, after, before, "id", "ASC");//the last ones are not used yet
+    if (errorMessage !== "")
+    {
+        throw errHandler.createBadRequestError(errorMessage);
+    }
+    //check for after on 0
+    if(after === 0){
+        after = -1; //because I always add +1 to the parameter on the url
+    }
+    //check for negative 'before' parameter
+    if(before != undefined && (before - number) < 0){
+        number = before;
     }
     try{
         const key = "&apiKey=2c386a9c54c36a16afbb829ecc51ac16";
@@ -226,14 +259,27 @@ async function scopusSearch(keyword) {
             }
         }
         //const url = "https://api.elsevier.com/content/search/scopus?start=0&count=25&view=complete&query="+keyword+key;(I don't have access to complete view)
-        const url = "https://api.elsevier.com/content/search/scopus?start=0&count=25&query="+keyword+key;
+        let url = undefined;
+        if(isNaN(before)){
+            url = "https://api.elsevier.com/content/search/scopus?start="+(after+1)+"&count="+number+"&query="+keyword+key;
+        }else{
+            url = "https://api.elsevier.com/content/search/scopus?start="+(before-number)+"&count="+number+"&query="+keyword+key;
+        }
+        console.log("URL : " + url);
         let response = await fetch(url, config);
         let json = await response.json();
         console.log(json);console.log("#############################################################")
-        const res = json['search-results'].entry.map(async (element) => {
+        const totRes = json['search-results']['opensearch:totalResults'];
+        const startIdx =json['search-results'][ 'opensearch:startIndex'];
+        const n = json['search-results']['opensearch:itemsPerPage'];
+        console.log("total results : " + totRes);
+        console.log("start index : " + startIdx);
+        console.log("results per page: " + n);
+        const res = json['search-results'].entry.map(async (element, index) => {
             let response = await fetch(element['prism:url']+'?field=description,authors'+key, config);//doesn't allow me to access desription field anymore
             let json = await response.json();
             return {
+                    "id" : Number.parseInt(startIdx, 10)+index,
                     "DOI" : element['prism:doi'],
                     "Link" : element.link[1]['@href'],
                     "Url" : element['prism:url'],
@@ -244,7 +290,7 @@ async function scopusSearch(keyword) {
                     "Document Type" : element.subtypeDescription
                 }
             });
-        return {"results" : await Promise.all(res)}
+        return {"results" : await Promise.all(res), "hasbefore" : (startIdx > 0), "continues" : ((startIdx+n) < totRes)}
     }catch(e){
         console.log(e);
         throw e;

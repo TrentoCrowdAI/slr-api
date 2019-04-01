@@ -209,6 +209,7 @@ async function selectByProject(project_id, number, after, before, orderBy, sort)
  * @param {integer} project_id
  * @param {integer} number number of projectPapers
  * @param {integer} after id where we begin to get
+ * @param {integer} before id where we begin to get backwards
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of projectPapers 
