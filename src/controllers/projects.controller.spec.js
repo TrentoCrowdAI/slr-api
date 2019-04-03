@@ -11,8 +11,11 @@ var validExample2 = {"name": "bb",
 };
 
 //not valid examples
-var notValidExampleForInsert = {"name": "aa"};
+var notValidExampleForInsert1 = {"name": "aa"};
 
+var notValidExampleForInsert2 = {"name": "",
+    "description": "aaa"
+};
 //not valid examples
 var notValidExampleForUpdate = {"names": "bb",
     "description": "aaa"
@@ -41,9 +44,21 @@ describe('good cases', () => {
         expect(response.status).toBe(200);
     });
 
-    test('GET /projects/1 should return 200 and project if project exists', async () => {
+    test('GET /projects?before=100 should return 200 if it finds something before ""exisiting"" given element', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?before=100');
+        expect(response.status).toBe(200);
+    });
+
+    test('GET /projects/2 should return 200 and project if project exists', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/projects/2');
+        expect(response.status).toBe(200);
+    });
+
+    test('GET /projects?query=a should return 200 if it finds something', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?query=a');
         expect(response.status).toBe(200);
     });
 
@@ -92,15 +107,45 @@ describe('bad cases', () => {
         expect(response.status).toBe(404);
     });
 
+    test('GET /projects?before=1 should return 404 if it finds nothing before the given id element', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?before=1');
+        expect(response.status).toBe(404);
+    });
+
+    test('GET /projects?before=10&after=1 should return 400 if both "after" and "before" elements are defined', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?before=10&after=1');
+        expect(response.status).toBe(400);
+    });
+
+    test('GET /projects?before=as should return 400 if parameters are of wrong type', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?before=as');
+        expect(response.status).toBe(400);
+    });
+
     test('GET /projects?after=as should return 400 if parameter is of wrong type', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/projects?after=as');
         expect(response.status).toBe(400);
     });
 
+    test('GET /projects?query=d1s+]2sda should return 404 if it finds nothing', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects?query=d1s+]2sda');
+        expect(response.status).toBe(404);
+    });
+
     test('POST /projects/ should return 400 if mandatory field is not valid', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/projects').send(notValidExampleForInsert).set('Accept', 'application/json');
+        let response = await request(app).post('/projects').send(notValidExampleForInsert1).set('Accept', 'application/json');
+        expect(response.status).toBe(400);
+    });
+
+    test('POST /projects/ should return 400 if mandatory field is empty string', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).post('/projects').send(notValidExampleForInsert1).set('Accept', 'application/json');
         expect(response.status).toBe(400);
     });
 

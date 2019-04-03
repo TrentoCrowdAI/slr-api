@@ -12,11 +12,19 @@ const router = express.Router();
 
 //get a list of projectPapers associated with a project
 router.get('/papers', async (req, res, next) => {
+    let projectPapers = undefined;
     try
     {
         let project_id = req.query.project_id;
-        //for now it returns a list of 10 projectPapers(sorted by id asc)
-        let projectPapers = await projectPapersDelegate.selectByProject(project_id, 10, 0, "id", "ASC");
+        let pagesize = req.query.pagesize;
+        let after = req.query.after; //select projects with id greater than the value of after
+        let before = req.query.before; //select projects with id lower than the value of before
+        let query = req.query.query;
+        if(query === undefined){
+            projectPapers = await projectPapersDelegate.selectByProject(project_id, pagesize, after, before, "id", "ASC");
+        }else{
+            projectPapers = await projectPapersDelegate.searchPaperByProject(query, project_id, pagesize, after, before, "id", "ASC");
+        }
         res.status(200).json(projectPapers);
     }
     catch (e)

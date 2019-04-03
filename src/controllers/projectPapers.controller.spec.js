@@ -41,10 +41,13 @@ var notValidExampleForUpdate = {
     "notes2": ""
 };
 
-var notValidExampleForPost = {
+var notValidExampleForPost1 = {
     "paper_id": 1
 }
-
+var notValidExampleForPost2 = {
+    "paper_id": 1,
+    "project_id": 1
+}
 
 
 test('dummy test', () => {
@@ -58,6 +61,32 @@ describe('good cases', () => {
     test('GET /papers?project_id=1 should return 200 if it finds something', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/papers?project_id=1');
+        expect(response.status).toBe(200);
+    });
+
+    test('GET /papers?project_id=1&pagesize=12 should return 200 if it has correct pagination params and finds something', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&pagesize=12');
+        expect(response.status).toBe(200);
+    });
+
+    //actually, the dao checks for elements with greater id, so maybe the element doesn't exists because it was deleted
+    test('GET /papers?project_id=1&after=3 should return 200 if it finds something after ""exisiting"" given element', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&after=3');
+        expect(response.status).toBe(200);
+    });
+
+    //here it's the same, the dao checks simply for elements with lower id, it doesn't bother seraching if the element at given id exists
+    test('GET /papers?project_id=1&before=100 should return 200 if it finds something before ""exisiting"" given element', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&before=100');
+        expect(response.status).toBe(200);
+    });
+
+    test('GET /papers?project_id=1&query=a should return 200 if it finds something', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&query=a');
         expect(response.status).toBe(200);
     });
 
@@ -104,6 +133,42 @@ describe('bad cases', () => {
         expect(response.status).toBe(404)
     });
 
+    test('GET /papers?project_id=1&pagesize=2 should return 400 if it has wrong pagination parameters', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&pagesize=2');
+        expect(response.status).toBe(400);
+    });
+
+    test('GET /papers?project_id=1&after=9822 should return 404 if there are no papers after the id', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&after=9822');
+        expect(response.status).toBe(404);
+    });
+
+    test('GET /papers?project_id=1&before=1 should return 404 if it finds nothing before the given id element', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&before=1');
+        expect(response.status).toBe(404);
+    });
+
+    test('GET /papers?project_id=1&before=10&after=1 should return 400 if both "after" and "before" elements are defined', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&before=10&after=1');
+        expect(response.status).toBe(400);
+    });
+
+    test('GET /papers?project_id=1&query=zazaxaxa should return 404 if it finds nothing', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&query=zazaxaxa');
+        expect(response.status).toBe(404);
+    });
+
+    test('GET /papers?project_id=1&before=as should return 400 if parameters are of wrong type', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/papers?project_id=1&before=as');
+        expect(response.status).toBe(400);
+    });
+
     test('GET /papers/9999 should return 404 if it finds nothing', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/papers/9999');
@@ -113,7 +178,13 @@ describe('bad cases', () => {
 
     test('POST /papers should return 400 if mandatory field is not valid', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/papers').send(notValidExampleForPost).set('Accept', 'application/json');;
+        let response = await request(app).post('/papers').send(notValidExampleForPost1).set('Accept', 'application/json');;
+        expect(response.status).toBe(400);
+    });
+
+    test('POST /papers should return 400 if paper is alredy in project', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).post('/papers').send(notValidExampleForPost2).set('Accept', 'application/json');;
         expect(response.status).toBe(400);
     });
 

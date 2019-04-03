@@ -38,22 +38,35 @@ function areValidListParameters(number, page, orderBy, sort) {
  * check if they are valid list parameters for the projects list fetch
  * @param {integer} number number of papers
  * @param {integer} after the next element
+ * @param {integer} before position where to begin to get backwards
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {string} error message. if isn't error will return empty string 
  */
-function areValidProjectsListParameters(number, after, orderBy, sort) {
+function areValidPaginationParameters(number, after, before, orderBy, sort) {
     let errorMessage = "";
+    //no need to check for undef/null 'after' and 'before' elements
     if (number === undefined || after === undefined || orderBy === undefined || sort === undefined || number === null || after === null || orderBy === null || sort === null)
     {
         errorMessage = "the paramters are not defined!";
     }
-    else if (!Number.isInteger(number) || !Number.isInteger(after))
-    {
-        errorMessage = "the number or next element is not a integer!";
+    else if(!Number.isInteger(before) && !Number.isInteger(after)){
+        errorMessage = "pagination elements should be integer";
     }
-    else if(number<10 || after<0 || number>100){
-        errorMessage = "the number of elements should be greater than 10 and lower than 100 and 'next' starts from 0";
+    else if(Number.isInteger(after) && Number.isInteger(before)){
+        errorMessage = "you can't define both a before and an after element!(you need 'pagesize' to specify the number of elments you want to get)";
+    }
+    else if(Number.isInteger(after) && after < 0){//checks specific for 'after' pagination
+        errorMessage = "'after' elements starts from 0";
+    }else if(Number.isInteger(before) && before <= 0){//checks specific for 'before' pagination
+        errorMessage = "'before' elements should be greater than 0";
+    }
+    else if (!Number.isInteger(number))
+    {
+        errorMessage = "the number of elements to get should be and integer";
+    }
+    else if(number<10 || number>100){
+        errorMessage = "the number of elements should be greater than 10 and lower than 100";
     }
     else if (!(orderBy === "id" || orderBy === "date_created" || orderBy === "date_last_modified" || orderBy === "date_deleted"))
     {
@@ -88,4 +101,4 @@ function areValidProjectsListParameters(number, after, orderBy, sort) {
 
 
 
-module.exports = { areValidListParameters, areValidProjectsListParameters};
+module.exports = { areValidListParameters, areValidPaginationParameters};

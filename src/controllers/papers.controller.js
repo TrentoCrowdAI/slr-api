@@ -13,10 +13,30 @@ router.get('/search', async (req, res, next) => {
     try
     {
         let query = req.query.query;
-        let page = req.query.page;
         let pagesize = req.query.pagesize;
+        let after = req.query.after; //select projects with id greater than the value of after
+        let before = req.query.before; //select projects with id lower than the value of before
         //for now it returns the first ten matched papers(sorted by id)
-        let papers = await papersDelegate.selectBySingleKeyword(query, pagesize, page, "id", "ASC");
+        let papers = await papersDelegate.selectBySingleKeyword(query,  pagesize, after, before, "id", "ASC");
+
+        res.status(200).json(papers);
+    }
+    catch (e)
+    {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+//search with scopus api
+router.get('/search-scopus', async (req, res, next) => {
+    try
+    {
+        let query = req.query.query;
+        let pagesize = req.query.pagesize;
+        let after = req.query.after; //select projects with id greater than the value of after
+        let before = req.query.before; //select projects with id lower than the value of before
+        let papers = await papersDelegate.scopusSearch(query, pagesize, after, before);
 
         res.status(200).json(papers);
     }

@@ -17,7 +17,7 @@ const db = require(__base + "db/index");
  return res.rows[0];
  }*/
 /**
- * insert a projectPaper by copie from fake_paper table
+ * insert a projectPaper by copy from fake_paper table
  * @param {integer} paper_id
  * @param {integer} project_id
  * @param {object} newProjectPaperData
@@ -77,28 +77,105 @@ async function selectById(projectPaper_id) {
  * select all projectPaper associated with a project
  * @param {integer} project_id
  * @param {integer} number number of projectPapers
- * @param {integer} offset position where we begin to get
+ * @param {integer} after the id of the first element to get
+ * @param {integer} before position where to begin to get backwards
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of projectPapers 
  */
-async function selectByProject(project_id, number, offset, orderBy, sort) {
-    let res = await db.query(
-            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $2 OFFSET $3',
-            [project_id, number, offset]
+async function selectByProject(project_id, number, after, before, orderBy, sort) {//the last 2 variables are still incompatible with our way of pagination
+    let res = undefined;
+    if(isNaN(before)){//if 'before' is not defined it means we should check for 'after'
+        res = await db.query(//I get the elements plus one extra one
+            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND id > $2 ORDER BY '+"id"+' '+"ASC"+' LIMIT $3',
+            [project_id, after, number+1]
             );
-
-    return res.rows;
+        let before = await db.query(//I check if there are elements before
+            'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND id <= $2 LIMIT 1',
+            [project_id, after]
+        );
+        return {"results" : res.rows.slice(0,number), "hasbefore" : (before.rows[0] ? true: false), "continues" : (res.rows.length > number)};
+    }else{
+        res = await db.query(//I get the elements before plus one extra one
+            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND id < $2 ORDER BY '+"id"+' '+"DESC"+' LIMIT $3',
+            [project_id, before, number+1]
+        );
+        let after =  await db.query(//I check if there are elements after the passed id
+            'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND id >= $2 LIMIT 1',
+            [project_id, before]
+        );
+        hasbefore =  (res.rows.length > number);//if I retrieved one extra element it means there's still something before the results
+        let array = res.rows.slice(0, number);//I remove the extra element since the client doesn't need it
+        array.sort(function(a, b) { //I sort the array in ASC again to be printed
+            var x = Number(a['id']); var y = Number(b['id']);
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+        return {"results" : array, "hasbefore" : hasbefore ,"continues" : (after.rows[0] ? true : false)};
+    }
 }
 
+/**
+ * search papers belonging to a project
+ * @param {string} keyword
+ * @param {integer} project_id
+ * @param {integer} number number of projectPapers
+ * @param {integer} after the id of the first element to get
+ * @param {integer} before position where to begin to get backwards
+ * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
+ * @param {string} sort {ASC or DESC}
+ * @returns {Array[Object]} array of projectPapers 
+ */
+async function searchPaperByProject(keyword, project_id, number, after, before, orderBy, sort) {//the last 2 variables are still incompatible with our way of pagination
+    let res = undefined;
+    if(isNaN(before)){//if 'before' is not defined it means we should check for 'after'
+        res = await db.query(//I get the elements plus one extra one
+            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND CAST(data AS TEXT) LIKE $2 AND id > $3 ORDER BY '+"id"+' '+"ASC"+' LIMIT $4',
+            [project_id, "%" + keyword + "%", after, number+1]
+            );
+        let before = await db.query(//I check if there are elements before
+            'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND CAST(data AS TEXT) LIKE $2 AND id <= $3 LIMIT 1',
+            [project_id, "%" + keyword + "%", after]
+        );
+        return {"results" : res.rows.slice(0,number), "hasbefore" : (before.rows[0] ? true: false), "continues" : (res.rows.length > number)};
+    }else{
+        res = await db.query(//I get the elements before plus one extra one
+            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND CAST(data AS TEXT) LIKE $2 AND id < $3 ORDER BY '+"id"+' '+"DESC"+' LIMIT $4',
+            [project_id, "%" + keyword + "%", before, number+1]
+        );
+        let after =  await db.query(//I check if there are elements after the passed id
+            'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND CAST(data AS TEXT) LIKE $2 AND id >= $3 LIMIT 1',
+            [project_id, "%" + keyword + "%", before]
+        );
+        hasbefore =  (res.rows.length > number);//if I retrieved one extra element it means there's still something before the results
+        let array = res.rows.slice(0, number);//I remove the extra element since the client doesn't need it
+        array.sort(function(a, b) { //I sort the array in ASC again to be printed
+            var x = Number(a['id']); var y = Number(b['id']);
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+        return {"results" : array, "hasbefore" : hasbefore ,"continues" : (after.rows[0] ? true : false)};
+    }
+}
 
-
+/*=== INTERNAL_FUNCTIONS(not accessible through apis) ===*/
+async function selectByIdAndProjectId(paper_id, project_id){
+    let paper_eid = await db.query(//I retrieve the eid of the paper to add
+        'SELECT data->>\'EID\' as eid FROM public.' + db.TABLES.papers + ' WHERE id = $1',
+        [paper_id]
+    );
+    paper_eid = paper_eid.rows[0].eid;
+    let res = await db.query(//I check if the paper with the current eid is already in the project
+        'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND data ->>\'EID\' = $2',
+        [project_id, paper_eid]
+    );
+    return res.rows[0];//this will be defined only if the paper is already in the project
+}
 
 module.exports = {
     insertFromPaper,
     update,
     deletes,
     selectById,
-    selectByProject
-
+    selectByProject,
+    selectByIdAndProjectId,
+    searchPaperByProject
 };

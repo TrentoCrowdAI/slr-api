@@ -82,19 +82,42 @@ async function selectAll(number, offset, orderBy, sort) {
  * select paper by a single keyword
  * @param {string} keyword to search
  * @param {integer} number number of papers
- * @param {integer} offset position where we begin to get
+ * @param {integer} after the id of the first element to get
+ * @param {integer} before position where to begin to get backwards
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of papers 
  */
-async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
-    //I select all the results and then I slice(it's kinda inefficient)
-    let res = await db.query(
-            'SELECT * FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1  ORDER BY '+orderBy+' '+sort,
-            ["%" + keyword + "%"]
+async function selectBySingleKeyword(keyword, number, after, before, orderBy, sort) {
+
+    let res = undefined;
+    if(isNaN(before)){//if 'before' is not defined it means we should check for 'after'
+        res = await db.query(//I get the elements plus one extra one
+            'SELECT * FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1 AND id > $2 ORDER BY '+"id"+' '+"ASC"+' LIMIT $3',
+            ["%" + keyword + "%", after, number+1]
             );
-    //another idea could be to use two queries, one for counting and one for returning with LIMIT OFFSET
-    return {"results" : res.rows.slice(offset, offset+number), "total" : res.rows.length};
+        let before = await db.query(//I check if there are elements before
+            'SELECT id FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1 AND id <= $2 LIMIT 1',
+            ["%" + keyword + "%", after]
+        );
+        return {"results" : res.rows.slice(0,number), "hasbefore" : (before.rows[0] ? true: false), "continues" : (res.rows.length > number)};
+    }else{
+        res = await db.query(//I get the elements before plus one extra one
+            'SELECT * FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1 AND id < $2 ORDER BY '+"id"+' '+"DESC"+' LIMIT $3',
+            ["%" + keyword + "%", before, number+1]
+        );
+        let after =  await db.query(//I check if there are elements after the passed id
+            'SELECT id FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1 AND id >= $2 LIMIT 1',
+            ["%" + keyword + "%",  before]
+        );
+        hasbefore =  (res.rows.length > number);//if I retrieved one extra element it means there's still something before the results
+        let array = res.rows.slice(0, number);//I remove the extra element since the client doesn't need it
+        array.sort(function(a, b) { //I sort the array in ASC again to be printed
+            var x = Number(a['id']); var y = Number(b['id']);
+            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
+        });
+        return {"results" : array, "hasbefore" : hasbefore ,"continues" : (after.rows[0] ? true : false)};
+    }
 }
 
 
