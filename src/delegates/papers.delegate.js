@@ -250,7 +250,7 @@ async function scopusSearch(keyword, number, after, before) {//the pagination ch
         number = before;
     }
     try{
-        const key = "&apiKey=2c386a9c54c36a16afbb829ecc51ac16";
+        const key = "&apiKey=1c828574217f856f6cf496239684fed4";
         const config = {
             method: 'GET',
             headers: {
