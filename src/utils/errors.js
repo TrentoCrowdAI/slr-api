@@ -4,7 +4,8 @@ const Boom = require('boom');
 //object that contains all the error names
 const errorNames = {
     badRequest : "badRequest",
-    notFound : "notFound"
+    notFound : "notFound",
+    badImplementation: "badImplementation"
      //to add the other error names
     
 };
@@ -31,6 +32,16 @@ const createNotFoundError = msg => {
     return e;
 };
 
+/**
+ * Creates and returns a error object with error.name "badImplementation".
+ * @param {String} msg error message
+ * @returns {Error} object error
+ */
+const createBadImplementationError = msg => {
+    let e = new Error(msg);
+    e.name = errorNames.badImplementation;
+    return e;
+};
 
 
 /**
@@ -57,9 +68,7 @@ const createBoomErrorForService = e => {
         const message = 'Not authorized to perform the request';
         errorBoom = Boom.unauthorized(message);
     }
-    
     //to add the other cases of error
-    
 
     
     return errorBoom;
@@ -68,5 +77,6 @@ const createBoomErrorForService = e => {
 module.exports = {
     createBadRequestError,
     createNotFoundError,
+    createBadImplementationError,
     createBoomErrorForService
 };

@@ -3,76 +3,47 @@
 // functionality related to HITs.
 
 const projectPapersDao = require(__base + 'dao/projectPapers.dao');
+//error handler
 const errHandler = require(__base + 'utils/errors');
-//supply the ausiliar function
+//supply the auxiliary function
 const support = require(__base + 'utils/support');
 //the packaged for input validation
+const ajv = require(__base + 'utils/ajv');
 const validationSchemes = require(__base + 'utils/validation.schemes');
-const Ajv = require('ajv');
-const ajv = new Ajv();
+
 
 /**
- * insert a projectPaper by copie from fake_paper table
- * @param {integer} paper_id
- * @param {integer} project_id
- * @param {object} newProjectPaperData
- * @returns {object} projectPaper created
+ * insert a list of projectPaper by copy from fake_paper table
+ * @param {array[]} arrayEid array of paper eid
+ * @param {int} project_id
+ * @returns {array[]} projectPaper created
  */
-async function insertFromPaper(paper_id, project_id) {
-    //error check
-    if (paper_id === undefined || paper_id === null)
-    {
-        throw errHandler.createBadRequestError('Paper id is not defined!');
-    }
-    //cast projectPaper_id to integer type
-    paper_id = Number(paper_id);
-    //error check
-    if (!Number.isInteger(paper_id))
-    {
-        throw errHandler.createBadRequestError('Paper id  is not a integer!');
-    }
-    //error check
-    if (project_id === undefined || project_id === null)
-    {
-        throw errHandler.createBadRequestError('Project id is not defined!');
-    }
-    //cast project_id to integer type
-    project_id = Number(project_id);
-    //error check
-    if (!Number.isInteger(project_id))
-    {
-        throw errHandler.createBadRequestError('Project id is not a integer!');
-    }
-    let paper = await projectPapersDao.selectByIdAndProjectId(paper_id, project_id); 
-    if(paper){
-        throw errHandler.createBadRequestError('The selected paper is already in the project');
-    }
+async function insertFromPaper(arrayEid, project_id) {
+
+    //check the validation of array
+    support.isValidArray(arrayEid);
+    //check validation of project id and transform the value in integer
+    project_id = support.setAndCheckValidProjectId(project_id);
+
+    let arrayEidExisting = await  projectPapersDao.checkExistenceByEids(arrayEid, project_id);
+    arrayEid = support.differenceOperation(arrayEid, arrayEidExisting);
     //call DAO layer
-    let res = await projectPapersDao.insertFromPaper(paper_id, project_id);
+    let res = await projectPapersDao.insertFromPaper(arrayEid, project_id);
     return  res;
 }
 
 
 /**
  *  * update a projectPaper
- * @param {integer} projectPaper_id
+ * @param {int} projectPaper_id
  * @param {object} newProjectPaperData
- * @returns {integer} number of row affected , 1 if ok, 0 if failed
+ * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function update(projectPaper_id, newProjectPaperData) {
-    //error check
-    if (projectPaper_id === undefined || projectPaper_id === null)
-    {
-        throw errHandler.createBadRequestError('Project paper id is not defined!');
-    }
-    //cast projectPaper_id to integer type
-    projectPaper_id = Number(projectPaper_id);
-    //error check
-    if (!Number.isInteger(projectPaper_id))
-    {
-        throw errHandler.createBadRequestError('Project paper id  is not a integer!');
-    }
-    
+
+    //check validation of projectPaper_id and transform the value in integer
+    projectPaper_id = support.setAndCheckValidProjectPaperId(projectPaper_id);
+
     //check input format
     let valid = ajv.validate(validationSchemes.projectPaper, newProjectPaperData);
     //if is not a valid input
@@ -80,8 +51,10 @@ async function update(projectPaper_id, newProjectPaperData) {
     {
         throw errHandler.createBadRequestError('the new projectPaper data for update is not valid!');
     }
+
     //call DAO layer
     let numberRow = await projectPapersDao.update(projectPaper_id, newProjectPaperData);
+
     //error check
     if (numberRow === 0)
     {
@@ -93,25 +66,17 @@ async function update(projectPaper_id, newProjectPaperData) {
 
 /**
  *  * delete a projectPaper
- * @param {integer} projectPaper_id
- * @returns {integer} number of row affected , 1 if ok, 0 if failed
+ * @param {int} projectPaper_id
+ * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function deletes(projectPaper_id) {
-    //error check
-    if (projectPaper_id === undefined || projectPaper_id === null)
-    {
-        throw errHandler.createBadRequestError('Project paper id is not defined!');
-    }
-    //cast projectPaper_id to integer type
-    projectPaper_id = Number(projectPaper_id);
-    //error check
-    if (!Number.isInteger(projectPaper_id))
-    {
-        throw errHandler.createBadRequestError('Project paper id  is not a integer!');
-    }
+
+    //check validation of projectPaper_id and transform the value in integer
+    projectPaper_id = support.setAndCheckValidProjectPaperId(projectPaper_id);
     
     //call DAO layer
     let numberRow = await projectPapersDao.deletes(projectPaper_id);
+
     //error check
     if (numberRow === 0)
     {
@@ -122,79 +87,48 @@ async function deletes(projectPaper_id) {
 
 /**
  * select a projectPaper
- * @param {integer} projectPaper_id
+ * @param {int} projectPaper_id
  * @returns {object} projectPaper found
  */
 async function selectById(projectPaper_id)  {
-    //error check
-    if (projectPaper_id === undefined || projectPaper_id === null)
-    {
-        throw errHandler.createBadRequestError('Project paper id is not defined!');
-    }
-    //cast projectPaper_id to integer type
-    projectPaper_id = Number(projectPaper_id);
-    //error check
-    if (!Number.isInteger(projectPaper_id))
-    {
-        throw errHandler.createBadRequestError('Project paper id  is not a integer!');
-    }
 
-    
+    //check validation of projectPaper_id and transform the value in integer
+    projectPaper_id = support.setAndCheckValidProjectPaperId(projectPaper_id);
+
     //call DAO layer
     let res = await projectPapersDao.selectById(projectPaper_id);
+
     //error check
     if (res === undefined)
     {
         throw errHandler.createNotFoundError('ProjectPaper does not exist!');
     }
+
     return res;
 }
 
 /**
  * select all projectPaper associated with a project
- * @param {integer} project_id
- * @param {integer} number number of projectPapers
- * @param {integer} after id where we begin to get
- * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
+ * @param {int} project_id
+ * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
- * @returns {Array[Object]} array of projectPapers 
+ * @param {int} start offset position where we begin to get
+ * @param {int} count number of projects
+ * @returns {Object} array of projectPapers and total number of result
  */
-async function selectByProject(project_id, number, after, before, orderBy, sort) {
+async function selectByProject(project_id, orderBy, sort, start, count) {
 
-    //error check
-    if (project_id === undefined || project_id === null)
-    {
-        throw errHandler.createBadRequestError('Project id is not defined!');
-    }
-    //cast project_id to integer type
-    project_id = Number(project_id);
-    //error check
-    if (!Number.isInteger(project_id))
-    {
-        throw errHandler.createBadRequestError('Project id is not a integer!');
-    }
-    //set orderBy
-    orderBy = orderBy || "id";
-    //cast number to integer type
-    number = Number(number || 10);
-    if(after === undefined && before === undefined){//if 'before' and 'after' elements are not defined I set 'after' to 0 as default value
-        after = 0;
-    }else{
-        //cast 'after' to integer type
-        after = Number(after);
-        //cast 'before' to integer type
-        before = Number(before);
-    }
-
-    //will return not empty string if they are not valid 
-    let errorMessage = support.areValidPaginationParameters(number, after, before, orderBy, sort, "projectPapers");
-    if (errorMessage !== "")
-    {
-        throw errHandler.createBadRequestError(errorMessage);
-    }
+    //check the validation of parameters
+    //check validation of project id and transform the value in integer
+    project_id = support.setAndCheckValidProjectId(project_id);
+    orderBy = support.setAndCheckValidProjectPaperOrderBy(orderBy);
+    sort = support.setAndCheckValidSort(sort);
+    start = support.setAndCheckValidStart(start);
+    count = support.setAndCheckValidCount(count);
 
     //call DAO layer
-    let res = await projectPapersDao.selectByProject(project_id, number, after, before, orderBy, sort);
+    let res = await projectPapersDao.selectByProject(project_id, orderBy, sort, start, count);
+
     //error check
     if (res.results.length === 0)
     {
@@ -204,63 +138,45 @@ async function selectByProject(project_id, number, after, before, orderBy, sort)
 }
 
 /**
- * search papers associated with a project
- * @param {string} keyword
- * @param {integer} project_id
- * @param {integer} number number of projectPapers
- * @param {integer} after id where we begin to get
- * @param {integer} before id where we begin to get backwards
- * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
+ * search papers belonging to a project
+ * @param {string} keyword to search
+ * @param {int} project_id
+ * @param {string} searchBy [all, author, content] "content" means title+description
+ * @param year specific year to search
+ * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
- * @returns {Array[Object]} array of projectPapers 
+ * @param {int} start offset position where we begin to get
+ * @param {int} count number of papers
+ * @returns {Object} array of projectPapers and total number of result
  */
-async function searchPaperByProject(keyword, project_id, number, after, before, orderBy, sort) {
+async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count) {
 
-    //error check
-    if (project_id === undefined || project_id === null)
-    {
-        throw errHandler.createBadRequestError('Project id is not defined!');
+    //check the validation of parameters
+    support.isValidKeyword(keyword);
+    //check validation of project id and transform the value in integer
+    project_id = support.setAndCheckValidProjectId(project_id);
+
+    /*=============
+     temporary parameter
+    * ============ */
+    searchBy = searchBy || "all";
+    if (searchBy !== "all" && searchBy !== "author" && searchBy !== "content") {
+        throw errHandler.createBadRequestError('searchBy has a not valid value!');
     }
-    //cast project_id to integer type
-    project_id = Number(project_id);
-    //error check
-    if (!Number.isInteger(project_id))
-    {
-        throw errHandler.createBadRequestError('Project id is not a integer!');
-    }
-    //set orderBy
-    orderBy = orderBy || "id";
-    //cast number to integer type
-    number = Number(number || 10);
-    if(after === undefined && before === undefined){//if 'before' and 'after' elements are not defined I set 'after' to 0 as default value
-        after = 0;
-    }else{
-        //cast 'after' to integer type
-        after = Number(after);
-        //cast 'before' to integer type
-        before = Number(before);
+    year = Number(year) || "";
+    if(year !== "" && !Number.isInteger(year)){
+        throw errHandler.createBadRequestError('year has a not valid value!');
     }
 
-    //will return not empty string if they are not valid 
-    let errorMessage = support.areValidPaginationParameters(number, after, before, orderBy, sort, "projectPapers");
-    if (errorMessage !== "")
-    {
-        throw errHandler.createBadRequestError(errorMessage);
-    }
+    /*================= */
 
-    //error check
-    if (keyword === undefined || keyword === null)
-    {
-        throw errHandler.createBadRequestError('the keyword is not defined!');
-    }
-    //error check
-    if (keyword === "")
-    {
-        throw errHandler.createBadRequestError('the keyword is empty!');
-    }
+    orderBy = support.setAndCheckValidProjectOrderBy(orderBy);
+    sort = support.setAndCheckValidSort(sort);
+    start = support.setAndCheckValidStart(start);
+    count = support.setAndCheckValidCount(count);
 
     //call DAO layer
-    let res = await projectPapersDao.searchPaperByProject(keyword, project_id, number, after, before, orderBy, sort);
+    let res = await projectPapersDao.searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count);
     //error check
     if (res.results.length === 0)
     {

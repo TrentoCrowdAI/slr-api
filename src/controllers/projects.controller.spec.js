@@ -37,18 +37,8 @@ describe('good cases', () => {
         expect(response.status).toBe(200);
     });
 
-    //actually, the dao check for elements with greater id, so maybe the element doesn't exists because it was deleted
-    test('GET /projects?after=3 should return 200 if it finds something after ""exisiting"" given element', async () => {
-        jest.setTimeout(10000);
-        let response = await request(app).get('/projects?after=3');
-        expect(response.status).toBe(200);
-    });
 
-    test('GET /projects?before=100 should return 200 if it finds something before ""exisiting"" given element', async () => {
-        jest.setTimeout(10000);
-        let response = await request(app).get('/projects?before=100');
-        expect(response.status).toBe(200);
-    });
+
 
     test('GET /projects/2 should return 200 and project if project exists', async () => {
         jest.setTimeout(10000);
@@ -72,14 +62,14 @@ describe('good cases', () => {
 
     test('PUT /projects/22 should return 204 if project exists', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).put('/projects/4').send(validExample2).set('Accept', 'application/json');
+        let response = await request(app).put('/projects/3').send(validExample2).set('Accept', 'application/json');
         expect(response.status).toBe(204);
     });
 
 
     test('DELETE /projects/5 should return 204 if project exists', async () => {
         jest.setTimeout(10000);
-        response = await request(app).delete('/projects/5');
+        response = await request(app).delete('/projects/4');
         expect(response.status).toBe(204);
     });
 
@@ -101,33 +91,23 @@ describe('bad cases', () => {
         expect(response.status).toBe(404)
     });
 
-    test('GET /projects?after=1001 should return 404 if it finds nothing after the given id element', async () => {
+    test('GET /projects?start=99999 should return 404 if it finds nothing after the given offset', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/projects?after=1001');
+        let response = await request(app).get('/projects?start=99999');
         expect(response.status).toBe(404);
     });
 
-    test('GET /projects?before=1 should return 404 if it finds nothing before the given id element', async () => {
-        jest.setTimeout(10000);
-        let response = await request(app).get('/projects?before=1');
-        expect(response.status).toBe(404);
-    });
 
-    test('GET /projects?before=10&after=1 should return 400 if both "after" and "before" elements are defined', async () => {
+
+    test('GET /projects?count=as should return 400 if parameters are of wrong type', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/projects?before=10&after=1');
+        let response = await request(app).get('/projects?count=as');
         expect(response.status).toBe(400);
     });
 
-    test('GET /projects?before=as should return 400 if parameters are of wrong type', async () => {
+    test('GET /projects?start=as should return 400 if parameter is of wrong type', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/projects?before=as');
-        expect(response.status).toBe(400);
-    });
-
-    test('GET /projects?after=as should return 400 if parameter is of wrong type', async () => {
-        jest.setTimeout(10000);
-        let response = await request(app).get('/projects?after=as');
+        let response = await request(app).get('/projects?start=as');
         expect(response.status).toBe(400);
     });
 
@@ -145,7 +125,7 @@ describe('bad cases', () => {
 
     test('POST /projects/ should return 400 if mandatory field is empty string', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/projects').send(notValidExampleForInsert1).set('Accept', 'application/json');
+        let response = await request(app).post('/projects').send(notValidExampleForInsert2).set('Accept', 'application/json');
         expect(response.status).toBe(400);
     });
 

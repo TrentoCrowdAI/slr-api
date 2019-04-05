@@ -27,3 +27,5 @@ config.json
 
 #netbeans files
 .netbeans.xml
+
+.idea

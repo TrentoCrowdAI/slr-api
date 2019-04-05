@@ -1,0 +1,167 @@
+const fetch = require("node-fetch");
+const AbortController = require("abort-controller");
+const Headers = require('fetch-headers');
+
+/*this is the file to create fetch request*/
+
+
+//10seconds for timeout
+const timeOutTime = 10 * 1000;
+
+//object to export
+const http = {
+    get,
+    post,
+};
+
+
+/**
+ * create a basic fetch request
+ * @param url
+ * @param options request config
+ * @return {object} response data
+ */
+async function request(url, options = {}) {
+    try {
+        //console.log("================================\n"+url);
+
+        //create a new abortController for this request
+        let abortController = new AbortController();
+        let signal = abortController.signal;
+
+        let requestOptions = Object.assign(
+            {
+                //enable the  sending of cookie
+                credentials: 'include',
+                "mode": 'cors',
+                "signal": signal
+            },
+            options
+        );
+
+        //set timeout clock
+        let timer = setTimeout(() => abortController.abort() , timeOutTime);
+
+        let response = await fetch(url, requestOptions);
+
+        //clear timeout clock
+        clearTimeout(timer);
+
+        //parse response data
+        let data = await parseResponseData(response);
+        //response error check
+        checkResponseStatus(response,data);
+        return  data;
+
+    }
+    catch (error) {
+
+        return error;
+
+    }
+}
+
+/**
+ * get method
+ * @param url
+ * @param queryData query string
+ * @return {object} response data
+ */
+async function get(url, queryData = "") {
+    let query = "";
+    if (queryData !== "") {
+        query = "?";
+        for (let key in queryData) {
+            query += key + "=" + encodeURIComponent(queryData[key]).replace(/\(/g, "%28").replace(/\)/g, "%29") + "&";
+        }
+        //delete the last &
+        query = query.slice(0, query.length - 1);
+    }
+
+    let jsonHeaders = new Headers();
+    jsonHeaders.append('Accept', 'application/json');
+    jsonHeaders.append('Content-Type', 'application/json;charset=UTF-8');
+
+    let options = {
+        "method": 'GET',
+        "headers": jsonHeaders,
+    };
+
+    return await request(url + query, options);
+}
+
+
+
+/**
+ * post method
+ * @param url
+ * @param bodyData
+ * @return {object } response data
+ */
+async function post(url, bodyData = "") {
+
+    let jsonHeaders = new Headers();
+    jsonHeaders.append('Accept', 'application/json');
+    jsonHeaders.append('Content-Type', 'application/json;charset=UTF-8');
+    let body = JSON.stringify(bodyData, null, 2);
+    let options = {
+        "method": 'POST',
+        "headers": jsonHeaders,
+        "body": body,
+    };
+
+    return await request(url, options);
+}
+
+
+
+
+/**
+ *  * check response status
+ * @param response to check
+ * @param data data received
+ * @throws {Error} if  status code < 200 or status code >= 300
+ */
+function checkResponseStatus(response, data) {
+
+    if (response.status < 200 || response.status >= 300) {
+        const error = new Error(response.statusText);
+        error.data = response;
+        if(data.payload){
+            error.payload = data.payload;
+        }
+        throw error;
+    }
+
+}
+
+
+/**
+ * parse the response of  http request
+ * @param response response object
+ * @return {object} data parsed
+ */
+async function parseResponseData(response) {
+    //get response data type
+    const contentType = response.headers.get('Content-Type');
+    let data = null;
+    //parse the data by its type
+    if (contentType != null) {
+        if (contentType.indexOf('text') > -1) {
+            data = await response.text()
+        }
+        if (contentType.indexOf('video') > -1) {
+            data = await response.blob();
+        }
+        if (contentType.indexOf('json') > -1) {
+            data = await response.json();
+        }
+    }
+    else if (response != null) {
+        data = await response.text();
+    }
+    return data;
+}
+
+
+module.exports = http;

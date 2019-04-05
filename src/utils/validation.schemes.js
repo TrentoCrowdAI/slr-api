@@ -3,47 +3,64 @@
 const paper = {
     "type": "object",
     "properties": {
-        "Authors": {
-            "type": "string"
+        "authors": {
+            "type": "string",
+            "isNotEmpty": true
         },
-        "Title": {
-            "type": "string"
+        "title": {
+            "type": "string",
+            "isNotEmpty": true
         },
-        "Year": {
-            "type": "string"
+        "year": {
+            "type": "string",
+            "isNotEmpty": true
         },
-        "Source title": {
-            "type": "string"
+        "date": {
+            "type": "string",
+            "isNotEmpty": true
         },
-        "Link": {
-            "type": "string"
+        "source_title": {
+            "type": "string",
+            "isNotEmpty": true
         },
-        "Abstract": {
-            "type": "string"
+        "link": {
+            "type": "string",
+            "isNotEmpty": true
         },
-        "Document Type": {
-            "type": "string"
+        "abstract": {
+            "type": "string",
+            "isNotEmpty": true
         },
-        "Source": {
-            "type": "string"
+        "document_type": {
+            "type": "string",
+            "isNotEmpty": true
         },
-        "EID": {
-            "type": "string"
+        "source": {
+            "type": "string",
+            "isNotEmpty": true
+        },
+        "eid": {
+            "type": "string",
+            "isNotEmpty": true
         },
         "abstract_structured": {
-            "type": "string"
+            "type": "string",
+
         },
-        "filter_OA_include": {
-            "type": "string"
+        "filter_oa_include": {
+            "type": "string",
+
         },
         "filter_study_include": {
-            "type": "string"
+            "type": "string",
+
         },
         "notes": {
-            "type": "string"
+            "type": "string",
+
         }
     },
-    "required": ["Authors", "Title", "Year", "Source title", "Link", "Abstract", "Document Type", "Source", "EID", "abstract_structured", "filter_OA_include", "filter_study_include", "notes"]
+    "required": ["authors", "title", "year", "date","source_title", "link", "abstract", "document_type", "source", "eid", "abstract_structured", "filter_oa_include", "filter_study_include", "notes"]
 };
 
 //is the same with paper object

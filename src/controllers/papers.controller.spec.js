@@ -1,71 +1,6 @@
 const request = require('supertest');
 const app = require(__base + 'app');
 
-// valid examples
-var validExample1 = {"Authors": "aa",
-    "Title": "aaa",
-    "Year": "2099",
-    "Source title": "aaa",
-    "Link": "https://www.scopus.com/",
-    "Abstract": "abc",
-    "Document Type": "Article",
-    "Source": "Scopus",
-    "EID": "111",
-    "abstract_structured": "1",
-    "filter_OA_include": "1",
-    "filter_study_include": "0",
-    "notes": ""
-
-};
-// valid examples
-var validExample2 = {
-    "Authors": "Momeni M., Hariri N., Nobahar M., Noshinfard F.",
-    "Title": "Older adults experiences of onlin",
-    "Year": "2018",
-    "Source title": "Koomesh",
-    "Link": "https://www.scopus.com/inwar",
-    "Abstract": "Introduction: Online social.",
-    "Document Type": "Article",
-    "Source": "Scopus",
-    "EID": "2-s2.0-85044209383",
-    "abstract_structured": "1",
-    "filter_OA_include": "1",
-    "filter_study_include": "0",
-    "notes": ""
-};
-
-//not valid examples
-var notValidExampleForInsert = {
-    "Authors": "Momeni infard F.",
-    "Title": "Older adults expomenological study",
-    "Year": "2018",
-    "Source title": "Koomesh",
-    "Link": "https://www.scopus.com/inward/recob8d226bde6114a2e524a",
-    "Document Type": "Article",
-    "Source": "Scopus",
-    "EID": "2-s2.0-85044209383",
-    "abstract_structured": "1",
-    "filter_OA_include": "1",
-    "filter_study_include": "0",
-    "notes": ""
-};
-//not valid examples
-var notValidExampleForUpdate = {
-    "Authors": "Momeni M., oshinfard F.",
-    "Title": "Older adults experiences of ocal study",
-    "Year": "2018",
-    "Source title": "Koomesh",
-    "Link": "https://www.scopus.com/inw4a",
-    "Abstract": "Introduce communication.",
-    "Document Type": "Article",
-    "Source": "Scopus",
-    "EID": "2-s2.0-85044209383",
-    "abstract_structured": "1",
-    "filter_OA_include": "1",
-    "filter_study_include": "0",
-    "notes2": ""
-};
-
 
 
 test('dummy test', () => {
@@ -134,11 +69,11 @@ describe('bad cases', () => {
         let response = await request(app).get('/search');
         expect(response.status).toBe(400)
     });
-  /*  test('GET /search should return 400 if optional field has illegal value', async () => {
+   test('GET /search should return 400 if optional field has illegal value', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/search?query=a&page=-1');
+        let response = await request(app).get('/search?query=a&count=-1');
         expect(response.status).toBe(400)
-    });*/
+    });
     test('GET /search should return 404 if it finds nothing', async () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/search?query=uaidafha');

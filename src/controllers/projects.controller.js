@@ -3,7 +3,6 @@
 
 const express = require('express');
 const projectsDelegate = require(__base + 'delegates/projects.delegate');
-const errHandler = require(__base + 'utils/errors');
 
 const router = express.Router();
 
@@ -15,14 +14,15 @@ router.get('/projects', async (req, res, next) => {
     try
     {
         let projects = undefined;
-        let pagesize = req.query.pagesize;
-        let after = req.query.after; //select projects with id greater than the value of after
-        let before = req.query.before; //select projects with id lower than the value of before
+        let orderBy = req.query.orderBy;
+        let sort = req.query.sort;
+        let start = req.query.start;
+        let count = req.query.count;
         let query = req.query.query;
         if(query === undefined){
-            projects = await projectsDelegate.selectAll(pagesize, after, before, "id", "ASC");
+            projects = await projectsDelegate.selectAll(orderBy, sort, start, count);
         }else{
-            projects = await projectsDelegate.selectBySingleKeyword(query, pagesize, after, before, "id", "ASC");
+            projects = await projectsDelegate.selectBySingleKeyword(query, orderBy, sort, start, count);
         }
         res.status(200).json(projects);
     }

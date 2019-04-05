@@ -3,20 +3,16 @@
 // functionality related to HITs.
 
 const projectsDao = require(__base + 'dao/projects.dao');
+//error handler
 const errHandler = require(__base + 'utils/errors');
-//supply the ausiliar function
+//supply the auxiliary function
 const support = require(__base + 'utils/support');
 //the packaged for input validation
+const ajv = require(__base + 'utils/ajv');
 const validationSchemes = require(__base + 'utils/validation.schemes');
-const Ajv = require('ajv');
-const ajv = new Ajv();
-ajv.addKeyword('isNotEmpty', {//keyword for empty string
-    type: 'string',
-    validate: function (schema, data) {
-      return typeof data === 'string' && data.trim() !== ''
-    },
-    errors: false
-})
+
+
+
 /**
  * insert a project
  * @param {object} newProjectData
@@ -40,24 +36,13 @@ async function insert(newProjectData) {
 
 /**
  *  * update a project
- * @param {integer}  project_id
+ * @param {int}  project_id
  * @param {object} newProjectData
- 
  */
 async function update(project_id, newProjectData) {
 
-    //error check
-    if (project_id === undefined || project_id === null)
-    {
-        throw errHandler.createBadRequestError('Project id is not defined!');
-    }
-    //cast project_id to integer type
-    project_id = Number(project_id);
-    //error check
-    if (!Number.isInteger(project_id))
-    {
-        throw errHandler.createBadRequestError('Project id is not a integer!');
-    }
+    //check validation of project id and transform the value in integer
+    project_id = support.setAndCheckValidProjectId(project_id);
 
     //check input format
     let valid = ajv.validate(validationSchemes.project, newProjectData);
@@ -80,22 +65,12 @@ async function update(project_id, newProjectData) {
 
 /**
  *  * delete a project
- * @param {integer} project_id
+ * @param {int} project_id
  */
 async function deletes(project_id) {
 
-    //error check
-    if (project_id === undefined || project_id === null)
-    {
-        throw errHandler.createBadRequestError('Project id is not defined!');
-    }
-    //cast project_id to integer type
-    project_id = Number(project_id);
-    //error check
-    if (!Number.isInteger(project_id))
-    {
-        throw errHandler.createBadRequestError('Project id  is not a integer!');
-    }
+    //check validation of project id and transform the value in integer
+    project_id = support.setAndCheckValidProjectId(project_id);
 
     //call DAO layer
     let numberRow = await projectsDao.deletes(project_id);
@@ -109,22 +84,13 @@ async function deletes(project_id) {
 
 /**
  * select a project
- * @param {integer} project_id
+ * @param {int} project_id
  * @returns {object} project found
  */
 async function selectById(project_id) {
-    //error check
-    if (project_id === undefined || project_id === null)
-    {
-        throw errHandler.createBadRequestError('Project id is not defined!');
-    }
-    //cast project_id to integer type
-    project_id = Number(project_id);
-    //error check
-    if (!Number.isInteger(project_id))
-    {
-        throw errHandler.createBadRequestError('Project id  is not a integer!');
-    }
+
+    //check validation of project id and transform the value in integer
+    project_id = support.setAndCheckValidProjectId(project_id);
 
     //call DAO layer
     let res = await projectsDao.selectById(project_id);
@@ -139,37 +105,21 @@ async function selectById(project_id) {
 /**
  * 
  * select all project
- * @param {integer} number number of projects
- * @param {integer} after the next one for the next page
- * @param {integer} before position where to begin to get backwards
- * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
+ * @param {string} orderBy [id, date_last_modified}
  * @param {string} sort {ASC or DESC}
- * @returns {Array[Object]} list of projects 
+ * @param {int} start offset position where we begin to get
+ * @param {int} count number of projects
+ * @returns {Object} array of projects and total number of result
  */
-async function selectAll(number, after, before, orderBy, sort) {
+async function selectAll(orderBy, sort, start, count) {
 
-    //cast number to integer type
-    number = Number(number || 10);
-    if(after === undefined && before === undefined){//if 'before' and 'after' elements are not defined I set 'after' to 0 as default value
-        after = 0;
-    }else{
-        //cast 'after' to integer type
-        after = Number(after);
-        //cast 'before' to integer type
-        before = Number(before);
-    }
-    //set orderBy
-    orderBy = orderBy || "id";
-    //will return not empty string if they are not valid 
-    let errorMessage = support.areValidPaginationParameters(number, after, before, orderBy, sort, "projects");
-    if (errorMessage !== "")
-    {
-        throw errHandler.createBadRequestError(errorMessage);
-    }
+    //check the validation of parameters
+    orderBy = support.setAndCheckValidProjectOrderBy(orderBy);
+    sort = support.setAndCheckValidSort(sort);
+    start = support.setAndCheckValidStart(start);
+    count = support.setAndCheckValidCount(count);
 
-    //check DAO layer
-    if(after === 0){after = -1}//if after has default value we put it to -1 we include the item with id 0 when starting
-    let res = await projectsDao.selectAll(number, after, before, orderBy, sort);
+    let res = await projectsDao.selectAll(orderBy, sort, start, count);
     
     //error check
     if (res.results.length === 0)
@@ -181,49 +131,26 @@ async function selectAll(number, after, before, orderBy, sort) {
 
 
 /**
- * 
  * select project by a single keyword
  * @param {string} keyword to search
- * @param {integer} number number of projects
- * @param {integer} after the next one for the next page
- * @param {integer} before position where to begin to get backwards
- * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
+ * @param {string} orderBy [id, date_last_modified}
  * @param {string} sort {ASC or DESC}
- * @returns {Array[Object]} array of projects 
+ * @param {int} start offset position where we begin to get
+ * @param {int} count number of projects
+ * @returns {Object} array of projects and total number of result
  */
-async function selectBySingleKeyword(keyword, number, after, before, orderBy, sort) {
+async function selectBySingleKeyword(keyword, orderBy, sort, start, count) {
 
-    //cast number to integer type
-    number = Number(number || 10);
-    if(after === undefined && before === undefined){//if 'before' and 'after' elements are not defined I set 'after' to 0 as default value
-        after = 0;
-    }else{
-        //cast 'after' to integer type
-        after = Number(after);
-        //cast 'before' to integer type
-        before = Number(before);
-    }
-    //set orderBy
-    orderBy = orderBy || "id";
-    //will return not empty string if they are not valid 
-    let errorMessage = support.areValidPaginationParameters(number, after, before, orderBy, sort, "projects");
-    if (errorMessage !== "")
-    {
-        throw errHandler.createBadRequestError(errorMessage);
-    }
-    //error check
-    if (keyword === undefined || keyword === null)
-    {
-        throw errHandler.createBadRequestError('the keyword is not define!');
-    }
-    //error check
-    if (keyword === "")
-    {
-        throw errHandler.createBadRequestError('the keyword is empty!');
-    }
+
+    //check the validation of parameters
+    support.isValidKeyword(keyword);
+    orderBy = support.setAndCheckValidProjectOrderBy(orderBy);
+    sort = support.setAndCheckValidSort(sort);
+    start = support.setAndCheckValidStart(start);
+    count = support.setAndCheckValidCount(count);
 
     //call DAO layer
-    let res = await projectsDao.selectBySingleKeyword(keyword, number, after, before, orderBy, sort);
+    let res = await projectsDao.selectBySingleKeyword(keyword, orderBy, sort, start, count);
     //error check
     if (res.results.length === 0)
     {

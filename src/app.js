@@ -32,7 +32,7 @@ app.all('*', function (req, res, next) {
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE, PUT');
     res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Accept, Cache-Control, Content-Type');
 
-    if (req.method == "OPTIONS") {
+    if (req.method === "OPTIONS") {
         res.send(200);
     } else {
         next();
@@ -48,7 +48,7 @@ app.use(projectPapersController);
 app.use((e, req, res, next) => {
 
 
-    // console.error('[Error]', e);
+    //console.error('[Error]', e);
 
     let error = errorsHelper.createBoomErrorForService(e);
 

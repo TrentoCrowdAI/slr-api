@@ -3,32 +3,33 @@
 
 const express = require('express');
 const projectPapersDelegate = require(__base + 'delegates/projectPapers.delegate');
-const errHandler = require(__base + 'utils/errors');
 
 const router = express.Router();
 
 
-
-
 //get a list of projectPapers associated with a project
 router.get('/papers', async (req, res, next) => {
+
     let projectPapers = undefined;
-    try
-    {
+
+    try {
         let project_id = req.query.project_id;
-        let pagesize = req.query.pagesize;
-        let after = req.query.after; //select projects with id greater than the value of after
-        let before = req.query.before; //select projects with id lower than the value of before
+        let orderBy = req.query.orderBy;
+        let sort = req.query.sort;
+        let start = req.query.start;
+        let count = req.query.count;
+        let searchBy = req.query.start;
+        let year = req.query.count;
         let query = req.query.query;
-        if(query === undefined){
-            projectPapers = await projectPapersDelegate.selectByProject(project_id, pagesize, after, before, "id", "ASC");
-        }else{
-            projectPapers = await projectPapersDelegate.searchPaperByProject(query, project_id, pagesize, after, before, "id", "ASC");
+        if (query === undefined) {
+            projectPapers = await projectPapersDelegate.selectByProject(project_id, orderBy, sort, start, count);
+        }
+        else {
+            projectPapers = await projectPapersDelegate.searchPaperByProject(query, project_id, searchBy, year, orderBy, sort, start, count);
         }
         res.status(200).json(projectPapers);
     }
-    catch (e)
-    {
+    catch (e) {
         // catch the error threw from delegate and we delegate to the error-handling middleware
         next(e);
     }
@@ -37,33 +38,28 @@ router.get('/papers', async (req, res, next) => {
 
 //insert a new projectPaper
 router.post('/papers', async (req, res, next) => {
-    try
-    {
-        let paper_id = req.body.paper_id;
+    try {
+        let arrayEid = req.body.arrayEid;
         let project_id = req.body.project_id;
-        
-        let projectPaper = await projectPapersDelegate.insertFromPaper(paper_id, project_id);
+
+        let projectPaper = await projectPapersDelegate.insertFromPaper(arrayEid, project_id);
         res.status(201).json(projectPaper);
     }
-    catch (e)
-    {
+    catch (e) {
         // catch the error threw from delegate and we delegate to the error-handling middleware
         next(e);
     }
 });
 
 
-
-//get a projectPaper 
+//get a projectPaper
 router.get('/papers/:projectPaper_id', async (req, res, next) => {
-    try
-    {
+    try {
         let projectPaper_id = req.params.projectPaper_id;
         let projectPaper = await projectPapersDelegate.selectById(projectPaper_id);
         res.status(200).json(projectPaper);
     }
-    catch (e)
-    {
+    catch (e) {
         // catch the error threw from delegate and we delegate to the error-handling middleware
         next(e);
     }
@@ -71,8 +67,7 @@ router.get('/papers/:projectPaper_id', async (req, res, next) => {
 
 //update a projectPaper
 router.put('/papers/:projectPaper_id', async (req, res, next) => {
-    try
-    {
+    try {
 
         let projectPaper_id = req.params.projectPaper_id;
         //the new data of projectPaper to update
@@ -81,8 +76,7 @@ router.put('/papers/:projectPaper_id', async (req, res, next) => {
         await projectPapersDelegate.update(projectPaper_id, newProjectPaperData);
         res.sendStatus(204);
     }
-    catch (e)
-    {
+    catch (e) {
         // catch the error threw from delegate and we delegate to the error-handling middleware
         next(e);
     }
@@ -90,20 +84,16 @@ router.put('/papers/:projectPaper_id', async (req, res, next) => {
 
 //delete a projectPaper
 router.delete('/papers/:projectPaper_id', async (req, res, next) => {
-    try
-    {
+    try {
         let projectPaper_id = req.params.projectPaper_id;
         await projectPapersDelegate.deletes(projectPaper_id);
         res.sendStatus(204);
     }
-    catch (e)
-    {
+    catch (e) {
         // catch the error threw from delegate and we delegate to the error-handling middleware
         next(e);
     }
 });
-
-
 
 
 module.exports = router;

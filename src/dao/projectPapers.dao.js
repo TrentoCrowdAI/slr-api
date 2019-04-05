@@ -1,34 +1,45 @@
 
 const db = require(__base + "db/index");
+//supply the auxiliary function
+const support = require(__base + 'utils/support');
 
 
 /**
  * insert a projectPaper
- * @param {integer} project_id
+ * @param {int} project_id
  * @param {object} newProjectPaperData
  * @returns {object} projectPaper created
  */
-/*
+
  async function insert(project_id, newProjectPaperData) {
  let res = await db.query(
  'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES($1,$2,$3, $4, $5) RETURNING *',
  [new Date(), new Date(), null, newProjectPaperData, project_id]
  );
  return res.rows[0];
- }*/
+ }
+
+
 /**
- * insert a projectPaper by copy from fake_paper table
- * @param {integer} paper_id
- * @param {integer} project_id
- * @param {object} newProjectPaperData
- * @returns {object} projectPaper created
+ * insert a list of projectPaper by copy from fake_paper table
+ * @param {array[]} arrayEid array of paper eid
+ * @param {int} project_id
+ * @returns {array[]} projectPaper created
  */
-async function insertFromPaper(paper_id, project_id) {
+async function insertFromPaper(arrayEid, project_id) {
+
+    //transform array in string where each element is surrounded by '
+    let joinString = support.arrayToString(arrayEid, "," , "'");
+    //if joinString is empty
+    if (joinString === "") {
+        joinString = "''";
+    }
+
     let res = await db.query(
-            'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", $1 FROM public.' + db.TABLES.papers + ' WHERE id = $2 ) RETURNING *',
-            [project_id, paper_id]
+            'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", $1 FROM public.' + db.TABLES.papers + ' WHERE data->>\'eid\' IN (' + joinString + ') ) RETURNING *',
+            [project_id]
             );
-    return res.rows[0];
+    return res.rows;
 }
 
 /**
@@ -75,88 +86,81 @@ async function selectById(projectPaper_id) {
 
 /**
  * select all projectPaper associated with a project
- * @param {integer} project_id
- * @param {integer} number number of projectPapers
- * @param {integer} after the id of the first element to get
- * @param {integer} before position where to begin to get backwards
- * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
+ * @param {int} project_id
+ * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
- * @returns {Array[Object]} array of projectPapers 
+ * @param {int} start offset position where we begin to get
+ * @param {int} count number of projects
+ * @returns {Object} array of projectPapers and total number of result
  */
-async function selectByProject(project_id, number, after, before, orderBy, sort) {//the last 2 variables are still incompatible with our way of pagination
-    let res = undefined;
-    if(isNaN(before)){//if 'before' is not defined it means we should check for 'after'
-        res = await db.query(//I get the elements plus one extra one
-            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND id > $2 ORDER BY '+"id"+' '+"ASC"+' LIMIT $3',
-            [project_id, after, number+1]
-            );
-        let before = await db.query(//I check if there are elements before
-            'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND id <= $2 LIMIT 1',
-            [project_id, after]
-        );
-        return {"results" : res.rows.slice(0,number), "hasbefore" : (before.rows[0] ? true: false), "continues" : (res.rows.length > number)};
-    }else{
-        res = await db.query(//I get the elements before plus one extra one
-            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND id < $2 ORDER BY '+"id"+' '+"DESC"+' LIMIT $3',
-            [project_id, before, number+1]
-        );
-        let after =  await db.query(//I check if there are elements after the passed id
-            'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND id >= $2 LIMIT 1',
-            [project_id, before]
-        );
-        hasbefore =  (res.rows.length > number);//if I retrieved one extra element it means there's still something before the results
-        let array = res.rows.slice(0, number);//I remove the extra element since the client doesn't need it
-        array.sort(function(a, b) { //I sort the array in ASC again to be printed
-            var x = Number(a['id']); var y = Number(b['id']);
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        });
-        return {"results" : array, "hasbefore" : hasbefore ,"continues" : (after.rows[0] ? true : false)};
-    }
+async function selectByProject(project_id, orderBy, sort, start, count) {
+
+    //query to get projects
+    let res = await db.query(
+        'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1  ORDER BY data->>$2 ' + sort + ' LIMIT $3 OFFSET $4',
+        [project_id, orderBy,  count, start]
+    );
+
+    //query to get total number of result
+    let resForTotalNumber = await db.query(
+        'SELECT COUNT(*)  FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1  ',
+        [project_id]
+    );
+
+    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 }
 
 /**
  * search papers belonging to a project
- * @param {string} keyword
- * @param {integer} project_id
- * @param {integer} number number of projectPapers
- * @param {integer} after the id of the first element to get
- * @param {integer} before position where to begin to get backwards
- * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
+ * @param {string} keyword to search
+ * @param {int} project_id
+ * @param {string} searchBy [all, author, content] "content" means title+description
+ * @param year specific year to search
+ * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
- * @returns {Array[Object]} array of projectPapers 
+ * @param {int} start offset position where we begin to get
+ * @param {int} count number of papers
+ * @returns {Object} array of projectPapers and total number of result
  */
-async function searchPaperByProject(keyword, project_id, number, after, before, orderBy, sort) {//the last 2 variables are still incompatible with our way of pagination
-    let res = undefined;
-    if(isNaN(before)){//if 'before' is not defined it means we should check for 'after'
-        res = await db.query(//I get the elements plus one extra one
-            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND CAST(data AS TEXT) LIKE $2 AND id > $3 ORDER BY '+"id"+' '+"ASC"+' LIMIT $4',
-            [project_id, "%" + keyword + "%", after, number+1]
-            );
-        let before = await db.query(//I check if there are elements before
-            'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND CAST(data AS TEXT) LIKE $2 AND id <= $3 LIMIT 1',
-            [project_id, "%" + keyword + "%", after]
-        );
-        return {"results" : res.rows.slice(0,number), "hasbefore" : (before.rows[0] ? true: false), "continues" : (res.rows.length > number)};
-    }else{
-        res = await db.query(//I get the elements before plus one extra one
-            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND CAST(data AS TEXT) LIKE $2 AND id < $3 ORDER BY '+"id"+' '+"DESC"+' LIMIT $4',
-            [project_id, "%" + keyword + "%", before, number+1]
-        );
-        let after =  await db.query(//I check if there are elements after the passed id
-            'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND CAST(data AS TEXT) LIKE $2 AND id >= $3 LIMIT 1',
-            [project_id, "%" + keyword + "%", before]
-        );
-        hasbefore =  (res.rows.length > number);//if I retrieved one extra element it means there's still something before the results
-        let array = res.rows.slice(0, number);//I remove the extra element since the client doesn't need it
-        array.sort(function(a, b) { //I sort the array in ASC again to be printed
-            var x = Number(a['id']); var y = Number(b['id']);
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        });
-        return {"results" : array, "hasbefore" : hasbefore ,"continues" : (after.rows[0] ? true : false)};
+async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count) {
+
+    //set sql where condition by searchBy value
+    let condition;
+    switch (searchBy) {
+        case "all":
+            condition = " AND ( data->>'authors' LIKE '%" + keyword + "%' OR data->>'title' LIKE '%" + keyword + "%' OR data->>'year' LIKE '%" + keyword + "%' OR data->>'source_title' LIKE '%" + keyword + "%' OR data->>'link' LIKE '%" + keyword + "%' OR data->>'abstract' LIKE '%" + keyword + "%' OR data->>'document_type' LIKE '%" + keyword + "%' OR data->>'source' LIKE '%" + keyword + "%' OR data->>'eid' LIKE '%" + keyword + "%' OR data->>'abstract_structured' LIKE '%" + keyword + "%' OR data->>'filter_study_include' LIKE '%" + keyword + "%' OR data->>'notes' LIKE '%" + keyword + "%' ) ";
+            break;
+        case "author":
+            condition = " AND ( data->>'authors' LIKE '%" + keyword + "%' ) ";
+            break;
+        case "content":
+            condition = " AND ( data->>'title' LIKE '%" + keyword + "%' OR  data->>'abstract' LIKE '%" + keyword + "%' ) ";
+            break;
     }
+
+    //set sql where condition2 by year
+    let conditionOnYear = "";
+    //if year isn't empty, set sql condition on year
+    if (year !== "") {
+        conditionOnYear = " AND ( data->>'year' = '" + year + "' )";
+    }
+
+    //query to get papers
+    let res = await db.query(
+        'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE  project_id = $1 ' + condition + ' ' + conditionOnYear + '  ORDER BY data->>$2 ' + sort + ' LIMIT $3 OFFSET $4',
+        [project_id, orderBy, count, start]
+    );
+    //query to get total number of result
+    let resForTotalNumber = await db.query(
+        'SELECT COUNT(*) FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1 ' + condition + ' ' + conditionOnYear + ' ',
+        [project_id]
+    );
+
+
+    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 }
 
-/*=== INTERNAL_FUNCTIONS(not accessible through apis) ===*/
+/*=== deprecated function ===
 async function selectByIdAndProjectId(paper_id, project_id){
     let paper_eid = await db.query(//I retrieve the eid of the paper to add
         'SELECT data->>\'EID\' as eid FROM public.' + db.TABLES.papers + ' WHERE id = $1',
@@ -168,7 +172,37 @@ async function selectByIdAndProjectId(paper_id, project_id){
         [project_id, paper_eid]
     );
     return res.rows[0];//this will be defined only if the paper is already in the project
+}*/
+
+
+/**
+ * internal function==========================================================
+ * check existence of papers in tables
+ * @param {array[]} arrayEid of paper to check
+ * @param {int} project_id
+ * @returns {array[]} arrayEid of papers that are already exist in table
+ */
+async function checkExistenceByEids(arrayEid, project_id) {
+
+    //transform array in string where each element is surrounded by '
+    let joinString = support.arrayToString(arrayEid, "," , "'");
+    //if joinString is empty
+    if (joinString === "") {
+        joinString = "''";
+    }
+
+    let res = await db.query(
+        'SELECT data->>\'eid\' AS eid FROM public.' + db.TABLES.projectPapers + ' WHERE data->>\'eid\' IN (' + joinString + ') AND project_id = $1 ; ',
+        [project_id]
+    );
+
+    let array =[];
+    for(let i =0; i<res.rows.length; i++){
+        array.push(res.rows[i].eid);
+    }
+    return array;
 }
+
 
 module.exports = {
     insertFromPaper,
@@ -176,6 +210,7 @@ module.exports = {
     deletes,
     selectById,
     selectByProject,
-    selectByIdAndProjectId,
-    searchPaperByProject
+    //selectByIdAndProjectId,
+    searchPaperByProject,
+    checkExistenceByEids
 };

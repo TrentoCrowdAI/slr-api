@@ -1,6 +1,6 @@
-
 const db = require(__base + "db/index");
-
+//supply the auxiliary function
+const support = require(__base + 'utils/support');
 
 /**
  * insert a paper
@@ -9,124 +9,195 @@ const db = require(__base + "db/index");
  */
 async function insert(newPaperData) {
     let res = await db.query(
-            'INSERT INTO public.' + db.TABLES.papers + '("date_created", "date_last_modified", "date_deleted", "data") VALUES($1,$2,$3,$4) RETURNING *',
-            [new Date(), new Date(), null, newPaperData]
-            );
+        'INSERT INTO public.' + db.TABLES.papers + '("date_created", "date_last_modified", "date_deleted", "data") VALUES($1,$2,$3,$4) RETURNING *',
+        [new Date(), new Date(), null, newPaperData]
+    );
+    return res.rows[0];
+}
+
+/**
+ * insert a list of paper
+ * @param {array[]} arrayPaperData a new list of newPaperData
+ * @returns {object} paper created
+ */
+async function insertByList(arrayPaperData) {
+
+    let values="";
+
+    for (let i = 0; i < arrayPaperData.length; i++) {
+        values += " ( now() , now() , " + null + " , $" + (i+1) + " ) ";
+        //if isn't last cycle, add a comma ad end of string
+        if (i < arrayPaperData.length - 1) {
+            values += ",";
+        }
+    }
+
+    let res = await db.query(
+        'INSERT INTO public.' + db.TABLES.papers + '("date_created", "date_last_modified", "date_deleted", "data") VALUES '+values+' RETURNING *'
+    , [...arrayPaperData]
+    );
+    return res.rows;
+}
+
+
+
+
+/**
+ * select a paper
+ * @param {int} paper_id
+ * @returns {object} paper found
+ */
+async function selectById(paper_id) {
+    let res = await db.query(
+        'SELECT * FROM public.' + db.TABLES.papers + ' WHERE id = $1',
+        [paper_id]
+    );
     return res.rows[0];
 }
 
 
 
+
 /**
  *  * update a paper
- * @param {integer}  paper_id
+ * @param {int}  paper_id
  * @param {object} newPaperData
- * @returns {integer} number of row affected , 1 if ok, 0 if failed
+ * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function update(paper_id, newPaperData) {
     let res = await db.query(
-            'UPDATE public.' + db.TABLES.papers + ' SET "date_last_modified" = $1,  "data" = $2 WHERE "id" = $3',
-            [new Date(), newPaperData, paper_id]
-            );
+        'UPDATE public.' + db.TABLES.papers + ' SET "date_last_modified" = $1,  "data" = $2 WHERE "id" = $3',
+        [new Date(), newPaperData, paper_id]
+    );
     return res.rowCount;
 }
 
 
 /**
  *  * delete a paper
- * @param {integer} paper id
- * @returns {integer} number of row affected , 1 if ok, 0 if failed
+ * @param {int} paper_id
+ * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function deletes(paper_id) {
     let res = await db.query(
-            'DELETE FROM public.' + db.TABLES.papers + ' WHERE id = $1',
-            [paper_id]
-            );
+        'DELETE FROM public.' + db.TABLES.papers + ' WHERE id = $1',
+        [paper_id]
+    );
     return res.rowCount;
 }
 
-/**
- * select a paper
- * @param {integer} paper_id
- * @returns {object} paper found
- */
-async function selectById(paper_id) {
-    let res = await db.query(
-            'SELECT * FROM public.' + db.TABLES.papers + ' WHERE id = $1',
-            [paper_id]
-            );
-    
-    return res.rows[0];
-}
+
+
 
 /**
+ *  internal function==========================================================
+ * check existence of papers in tables
+ * @param {array[]} arrayEid of paper to check
+ * @returns {array[]} arrayEid of papers that are already exist in table
+ */
+async function checkExistenceByEids(arrayEid) {
+
+    //transform array in string where each element is surrounded by '
+    let joinString = support.arrayToString(arrayEid, "," , "'");
+    //if joinString is empty
+    if (joinString === "") {
+        joinString = "''";
+    }
+
+    let res = await db.query(
+        'SELECT data->>\'eid\' AS eid FROM public.' + db.TABLES.papers + ' WHERE data->>\'eid\' IN (' + joinString + ');'
+    );
+
+    let array =[];
+    for(let i =0; i<res.rows.length; i++){
+        array.push(res.rows[i].eid);
+    }
+    return array;
+
+}
+
+
+/**
+ * deprecated function selectBySingleKeyword and selectAll
+ *==========================================================================
+ *
+ * select paper by a single keyword
+ * @param {string} keyword to search
+ * @param {string} searchBy [all, author, content] "content" means title+description
+ * @param {string} year specific year to search
+ * @param {string} orderBy each paper data.propriety
+ * @param {string} sort {ASC or DESC}
+ * @param {int} start offset position where we begin to get
+ * @param {int} count number of papers
+ * @returns {Object} array of papers and total number of result
+
+ async function selectBySingleKeyword(keyword, searchBy, year, orderBy, sort, start, count) {
+
+    //set sql where condition by searchBy value
+    let condition;
+    switch (searchBy) {
+        case "all":
+            condition = " ( data->>'authors' = '" + keyword + "' OR data->>'title' = '" + keyword + "' OR data->>'year' = '" + keyword + "' OR data->>'source_title' = '" + keyword + "' OR data->>'link' = '" + keyword + "' OR data->>'abstract' = '" + keyword + "' OR data->>'document_type' = '" + keyword + "' OR data->>'source' = '" + keyword + "' OR data->>'eid' = '" + keyword + "' OR data->>'abstract_structured' = '" + keyword + "' OR data->>'filter_study_include' = '" + keyword + "' OR data->>'notes' = '" + keyword + "' ) ";
+            break;
+        case "author":
+            condition = " ( data->>'authors' = '" + keyword + "' ) ";
+            break;
+        case "content":
+            condition = " ( data->>'title' = '" + keyword + "' OR  data->>'abstract' = '" + keyword + "' ) ";
+            break;
+    }
+
+    //set sql where condition2 by year
+    let conditionOnYear = "";
+    //if year isn't empty, set sql condition on year
+    if (year !== "") {
+        conditionOnYear = " AND ( data->>'year' = '" + year + "' )";
+    }
+
+    //query to get papers
+    let res = await db.query(
+        'SELECT * FROM public.' + db.TABLES.papers + 'WHERE ' + condition + ' ' + conditionOnYear + '  ORDER BY data->>$1 ' + sort + ' LIMIT $2 OFFSET $3',
+        [orderBy, count, start]
+    );
+    //query to get total number of result
+    let resForTotalNumber = await db.query(
+        'SELECT COUNT(*) FROM public.' + db.TABLES.papers + 'WHERE ' + condition + ' ' + conditionOnYear + ' ');
+
+
+    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
+
+}
+
+
+
+ /**
  * select all paper
- * @param {integer} number number of papers
- * @param {integer} offset position where we begin to get
+ * @param {int} number number of papers
+ * @param {int} offset position where we begin to get
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
- * @returns {Array[Object]} array of papers 
- */
+ * @returns {Array[]} array of papers
+ *//*
 async function selectAll(number, offset, orderBy, sort) {
     let res = await db.query(
-            'SELECT * FROM public.' + db.TABLES.papers + ' ORDER BY '+orderBy+' '+sort+' LIMIT $1 OFFSET $2',
-            [number, offset]
-            );
+        'SELECT * FROM public.' + db.TABLES.papers + ' ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $1 OFFSET $2',
+        [number, offset]
+    );
 
     return res.rows;
 }
 
-
-/**
- * 
- * select paper by a single keyword
- * @param {string} keyword to search
- * @param {integer} number number of papers
- * @param {integer} after the id of the first element to get
- * @param {integer} before position where to begin to get backwards
- * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
- * @param {string} sort {ASC or DESC}
- * @returns {Array[Object]} array of papers 
- */
-async function selectBySingleKeyword(keyword, number, after, before, orderBy, sort) {
-
-    let res = undefined;
-    if(isNaN(before)){//if 'before' is not defined it means we should check for 'after'
-        res = await db.query(//I get the elements plus one extra one
-            'SELECT * FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1 AND id > $2 ORDER BY '+"id"+' '+"ASC"+' LIMIT $3',
-            ["%" + keyword + "%", after, number+1]
-            );
-        let before = await db.query(//I check if there are elements before
-            'SELECT id FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1 AND id <= $2 LIMIT 1',
-            ["%" + keyword + "%", after]
-        );
-        return {"results" : res.rows.slice(0,number), "hasbefore" : (before.rows[0] ? true: false), "continues" : (res.rows.length > number)};
-    }else{
-        res = await db.query(//I get the elements before plus one extra one
-            'SELECT * FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1 AND id < $2 ORDER BY '+"id"+' '+"DESC"+' LIMIT $3',
-            ["%" + keyword + "%", before, number+1]
-        );
-        let after =  await db.query(//I check if there are elements after the passed id
-            'SELECT id FROM public.' + db.TABLES.papers + ' WHERE CAST(data AS TEXT) LIKE $1 AND id >= $2 LIMIT 1',
-            ["%" + keyword + "%",  before]
-        );
-        hasbefore =  (res.rows.length > number);//if I retrieved one extra element it means there's still something before the results
-        let array = res.rows.slice(0, number);//I remove the extra element since the client doesn't need it
-        array.sort(function(a, b) { //I sort the array in ASC again to be printed
-            var x = Number(a['id']); var y = Number(b['id']);
-            return ((x < y) ? -1 : ((x > y) ? 1 : 0));
-        });
-        return {"results" : array, "hasbefore" : hasbefore ,"continues" : (after.rows[0] ? true : false)};
-    }
-}
+ ===============================================================*/
 
 
 module.exports = {
     insert,
+    insertByList,
     update,
     deletes,
     selectById,
-    selectAll,
-    selectBySingleKeyword
+    //selectAll,
+    //selectBySingleKeyword,
+    checkExistenceByEids
 
 };

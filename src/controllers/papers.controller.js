@@ -3,7 +3,7 @@
 
 const express = require('express');
 const papersDelegate = require(__base + 'delegates/papers.delegate');
-const errHandler = require(__base + 'utils/errors');
+
 
 const router = express.Router();
 
@@ -12,12 +12,15 @@ const router = express.Router();
 router.get('/search', async (req, res, next) => {
     try
     {
+
         let query = req.query.query;
-        let pagesize = req.query.pagesize;
-        let after = req.query.after; //select projects with id greater than the value of after
-        let before = req.query.before; //select projects with id lower than the value of before
-        //for now it returns the first ten matched papers(sorted by id)
-        let papers = await papersDelegate.selectBySingleKeyword(query,  pagesize, after, before, "id", "ASC");
+        let searchBy = req.query.searchBy;
+        let year = req.query.year;
+        let orderBy = req.query.orderBy;
+        let sort = req.query.sort;
+        let start = req.query.start;
+        let count = req.query.count;
+        let papers = await papersDelegate.scopusSearch(query, searchBy, year, orderBy, sort, start, count);
 
         res.status(200).json(papers);
     }
@@ -28,24 +31,6 @@ router.get('/search', async (req, res, next) => {
     }
 });
 
-//search with scopus api
-router.get('/search-scopus', async (req, res, next) => {
-    try
-    {
-        let query = req.query.query;
-        let pagesize = req.query.pagesize;
-        let after = req.query.after; //select projects with id greater than the value of after
-        let before = req.query.before; //select projects with id lower than the value of before
-        let papers = await papersDelegate.scopusSearch(query, pagesize, after, before);
-
-        res.status(200).json(papers);
-    }
-    catch (e)
-    {
-        // catch the error threw from delegate and we delegate to the error-handling middleware
-        next(e);
-    }
-});
 
 /*
  * 
