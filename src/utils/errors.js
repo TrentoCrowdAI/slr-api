@@ -63,13 +63,15 @@ const createBoomErrorForService = e => {
     {
         errorBoom = Boom.notFound(e.message);
     }
+   else if(e.name === errorNames.badImplementation){
+        errorBoom = Boom.badImplementation(e.message);
+    }
     //when the error isn't threw by delegate level
     else if(e.status === 401){
         const message = 'Not authorized to perform the request';
         errorBoom = Boom.unauthorized(message);
     }
     //to add the other cases of error
-
     
     return errorBoom;
 };

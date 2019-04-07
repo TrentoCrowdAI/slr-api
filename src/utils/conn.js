@@ -55,6 +55,7 @@ async function request(url, options = {}) {
 
     }
     catch (error) {
+       // console.dir(error.message);
 
         return error;
 
@@ -125,10 +126,13 @@ async function post(url, bodyData = "") {
 function checkResponseStatus(response, data) {
 
     if (response.status < 200 || response.status >= 300) {
-        const error = new Error(response.statusText);
+        let error = new Error(response.statusText);
         error.data = response;
-        if(data.payload){
-            error.payload = data.payload;
+
+        //if is the scoupus error
+        if(data["service-error"]){
+            let scopusErrorStatus = data["service-error"].status;
+            error.message = scopusErrorStatus.statusCode+" : "+scopusErrorStatus.statusText;
         }
         throw error;
     }

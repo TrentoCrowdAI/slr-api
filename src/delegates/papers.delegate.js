@@ -197,7 +197,7 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
 
     //if there is the error from fetch
     if (response.message) {
-        throw errHandler.createBadImplementationError('the server could not get response from scopus!');
+        throw errHandler.createBadImplementationError(response.message);
     }
 
     //get total number of results
