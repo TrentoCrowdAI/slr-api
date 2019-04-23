@@ -138,7 +138,7 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
     }
 
     searchBy = searchBy || "all";
-    if (searchBy !== "all" && searchBy !== "author" && searchBy !== "content") {
+    if (searchBy !== "all" && searchBy !== "author" && searchBy !== "content" && searchBy !== "advance"  ) {
         throw errHandler.createBadRequestError('searchBy has a not valid value!');
     }
 
@@ -153,7 +153,7 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
     //prepare the query object
     let queryData = {};
     queryData.apiKey = config.scopus.apiKey;
-    //serchBy condition
+    //searchBy condition
     let query;
     switch (searchBy) {
         case "all":
@@ -164,6 +164,9 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
             break;
         case "content":
             query = "TITLE-ABS-KEY(\""+keyword+"\")";
+            break;
+        case "advance":
+            query =keyword;
             break;
     }
     queryData.query = query;
