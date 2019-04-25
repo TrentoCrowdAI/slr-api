@@ -39,10 +39,15 @@ router.get('/papers', async (req, res, next) => {
 //insert a new projectPaper
 router.post('/papers', async (req, res, next) => {
     try {
+        let projectPaper = null;
         let arrayEid = req.body.arrayEid;
         let project_id = req.body.project_id;
-
-        let projectPaper = await projectPapersDelegate.insertFromPaper(arrayEid, project_id);
+        if(arrayEid){
+            projectPaper = await projectPapersDelegate.insertFromPaper(arrayEid, project_id);
+        }else{
+            let newPaper = req.body.paper;
+            projectPaper = await projectPapersDelegate.insertCustomPaper(newPaper, project_id);
+        }
         res.status(201).json(projectPaper);
     }
     catch (e) {

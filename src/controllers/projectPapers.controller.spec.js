@@ -21,10 +21,16 @@ var validExample = {
 
 };
 
-var validExampleForPost = {
+var validExampleForPost1 = {
     "arrayEid": ["2-s2.0-85058217031", "2-s2.0-85050101553"],
     "project_id": 1
 };
+
+var validExampleForPost2 = {
+    "paper": validExample,
+    "project_id": 1
+};
+
 
 //not valid examples
 var notValidExampleForUpdate = {
@@ -50,7 +56,10 @@ var notValidExampleForPost2 = {
     "arrayEid": 1,
     "project_id": 1
 };
-
+var notValidExampleForPost3 = {
+    "paper": notValidExampleForUpdate,
+    "project_id": 1
+};
 
 test('dummy test', () => {
     expect(true).toBe(true);
@@ -85,12 +94,19 @@ describe('good cases', () => {
         expect(response.status).toBe(200);
     });
 
-    test('POST /papers should return 201', async () => {
+    test('POST /papers should return 201(on eid array)', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/papers').send(validExampleForPost).set('Accept', 'application/json');
+        let response = await request(app).post('/papers').send(validExampleForPost1).set('Accept', 'application/json');
         expect(response.status).toBe(201);
         //let result = await response.body;
     });
+
+    test('POST /papers should return 201(on paper object)', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).post('/papers').send(validExampleForPost2).set('Accept', 'application/json');
+        expect(response.status).toBe(201);
+        //let result = await response.body;
+    });    
 
 
     test('PUT /papers/1 should return 204 if projectPaper exists', async () => {
@@ -163,6 +179,12 @@ describe('bad cases', () => {
     test('POST /papers should return 400 if mandatory field is not valid', async () => {
         jest.setTimeout(10000);
         let response = await request(app).post('/papers').send(notValidExampleForPost1).set('Accept', 'application/json');;
+        expect(response.status).toBe(400);
+    });
+
+    test('POST /papers should return 400 if paper has missing fields', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).post('/papers').send(notValidExampleForPost3).set('Accept', 'application/json');;
         expect(response.status).toBe(400);
     });
 
