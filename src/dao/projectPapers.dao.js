@@ -11,13 +11,13 @@ const support = require(__base + 'utils/support');
  * @returns {object} projectPaper created
  */
 
- async function insert(project_id, newProjectPaperData) {
- let res = await db.query(
- 'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES($1,$2,$3, $4, $5) RETURNING *',
- [new Date(), new Date(), null, newProjectPaperData, project_id]
- );
- return res.rows[0];
- }
+async function insert(newProjectPaperData, project_id) {
+    let res = await db.query(
+        'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES($1,$2,$3, $4, $5) RETURNING *',
+        [new Date(), new Date(), null, newProjectPaperData, project_id]
+    );
+    return res.rows[0];
+}
 
 
 /**
@@ -209,6 +209,7 @@ async function checkExistenceByEids(arrayEid, project_id) {
 
 
 module.exports = {
+    insert,
     insertFromPaper,
     update,
     deletes,
