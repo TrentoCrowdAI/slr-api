@@ -170,7 +170,7 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
 
     /*================= */
 
-    orderBy = support.setAndCheckValidProjectOrderBy(orderBy);
+    orderBy = support.setAndCheckValidProjectPaperOrderBy(orderBy);
     sort = support.setAndCheckValidSort(sort);
     start = support.setAndCheckValidStart(start);
     count = support.setAndCheckValidCount(count);

@@ -95,10 +95,14 @@ async function selectById(projectPaper_id) {
  */
 async function selectByProject(project_id, orderBy, sort, start, count) {
 
+    if(orderBy !== "date_created"){
+        orderBy = "data->>'"+orderBy+"'";
+    }
+
     //query to get projects
     let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1  ORDER BY data->>$2 ' + sort + ' LIMIT $3 OFFSET $4',
-        [project_id, orderBy,  count, start]
+        'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1  ORDER BY  '+orderBy +'   '+ sort + ' LIMIT $2 OFFSET $3',
+        [project_id,  count, start]
     );
 
     //query to get total number of result
