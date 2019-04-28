@@ -68,10 +68,12 @@ async function update(projectPaper_id, newProjectPaperData) {
             [new Date(), newProjectPaperData, projectPaper_id]
             );
     
-    let upd = await db.query(
-        'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
-        [new Date(), id.rows[0].project_id]
-    );
+    if(id.rows[0]){
+        let upd = await db.query(
+            'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
+            [new Date(), id.rows[0].project_id]
+        );
+    }
 
     return res.rowCount;
 }
@@ -83,19 +85,22 @@ async function update(projectPaper_id, newProjectPaperData) {
  * @returns {integer} number of row affected , 1 if ok, 0 if failed
  */
 async function deletes(projectPaper_id) {
+    console.log("searching for " + projectPaper_id + " to delete");
     let id = await db.query(
         'SELECT project_id FROM public.' + db.TABLES.projectPapers + ' WHERE "id" = $1',
         [projectPaper_id]);
-
+    console.log("FOUND");
+    console.log(id.rows[0]);
     let res = await db.query(
             'DELETE FROM public.' + db.TABLES.projectPapers + ' WHERE id = $1',
             [projectPaper_id]
             );
-    
-    let upd = await db.query(
-        'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
-        [new Date(), id.rows[0].project_id]
-    );
+    if(id.rows[0]){
+        let upd = await db.query(
+            'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
+            [new Date(), id.rows[0].project_id]
+        );
+    }
 
     return res.rowCount;
 }
