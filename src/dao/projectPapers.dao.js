@@ -11,13 +11,17 @@ const support = require(__base + 'utils/support');
  * @returns {object} projectPaper created
  */
 
- async function insert(project_id, newProjectPaperData) {
- let res = await db.query(
- 'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES($1,$2,$3, $4, $5) RETURNING *',
- [new Date(), new Date(), null, newProjectPaperData, project_id]
- );
- return res.rows[0];
- }
+async function insert(newProjectPaperData, project_id) {
+    let res = await db.query(
+        'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES($1,$2,$3, $4, $5) RETURNING *',
+        [new Date(), new Date(), null, newProjectPaperData, project_id]
+    );
+    let upd = await db.query(
+        'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
+        [new Date(), project_id]
+    );
+    return res.rows[0];
+}
 
 
 /**
@@ -39,6 +43,12 @@ async function insertFromPaper(arrayEid, project_id) {
             'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", $1 FROM public.' + db.TABLES.papers + ' WHERE data->>\'eid\' IN (' + joinString + ') ) RETURNING *',
             [project_id]
             );
+
+    let upd = await db.query(
+        'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
+        [new Date(), project_id]
+    );
+
     return res.rows;
 }
 
@@ -49,10 +59,22 @@ async function insertFromPaper(arrayEid, project_id) {
  * @returns {integer} number of row affected , 1 if ok, 0 if failed
  */
 async function update(projectPaper_id, newProjectPaperData) {
+    let id = await db.query(
+        'SELECT project_id FROM public.' + db.TABLES.projectPapers + ' WHERE "id" = $1',
+        [projectPaper_id]);
+
     let res = await db.query(
             'UPDATE public.' + db.TABLES.projectPapers + ' SET "date_last_modified" = $1,  "data" = $2 WHERE "id" = $3',
             [new Date(), newProjectPaperData, projectPaper_id]
             );
+    
+    if(id.rows[0]){
+        let upd = await db.query(
+            'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
+            [new Date(), id.rows[0].project_id]
+        );
+    }
+
     return res.rowCount;
 }
 
@@ -63,10 +85,23 @@ async function update(projectPaper_id, newProjectPaperData) {
  * @returns {integer} number of row affected , 1 if ok, 0 if failed
  */
 async function deletes(projectPaper_id) {
+    console.log("searching for " + projectPaper_id + " to delete");
+    let id = await db.query(
+        'SELECT project_id FROM public.' + db.TABLES.projectPapers + ' WHERE "id" = $1',
+        [projectPaper_id]);
+    console.log("FOUND");
+    console.log(id.rows[0]);
     let res = await db.query(
             'DELETE FROM public.' + db.TABLES.projectPapers + ' WHERE id = $1',
             [projectPaper_id]
             );
+    if(id.rows[0]){
+        let upd = await db.query(
+            'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
+            [new Date(), id.rows[0].project_id]
+        );
+    }
+
     return res.rowCount;
 }
 
@@ -95,10 +130,14 @@ async function selectById(projectPaper_id) {
  */
 async function selectByProject(project_id, orderBy, sort, start, count) {
 
+    if(orderBy !== "date_created"){
+        orderBy = "data->>'"+orderBy+"'";
+    }
+
     //query to get projects
     let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1  ORDER BY data->>$2 ' + sort + ' LIMIT $3 OFFSET $4',
-        [project_id, orderBy,  count, start]
+        'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1  ORDER BY  '+orderBy +'   '+ sort + ' LIMIT $2 OFFSET $3',
+        [project_id,  count, start]
     );
 
     //query to get total number of result
@@ -205,6 +244,7 @@ async function checkExistenceByEids(arrayEid, project_id) {
 
 
 module.exports = {
+    insert,
     insertFromPaper,
     update,
     deletes,

@@ -161,12 +161,12 @@ function setAndCheckValidProjectPaperId(projectPaper_id) {
  */
 function setAndCheckValidProjectPaperOrderBy(orderBy) {
 
-    //set default value if isn't defined
-    orderBy = orderBy || "eid";
+    //set default value if isn't defined, set the default value
+    orderBy = orderBy || "date_created";
     //get array that includes all properties name of a projectPaper
     let arrayKeys = Object.keys(validationSchemes.projectPaper.properties);
-    //if orderBy isn't included in this array
-    if (!arrayKeys.includes(orderBy)) {
+    //if orderBy isn't included in this array, and isn't "date_created"
+    if (!arrayKeys.includes(orderBy) && orderBy !== "date_created") {
         throw errHandler.createBadRequestError('the orderBy has a not valid value!');
     }
 

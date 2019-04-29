@@ -34,6 +34,29 @@ async function insertFromPaper(arrayEid, project_id) {
 
 
 /**
+ * insert a custom paper into a project
+ * @param {object} newPaper array of paper eid
+ * @param {int} project_id
+ * @returns {object} projectPaper created
+ */
+async function insertCustomPaper(newPaper, project_id) {
+
+    //check validation of project id and transform the value in integer
+    project_id = support.setAndCheckValidProjectId(project_id);
+
+    //check input format
+    let valid = ajv.validate(validationSchemes.paper, newPaper);
+    //if is not a valid input
+    if (!valid) {
+        throw errHandler.createBadRequestError('the new paper data is not valid!');
+    }
+
+    //call DAO layer
+    let res = await projectPapersDao.insert(newPaper, project_id);
+    return  res;
+}
+
+/**
  *  * update a projectPaper
  * @param {int} projectPaper_id
  * @param {object} newProjectPaperData
@@ -170,7 +193,7 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
 
     /*================= */
 
-    orderBy = support.setAndCheckValidProjectOrderBy(orderBy);
+    orderBy = support.setAndCheckValidProjectPaperOrderBy(orderBy);
     sort = support.setAndCheckValidSort(sort);
     start = support.setAndCheckValidStart(start);
     count = support.setAndCheckValidCount(count);
@@ -187,6 +210,7 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
 
 
 module.exports = {
+    insertCustomPaper,
     insertFromPaper,
     update,
     deletes,
