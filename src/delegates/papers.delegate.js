@@ -112,7 +112,7 @@ async function selectById(paper_id) {
  *
  * find papers by searching with the Scopus APIs
  * @param {string} keyword to search
- * @param {string} searchBy [all, author, content] "content" means abstracts+keywords+titles.
+ * @param {string} searchBy [all, author, content, advanced] "content" means abstracts+keywords+titles.
  * @param {string} year specific year to search
  * @param {string} orderBy [date, title]
  * @param {string} sort {ASC or DESC}
@@ -229,7 +229,7 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
         paper.date = arrayResults[i]["prism:coverDate"] || "";
         paper.source_title = arrayResults[i]["prism:publicationName"] || "";
         paper.link = arrayResults[i].link || "";
-
+        paper.doi = arrayResults[i]["prism:doi"] || "";
         //to be defined in future
         paper.abstract = "I am a no-subscriber, so I can't get the abstract from scopus. I am a no-subscriber, so I can't get the abstract from scopus.";
 
@@ -241,7 +241,7 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
         paper.filter_oa_include ="";
         paper.filter_study_include ="";
         paper.notes ="";
-
+        paper.manual ="0";
 
         //push element in array
         arrayPapers.push(paper);

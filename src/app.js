@@ -48,7 +48,7 @@ app.use(projectPapersController);
 app.use((e, req, res, next) => {
 
 
-    //console.error('[Error]', e);
+    console.error('[Error]', e);
 
     let error = errorsHelper.createBoomErrorForService(e);
 

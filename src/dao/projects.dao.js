@@ -29,6 +29,22 @@ async function update(project_id, newProjectData) {
     return res.rowCount;
 }
 
+/**
+ *  * update the last modified date of a project
+ * @param {int}  project_id
+ * @returns {int} number of row affected , 1 if ok, 0 if failed
+ */
+async function updateLastModifiedDate(project_id) {
+    let res = await db.query(
+        'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
+        [new Date(), project_id]
+    );
+
+    return res.rowCount;
+}
+
+
+
 
 /**
  *  * delete a project
@@ -59,7 +75,7 @@ async function selectById(project_id) {
 
 /**
  * select all project
- * @param {string} orderBy [id, date_last_modified}
+ * @param {string} orderBy [id, date_created, date_last_modified, date_deleted}
  * @param {string} sort {ASC or DESC}
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
@@ -84,7 +100,7 @@ async function selectAll(orderBy, sort, start, count) {
 /**
  * select project by a single keyword
  * @param {string} keyword to search
- * @param {string} orderBy [id, date_last_modified}
+ * @param {string} orderBy [id, date_created, date_last_modified, date_deleted}
  * @param {string} sort {ASC or DESC}
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
@@ -113,6 +129,7 @@ async function selectBySingleKeyword(keyword, orderBy, sort, start, count) {
 module.exports = {
     insert,
     update,
+    updateLastModifiedDate,
     deletes,
     selectById,
     selectAll,

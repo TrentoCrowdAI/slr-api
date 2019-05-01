@@ -58,9 +58,17 @@ const paper = {
         "notes": {
             "type": "string",
 
+        },
+        "manual": {
+            "type": "string",
+            "isNotEmpty": true
+        },
+        "doi": {
+            "type": "string",
+            "isNotEmpty": true
         }
     },
-    "required": ["authors", "title", "year", "date","source_title", "link", "abstract", "document_type", "source", "eid", "abstract_structured", "filter_oa_include", "filter_study_include", "notes"]
+    "required": ["authors", "title", "year", "date","source_title", "link", "abstract", "document_type", "source", "eid", "abstract_structured", "filter_oa_include", "filter_study_include", "notes", "manual", "doi"]
 };
 
 //is the same with paper object

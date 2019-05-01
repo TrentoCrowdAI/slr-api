@@ -30,17 +30,18 @@ paths:
         - Papers
       parameters:
         - $ref: '#/parameters/Query'
-        - $ref: '#/parameters/Number'
-        - $ref: '#/parameters/After'
-        - $ref: '#/parameters/Before'
-        - $ref: '#/parameters/Type_for_paper'
-        - $ref: '#/parameters/Subject_for_paper'
-        - $ref: '#/parameters/Year_for_paper'
+        - $ref: '#/parameters/SearchBy'
+        - $ref: '#/parameters/Year'
+        - $ref: '#/parameters/OrderByForSearch'
+        - $ref: '#/parameters/Sort'
+        - $ref: '#/parameters/Start'
+        - $ref: '#/parameters/Count'
+
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Paper_search_results'
+            $ref: '#/definitions/Result_of_paper_search'
         '400':
           $ref: '#/responses/400_bad_request'
         '404':
@@ -51,6 +52,7 @@ paths:
 
 
   '/projects':
+
     get:
       summary: Returns all projects
       description: >-
@@ -59,11 +61,10 @@ paths:
         - Projects
       parameters:
         - $ref: '#/parameters/Query_optional'
-        - $ref: '#/parameters/Number'
-        - $ref: '#/parameters/After'
-        - $ref: '#/parameters/Before'
         - $ref: '#/parameters/OrderBy'
         - $ref: '#/parameters/Sort'
+        - $ref: '#/parameters/Start'
+        - $ref: '#/parameters/Count'
       responses:
         '200':
           description: OK
@@ -77,6 +78,7 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
     post:
       summary: Add new project
       description: >-
@@ -96,7 +98,10 @@ paths:
           $ref: '#/responses/401_unauthorized'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
+
   '/projects/{project_id}':
+
     get:
       summary: access a specific project
       description: Get the basic data of a project
@@ -117,6 +122,7 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
     put:
       summary: update a specific project
       description: Overwrites the existing project
@@ -136,6 +142,7 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
     delete:
       summary: delete a specific project
       tags:
@@ -153,20 +160,22 @@ paths:
           $ref: '#/responses/500_internal_server_error'
 
 
+
   '/papers':
     get:
-      summary: access papers of a project
+      summary: access the papers of a project
       description: Get a list of projectPapers associated with a project
       tags:
         - Projects Papers
       parameters:
         - $ref: '#/parameters/Project_id'
         - $ref: '#/parameters/Query_optional'
-        - $ref: '#/parameters/Number'
-        - $ref: '#/parameters/After'
-        - $ref: '#/parameters/Before'
+        - $ref: '#/parameters/SearchBy'
+        - $ref: '#/parameters/Year'
         - $ref: '#/parameters/OrderBy'
         - $ref: '#/parameters/Sort'
+        - $ref: '#/parameters/Start'
+        - $ref: '#/parameters/Count'
 
       responses:
         '200':
@@ -181,6 +190,7 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
     post:
       summary: add new paper to specific project
       description: copy the paper into a project_paper table
@@ -201,6 +211,7 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
 
   '/papers/{project_paper_id}':
     get:
@@ -224,6 +235,7 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
     put:
       summary: update a specific paper of a project
       description: Overwrites the existing paper
@@ -243,6 +255,7 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
     delete:
       summary: delete a specific paper of a project
       tags:
@@ -259,517 +272,16 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
-definitions:
-  Error:
-    properties:
-      statusCode:
-        type: integer
-      payload:
-        type: object
-        properties:
-          statusCode:
-            type: integer
-          error:
-            type: string
-          message:
-            type: string
-      headers:
-        type: object
-  Paper:
-    type: object
-    properties:
-      ID:
-        type: integer
-        description: the ID on the internal database
-        example: 1
-      date_created:
-        type: string
-        format: date-time
-        example:  "2017-07-21T17:32:28Z"
-      date_last_modified:
-        type: string
-        format: date-time
-        example:  "2017-09-24T18:38:00Z"
-      data:
-        type: object
-        properties:
-          Authors:
-            type: string
-            example: >-
-              Bygholm, Hansen
-          Title:
-            type: string
-            example: x relations to y
-          Year:
-            type: string
-            example: "2017"
-            format: date
-            pattern: "YYYY"
-          Source title:
-            type: string
-            example: Educations in y
-          Link:
-            type: string
-            example: "https://scopus.com/bla/inward?uri=2412414141"
-          Abstract:
-            type: string
-            example: >-
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
-              magna, ultricies eu mauris at, vehicula elementum felis. Nunc
-              vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
-              lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
-              lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
-              eleifend[..]
-          Document Type:
-            type: string
-            example: article
-          Source:
-            type: string
-            example: scopus
-          EID:
-            type: string
-            example: >-
-              2-s2.0-45252342358235
-          abstract_structured:
-            type: string
-            example: "0"
-          filter_OA_include:
-            type: string
-            example: "1"
-          filter_study_include:
-            type: string
-            example: "0"
-          notes:
-            type: string
-            example: "note"
-
-  Papers:
-    type: array
-    items:
-      $ref: '#/definitions/Paper'
-
-  Paper_search_result:
-    type: object
-    properties:
-      ID:
-        type: integer
-        description: the ID on the internal database
-        example: 1
-      date_created:
-        type: string
-        format: date-time
-        example:  "2017-07-21T17:32:28Z"
-      date_last_modified:
-        type: string
-        format: date-time
-        example:  "2017-09-24T18:38:00Z"
-      confidence:
-        type: number
-        example: 0.95
-      reason:
-        type: string
-        example: >-
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
-      content:
-        type: object
-        properties:
-          Authors:
-            type: string
-            example: >-
-              Bygholm, Hansen
-          Title:
-            type: string
-            example: x relations to y
-          Year:
-            type: string
-            example: "2017"
-            format: date
-            pattern: "YYYY"
-          Source title:
-            type: string
-            example: Educations in y
-          Link:
-            type: string
-            example: "https://scopus.com/bla/inward?uri=2412414141"
-          Abstract:
-            type: string
-            example: >-
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
-              magna, ultricies eu mauris at, vehicula elementum felis. Nunc
-              vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
-              lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
-              lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
-              eleifend[..]
-          Document Type:
-            type: string
-            example: article
-          Source:
-            type: string
-            example: scopus
-          EID:
-            type: string
-            example: >-
-              2-s2.0-45252342358235
-          abstract_structured:
-            type: string
-            example: "0"
-          filter_OA_include:
-            type: string
-            example: "1"
-          filter_study_include:
-            type: string
-            example: "0"
-          notes:
-            type: string
-            example: "note "
-
-  Paper_search_results:
-    type: object
-    properties:
-      results:
-        type: array
-        items:
-          $ref: '#/definitions/Paper_search_result'
-      hasbefore:
-        type: boolean
-      continues: 
-        type: boolean
-
-  Paper_for_post_put:
-    type: object
-    properties:
-      Authors:
-        type: string
-        example: >-
-          Bygholm, Hansen
-      Title:
-        type: string
-        example: x relations to y
-      Year:
-        type: string
-        example: "2017"
-        format: date
-        pattern: "YYYY"
-      Source title:
-        type: string
-        example: Educations in y
-      Abstract:
-        type: string
-        example: >-
-          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
-          magna, ultricies eu mauris at, vehicula elementum felis. Nunc
-          vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
-          lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
-          lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
-          eleifend[..]
-      Document Type:
-        type: string
-        example: article
-      EID:
-        type: string
-        example: >-
-          2-s2.0-45252342358235
-      notes:
-        type: string
-        example: "note"
-
-  Project:
-    type: object
-    properties:
-      ID:
-        type: integer
-        description: the ID on the internal database
-        example: 1
-      date_created:
-        type: string
-        format: date-time
-        example:  "2017-07-21T17:32:28Z"
-      date_last_modified:
-        type: string
-        format: date-time
-        example:  "2017-09-24T18:38:00Z"
-      data:
-        type: object
-        properties:
-          name:
-            type: string
-            example: "robots research"
-          description:
-            type: string
-            example: >-
-              orem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
-              magna, ultricies eu mauris at, vehicula elementum felis. Nunc
-              vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
-
-  Projects:
-    type: array
-    items:
-      $ref: '#/definitions/Project'
-  
-  Result_projects:
-    type: object
-    properties:
-      results:
-        $ref : '#/definitions/Projects'
-      hasbefore:
-        type: boolean
-      continues: 
-        type: boolean
-
-  Project_for_post_put:
-    type: object
-    properties:
-      name:
-        type: string
-        example: "robots research"
-      description:
-        type: string
-        example: >-
-          orem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
-          magna, ultricies eu mauris at, vehicula elementum felis. Nunc
-          vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
-
-
-  Project_paper:
-    type: object
-    properties:
-      ID:
-        type: integer
-        description: the ID on the internal database
-        example: 1
-      date_created:
-        type: string
-        format: date-time
-        example:  "2017-07-21T17:32:28Z"
-      date_last_modified:
-        type: string
-        format: date-time
-        example:  "2017-09-24T18:38:00Z"
-      data:
-        type: object
-        properties:
-          Authors:
-            type: string
-            example: >-
-              Bygholm, Hansen
-          Title:
-            type: string
-            example: x relations to y
-          Year:
-            type: string
-            example: "2017"
-            format: date
-            pattern: "YYYY"
-          Source title:
-            type: string
-            example: Educations in y
-          Link:
-            type: string
-            example: "https://scopus.com/bla/inward?uri=2412414141"
-          Abstract:
-            type: string
-            example: >-
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
-              magna, ultricies eu mauris at, vehicula elementum felis. Nunc
-              vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
-              lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
-              lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
-              eleifend[..]
-          Document Type:
-            type: string
-            example: article
-          Source:
-            type: string
-            example: scopus
-          EID:
-            type: string
-            example: >-
-              2-s2.0-45252342358235
-          abstract_structured:
-            type: string
-            example: "0"
-          filter_OA_include:
-            type: string
-            example: "1"
-          filter_study_include:
-            type: string
-            example: "0"
-          notes:
-            type: string
-            example: "note"
-      project_id:
-        type: integer
-        description: the ID of project associated
-        example: 1
-
-  Project_papers:
-    type: array
-    items:
-      $ref: '#/definitions/Project_paper'
-
-
-
-
-  Project_paper_for_post:
-    type: object
-    properties:
-      project_id:
-        type: integer
-        example: "1"
-      paper_id:
-        type: integer
-        example: "2"
 
 
 
 
 
-parameters:
-  Query:
-    in: query
-    name: query
-    type: string
-    description: can be a natural language text or an id
-    required: true
-  Query_optional:
-    in: query
-    name: query
-    type: string
-    description: can be a natural language text or an id(optional)
-  Type_for_paper:
-    in: query
-    name: type
-    type: string
-    enum:
-      - article
-      - review
-      - book chapter
-    description: the type of papers to search
-  Subject_for_paper:
-    in: query
-    name: subject
-    type: string
-    enum:
-      - engineering
-      - computer science
-      - physics
-    description: the subject of the papers to search
-  Year_for_paper:
-    in: query
-    name: year
-    type: string
-    format: date
-    pattern: "YYYY"
-    description: the year when the papers to search were published
-  Number:
-    in: query
-    name: number
-    type: integer
-    minimum: 1
-    maximum: 100
-    description: select the maximum amount of papers you want to receive
-  After:
-    in: query
-    name: after
-    type: integer
-    description: the ids of the papers will be greater than this one
-  Before:
-    in: query
-    name: before
-    type: integer
-    description: the ids of the papers will be lower than this one
-  Offset:
-    in: query
-    name: offset
-    type: integer
-    description: select the offset of the list you receive
-  OrderBy:
-    in: query
-    name: orderby
-    type: string
-    enum:
-      - id
-      - date_created
-      - date_last_modified
-      - date_deleted
-    description: the attribute for sorting the papers you want to receive
-  Sort:
-    in: query
-    name: sort
-    type: string
-    enum:
-      - asc
-      - desc
-    description: sort ascending or descending
-
-  Project_id:
-    in: query
-    name: project_id
-    description: the internal id of a project
-    type: integer
-    required: true
-
-  Paper_id_in_path:
-    in: path
-    name: paper_id
-    description: the internal id of a paper
-    type: integer
-    required: true
 
 
-  Project_id_in_path:
-    in: path
-    name: project_id
-    description: the internal id of a project
-    type: integer
-    required: true
-
-  Project_paper_id_in_path:
-    in: path
-    name: project_paper_id
-    description: the internal id of a project_paper
-    type: integer
-    required: true
 
 
-  Paper_post_put_body:
-    in: body
-    name: body
-    description: content of the paper to be stored
-    required: true
-    schema:
-      $ref: "#/definitions/Paper_for_post_put"
-      required:
-        - Authors
-        - Title
-        - Year
-        - Source title
-        - Abstract
-        - Document Type
-        - EID
-        - notes
-
-  Project_post_put_body:
-    in: body
-    name: body
-    description: basic content of the project to be stored
-    required: true
-    schema:
-      $ref: "#/definitions/Project_for_post_put"
-      required:
-        - name
-        - description
-
-  Project_paper_post_body:
-    in: body
-    name: body
-    description: project_id and paper_id
-    required: true
-    schema:
-      $ref: "#/definitions/Project_paper_for_post"
-      required:
-        - project_id
-        - paper_id
+#responses ===================================================
 
 responses:
   Unknown_error:
@@ -810,3 +322,441 @@ responses:
     description: Internal Server Error
     schema:
       $ref: '#/definitions/Error'
+
+
+
+#definitions ===================================================
+
+definitions:
+  Error:
+    properties:
+      statusCode:
+        type: integer
+      payload:
+        type: object
+        properties:
+          statusCode:
+            type: integer
+          error:
+            type: string
+          message:
+            type: string
+      headers:
+        type: object
+
+  Paper_data:
+    type: object
+    properties:
+      authors:
+        type: string
+        example: >-
+          Bygholm, Hansen
+      title:
+        type: string
+        example: x relations to y
+      year:
+        type: string
+        example: "2017"
+        format: date
+        pattern: "YYYY"
+      date:
+        type: string
+        example: "2017-10-01"
+        format: date
+        pattern: "YYYY-MM-DD"
+      source_title:
+        type: string
+        example: Educations in y
+      link:
+        type: string
+        example: "https://scopus.com/bla/inward?uri=2412414141"
+      abstract:
+        type: string
+        example: >-
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
+          magna, ultricies eu mauris at, vehicula elementum felis. Nunc
+          vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
+          lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
+          lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
+          eleifend[..]
+      document_type:
+        type: string
+        example: article
+      source:
+        type: string
+        example: scopus
+      eid:
+        type: string
+        example: >-
+          2-s2.0-45252342358235
+      abstract_structured:
+        type: string
+        example: "0"
+      filter_oa_include:
+        type: string
+        example: "1"
+      filter_study_include:
+        type: string
+        example: "0"
+      notes:
+        type: string
+        example: "note"
+      manual:
+        type: string
+        example: "0"
+      doi:
+        type: string
+        example: "10.1000/182"
+
+  Paper:
+    type: object
+    properties:
+      ID:
+        type: integer
+        description: the ID on the internal database
+        example: 1
+      date_created:
+        type: string
+        format: date-time
+        example:  "2017-07-21T17:32:28Z"
+      date_last_modified:
+        type: string
+        format: date-time
+        example:  "2017-09-24T18:38:00Z"
+      data:
+        $ref: '#/definitions/Paper_data'
+
+  Papers:
+    type: array
+    items:
+      $ref: '#/definitions/Paper'
+
+
+  Result_of_paper_search:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Paper_data'
+      totalResults:
+        type: integer
+
+
+  Project_paper:
+    type: object
+    properties:
+      ID:
+        type: integer
+        description: the ID on the internal database
+        example: 1
+      date_created:
+        type: string
+        format: date-time
+        example:  "2017-07-21T17:32:28Z"
+      date_last_modified:
+        type: string
+        format: date-time
+        example:  "2017-09-24T18:38:00Z"
+      data:
+        $ref: '#/definitions/Paper_data'
+      project_id:
+        type: integer
+        description: the ID of project associated
+        example: 1
+
+  Project_papers:
+    type: array
+    items:
+      $ref: '#/definitions/Project_paper'
+
+
+  Project_paper_for_post:
+    type: object
+    properties:
+      project_id:
+        type: integer
+        example: "1"
+      arrayEid:
+        type: array
+        items:
+          type: string
+          example: "2-s2.0-85062651974"
+      authors:
+        type: string
+        example: >-
+          Bygholm, Hansen
+      title:
+        type: string
+        example: x relations to y
+      year:
+        type: string
+        example: "2017"
+        format: date
+        pattern: "YYYY"
+      source_title:
+        type: string
+        example: Educations in y
+      link:
+        type: string
+        example: "https://scopus.com/bla/inward?uri=2412414141"
+      abstract:
+        type: string
+        example: >-
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
+          magna, ultricies eu mauris at, vehicula elementum felis. Nunc
+          vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
+          lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
+          lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
+          eleifend[..]
+      document_type:
+        type: string
+        example: article
+      source:
+        type: string
+        example: scopus
+      eid:
+        type: string
+        example: >-
+          2-s2.0-45252342358235
+      abstract_structured:
+        type: string
+        example: "0"
+      filter_oa_include:
+        type: string
+        example: "1"
+      filter_study_include:
+        type: string
+        example: "0"
+      notes:
+        type: string
+        example: "note"
+      manual:
+        type: string
+        example: "0"
+      doi:
+        type: string
+        example: "10.1000/182"
+
+
+
+  Project_data:
+    type: object
+    properties:
+      name:
+        type: string
+        example: "robots research"
+      description:
+        type: string
+        example: >-
+          orem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
+          magna, ultricies eu mauris at, vehicula elementum felis. Nunc
+          vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
+
+  Project:
+    type: object
+    properties:
+      ID:
+        type: integer
+        description: the ID on the internal database
+        example: 1
+      date_created:
+        type: string
+        format: date-time
+        example:  "2017-07-21T17:32:28Z"
+      date_last_modified:
+        type: string
+        format: date-time
+        example:  "2017-09-24T18:38:00Z"
+      data:
+        $ref: '#/definitions/Project_data'
+
+  Projects:
+    type: array
+    items:
+      $ref: '#/definitions/Project'
+  
+  Result_projects:
+    type: object
+    properties:
+      results:
+        $ref : '#/definitions/Projects'
+      totalResults:
+        type: integer
+
+
+
+
+
+#parameters==============================================
+
+parameters:
+
+  Query:
+    in: query
+    name: query
+    type: string
+    description: keywords to search
+    required: true
+
+  Query_optional:
+    in: query
+    name: query
+    type: string
+    description: keywords to search
+
+
+
+  SearchBy:
+    in: query
+    name: searchBy
+    type: string
+    enum:
+      - all
+      - author
+      - content
+      - advanced
+    description: the attribute for search on the specific field of papers
+
+  OrderByForSearch:
+    in: query
+    name: orderBy
+    type: string
+    enum:
+      - date
+      - title
+    description: the attribute for sorting the papers you want to receive
+
+  OrderBy:
+    in: query
+    name: orderBy
+    type: string
+    description: the attribute for sorting the papers you want to receive
+
+  Year:
+    in: query
+    name: year
+    type: string
+    format: date
+    pattern: "YYYY"
+    description: the year when the papers to search were published
+
+  Sort:
+    in: query
+    name: sort
+    type: string
+    enum:
+      - ASC
+      - DESC
+    description: sort ascending or descending
+
+
+  Start:
+    in: query
+    name: start
+    type: integer
+    description: the offset where will start to get the papers
+
+  Count:
+    in: query
+    name: count
+    type: integer
+    description: select the maximum amount of papers you want to receive
+
+
+
+  Project_id:
+    in: query
+    name: project_id
+    description: the internal id of a project
+    type: integer
+    required: true
+
+  Project_id_in_path:
+    in: path
+    name: project_id
+    description: the internal id of a project
+    type: integer
+    required: true
+
+  Project_paper_id_in_path:
+    in: path
+    name: project_paper_id
+    description: the internal id of a project_paper
+    type: integer
+    required: true
+
+
+  Paper_post_put_body:
+    in: body
+    name: body
+    description: content of the paper to be stored
+    required: true
+    schema:
+      $ref: "#/definitions/Paper_data"
+      required:
+        - authors
+        - title
+        - year
+        - date
+        - source_title
+        - link
+        - abstract
+        - document_type
+        - source
+        - eid
+        - abstract_structured
+        - filter_oa_include
+        - filter_study_include
+        - notes
+        - manual
+        - doi
+
+  Project_post_put_body:
+    in: body
+    name: body
+    description: basic content of the project to be stored
+    required: true
+    schema:
+      $ref: "#/definitions/Project_data"
+      required:
+        - name
+        - description
+
+  Project_paper_post_body:
+    in: body
+    name: body
+    description: project_id and arrayEid or new paper object
+    required: true
+    schema:
+      $ref: "#/definitions/Project_paper_for_post"
+      required:
+        - project_id
+
+
+
+
+# are not used yet =============================
+
+  Type_for_paper:
+    in: query
+    name: type
+    type: string
+    enum:
+      - article
+      - review
+      - book chapter
+    description: the type of papers to search
+
+  Subject_for_paper:
+    in: query
+    name: subject
+    type: string
+    enum:
+      - engineering
+      - computer science
+      - physics
+    description: the subject of the papers to search
+
+
+

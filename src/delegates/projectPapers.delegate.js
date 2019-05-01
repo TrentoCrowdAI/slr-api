@@ -3,6 +3,8 @@
 // functionality related to HITs.
 
 const projectPapersDao = require(__base + 'dao/projectPapers.dao');
+const projectsDao = require(__base + 'dao/projects.dao');
+
 //error handler
 const errHandler = require(__base + 'utils/errors');
 //supply the auxiliary function
@@ -15,7 +17,7 @@ const validationSchemes = require(__base + 'utils/validation.schemes');
 /**
  * insert a list of projectPaper by copy from fake_paper table
  * @param {array[]} arrayEid array of paper eid
- * @param {int} project_id
+ * @param {number} project_id
  * @returns {array[]} projectPaper created
  */
 async function insertFromPaper(arrayEid, project_id) {
@@ -29,14 +31,23 @@ async function insertFromPaper(arrayEid, project_id) {
     arrayEid = support.differenceOperation(arrayEid, arrayEidExisting);
     //call DAO layer
     let res = await projectPapersDao.insertFromPaper(arrayEid, project_id);
+
+    //update the last modified date
+    let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
+    //error check
+    if (updateProjectDate === 0)
+    {
+        throw errHandler.createNotFoundError('the project doesn\'t exist!');
+    }
+
     return  res;
 }
 
 
 /**
  * insert a custom paper into a project
- * @param {object} newPaper array of paper eid
- * @param {int} project_id
+ * @param {object} newPaper
+ * @param {number} project_id
  * @returns {object} projectPaper created
  */
 async function insertCustomPaper(newPaper, project_id) {
@@ -53,12 +64,21 @@ async function insertCustomPaper(newPaper, project_id) {
 
     //call DAO layer
     let res = await projectPapersDao.insert(newPaper, project_id);
+
+    //update the last modified date
+    let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
+    //error check
+    if (updateProjectDate === 0)
+    {
+        throw errHandler.createNotFoundError('the project doesn\'t exist!');
+    }
+
     return  res;
 }
 
 /**
  *  * update a projectPaper
- * @param {int} projectPaper_id
+ * @param {number} projectPaper_id
  * @param {object} newProjectPaperData
  * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
@@ -75,36 +95,65 @@ async function update(projectPaper_id, newProjectPaperData) {
         throw errHandler.createBadRequestError('the new projectPaper data for update is not valid!');
     }
 
+    //get project id by projectPaper id
+    let project_id = await projectPapersDao.getProjectIdByProjectPaperId(projectPaper_id);
+    if(project_id === -1){
+        throw errHandler.createNotFoundError('ProjectPaper does not exist!');
+    }
+    //update the last modified date
+    let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
+    //error check
+    if (updateProjectDate === 0)
+    {
+        throw errHandler.createNotFoundError('the project doesn\'t exist!');
+    }
+
     //call DAO layer
     let numberRow = await projectPapersDao.update(projectPaper_id, newProjectPaperData);
-
     //error check
     if (numberRow === 0)
     {
         throw errHandler.createNotFoundError('ProjectPaper does not exist!');
     }
+
+
 
 }
 
 
 /**
  *  * delete a projectPaper
- * @param {int} projectPaper_id
+ * @param {number} projectPaper_id
  * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function deletes(projectPaper_id) {
 
     //check validation of projectPaper_id and transform the value in integer
     projectPaper_id = support.setAndCheckValidProjectPaperId(projectPaper_id);
+
+    //get project id by projectPaper id
+    let project_id = await projectPapersDao.getProjectIdByProjectPaperId(projectPaper_id);
+    if(project_id === -1){
+        throw errHandler.createNotFoundError('ProjectPaper does not exist!');
+    }
+    //update the last modified date
+    let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
+    //error check
+    if (updateProjectDate === 0)
+    {
+        throw errHandler.createNotFoundError('the project doesn\'t exist!');
+    }
+
     
     //call DAO layer
     let numberRow = await projectPapersDao.deletes(projectPaper_id);
-
     //error check
     if (numberRow === 0)
     {
         throw errHandler.createNotFoundError('ProjectPaper does not exist!');
     }
+
+
 }
 
 
@@ -126,6 +175,8 @@ async function selectById(projectPaper_id)  {
     {
         throw errHandler.createNotFoundError('ProjectPaper does not exist!');
     }
+
+
 
     return res;
 }
