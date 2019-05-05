@@ -59,7 +59,7 @@ async function insertCustomPaper(newPaper, project_id) {
     let valid = ajv.validate(validationSchemes.paper, newPaper);
     //if is not a valid input
     if (!valid) {
-        throw errHandler.createBadRequestError('the new paper data is not valid!');
+        throw errHandler.createBadRequestError('the new paper data is not valid! (' + ajv.errorsText() + ')');
     }
 
     //call DAO layer

@@ -1,5 +1,5 @@
 
-//scheme of paper, has 13 attributes
+//scheme of paper, has 13 attributes, it is used only for the validation of the custom paper
 const paper = {
     "type": "object",
     "properties": {
@@ -15,9 +15,8 @@ const paper = {
             "type": "string",
             "isNotEmpty": true
         },
-        "date": {
-            "type": "string",
-            "isNotEmpty": true
+        "date": { /* temporarly unused */
+            "type": "string"
         },
         "source_title": {
             "type": "string",
@@ -39,9 +38,8 @@ const paper = {
             "type": "string",
             "isNotEmpty": true
         },
-        "eid": {
-            "type": "string",
-            "isNotEmpty": true
+        "eid": { /* temporarly unused */
+            "type": "string"
         },
         "abstract_structured": {
             "type": "string",
@@ -68,7 +66,7 @@ const paper = {
             "isNotEmpty": true
         }
     },
-    "required": ["authors", "title", "year", "date","source_title", "link", "abstract", "document_type", "source", "eid", "abstract_structured", "filter_oa_include", "filter_study_include", "notes", "manual", "doi"]
+    "required": ["authors", "title", "year", "source_title", "link", "abstract", "document_type", "source", "abstract_structured", "filter_oa_include", "filter_study_include", "notes", "manual", "doi"]
 };
 
 //is the same with paper object
