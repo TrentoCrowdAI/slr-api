@@ -1,6 +1,7 @@
 global.__base = __dirname + '/';
 
 const express = require('express');
+
 const bodyParser = require('body-parser');
 //HTTP-friendly error objects
 const Boom = require('boom');
@@ -13,11 +14,14 @@ const papersController = require('./controllers/papers.controller');
 const projectsController = require('./controllers/projects.controller');
 //controller for projectPapers
 const projectPapersController = require('./controllers/projectPapers.controller');
+//controller for uploadFile
+const uploadFileController = require('./controllers/uploadFile.controller');
 
 const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+
+app.use(bodyParser.json({limit: '50mb'}));
+app.use(bodyParser.urlencoded({extended: true, limit: '50mb', parameterLimit: 1000000}));
 
 // health check (public endpoint)
 app.get('/', (req, res) => {
@@ -43,6 +47,8 @@ app.all('*', function (req, res, next) {
 app.use(papersController);
 app.use(projectsController);
 app.use(projectPapersController);
+app.use(uploadFileController);
+
 
 //manages the object error threw by level delegate
 app.use((e, req, res, next) => {

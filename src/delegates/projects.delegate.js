@@ -162,11 +162,14 @@ async function selectBySingleKeyword(keyword, orderBy, sort, start, count) {
 
 
 
+
+
 module.exports = {
     insert,
     update,
     deletes,
     selectById,
     selectAll,
-    selectBySingleKeyword
+    selectBySingleKeyword,
+
 };

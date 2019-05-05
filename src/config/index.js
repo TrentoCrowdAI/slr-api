@@ -2,8 +2,7 @@
 
 
 module.exports = {
-    db: {
-
+    "db": {
         // were not used
         user: process.env.PGUSER,
         password: process.env.PGPASSWORD,
@@ -15,13 +14,16 @@ module.exports = {
         url: process.env.DATABASE_URL
     },
 
-    pagination:{
+    "pagination":{
         defaultCount: 10
 
     },
 
-    scopus:{
+    "scopus":{
         apiKey: "1c828574217f856f6cf496239684fed4",
         url: "https://api.elsevier.com/content/search/scopus",
-    }
+    },
+
+    "pdf_parse_server": "http://scienceparse.allenai.org/v1",
+
 };

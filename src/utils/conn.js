@@ -1,6 +1,7 @@
 const fetch = require("node-fetch");
 const AbortController = require("abort-controller");
 const Headers = require('fetch-headers');
+const fs= require('fs');
 
 /*this is the file to create fetch request*/
 
@@ -12,6 +13,7 @@ const timeOutTime = 10 * 1000;
 const http = {
     get,
     post,
+    postPdf
 };
 
 
@@ -19,9 +21,10 @@ const http = {
  * create a basic fetch request
  * @param url
  * @param options request config
+ * @param {int} timeOutTime
  * @return {object} response data
  */
-async function request(url, options = {}) {
+async function request(url, options, timeOutTime) {
     try {
         //console.log("================================\n"+url);
 
@@ -88,7 +91,7 @@ async function get(url, queryData = "") {
         "headers": jsonHeaders,
     };
 
-    return await request(url + query, options);
+    return await request(url + query, options, timeOutTime);
 }
 
 
@@ -111,9 +114,35 @@ async function post(url, bodyData = "") {
         "body": body,
     };
 
-    return await request(url, options);
+    return await request(url, options, timeOutTime);
 }
 
+
+/**
+ * post pdf method
+ * @param url
+ * @param fsStream read stream of file
+ * @return {object} response data
+ */
+async function postPdf(url, fsStream) {
+
+    //custom timeout for request
+    let customTimeOutTime= 60 * 1000;
+
+    let jsonHeaders = new Headers();
+    jsonHeaders.append('Accept', 'application/json, text/plain, */*');
+    //jsonHeaders.append('Cache-Control', 'no-cache');
+    jsonHeaders.append('Content-Type', 'application/pdf');
+    let options = {
+        "method": 'POST',
+        "headers": jsonHeaders,
+        "encoding": null,
+        //"body": bodyData
+        "body": fsStream,
+    };
+
+    return await request(url, options, customTimeOutTime);
+}
 
 
 

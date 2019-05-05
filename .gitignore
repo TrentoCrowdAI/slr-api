@@ -29,3 +29,6 @@ config.json
 .netbeans.xml
 
 .idea
+
+#temp file
+tmp
