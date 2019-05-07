@@ -17,8 +17,9 @@ var validExample = {
     "abstract_structured": "1",
     "filter_oa_include": "1",
     "filter_study_include": "0",
-    "notes": ""
-
+    "notes": "",
+    "manual":"0",
+    "doi": "abcdefg"
 };
 
 var validExampleForPost1 = {
@@ -46,7 +47,8 @@ var notValidExampleForUpdate = {
     "abstract_structured": "1",
     "filter_OA_include": "1",
     "filter_study_include": "0",
-    "notes2": ""
+    "notes2": "",
+    "doi": "abcdefg"
 };
 
 var notValidExampleForPost1 = {

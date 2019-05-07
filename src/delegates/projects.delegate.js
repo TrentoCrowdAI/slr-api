@@ -105,7 +105,7 @@ async function selectById(project_id) {
 /**
  * 
  * select all project
- * @param {string} orderBy [id, date_last_modified}
+ * @param {string} orderBy [id, date_created, date_last_modified, date_deleted}
  * @param {string} sort {ASC or DESC}
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
@@ -133,7 +133,7 @@ async function selectAll(orderBy, sort, start, count) {
 /**
  * select project by a single keyword
  * @param {string} keyword to search
- * @param {string} orderBy [id, date_last_modified}
+ * @param {string} orderBy [id, date_created, date_last_modified, date_deleted}
  * @param {string} sort {ASC or DESC}
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
@@ -162,11 +162,14 @@ async function selectBySingleKeyword(keyword, orderBy, sort, start, count) {
 
 
 
+
+
 module.exports = {
     insert,
     update,
     deletes,
     selectById,
     selectAll,
-    selectBySingleKeyword
+    selectBySingleKeyword,
+
 };

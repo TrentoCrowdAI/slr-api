@@ -53,7 +53,7 @@ const createBadImplementationError = msg => {
 const createBoomErrorForService = e => {
     
     //default errorBoom
-    var errorBoom =Boom.badImplementation();
+    let errorBoom =Boom.badImplementation(e.message);
     
     if (e.name === errorNames.badRequest)
     {
@@ -68,7 +68,7 @@ const createBoomErrorForService = e => {
     }
     //when the error isn't threw by delegate level
     else if(e.status === 401){
-        const message = 'Not authorized to perform the request';
+        let message = 'Not authorized to perform the request';
         errorBoom = Boom.unauthorized(message);
     }
     //to add the other cases of error

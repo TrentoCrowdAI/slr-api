@@ -16,10 +16,7 @@ async function insert(newProjectPaperData, project_id) {
         'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES($1,$2,$3, $4, $5) RETURNING *',
         [new Date(), new Date(), null, newProjectPaperData, project_id]
     );
-    let upd = await db.query(
-        'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
-        [new Date(), project_id]
-    );
+
     return res.rows[0];
 }
 
@@ -44,36 +41,24 @@ async function insertFromPaper(arrayEid, project_id) {
             [project_id]
             );
 
-    let upd = await db.query(
-        'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
-        [new Date(), project_id]
-    );
+
 
     return res.rows;
 }
 
 /**
  *  * update a projectPaper
- * @param {integer} projectPaper_id
+ * @param {int} projectPaper_id
  * @param {object} newProjectPaperData
- * @returns {integer} number of row affected , 1 if ok, 0 if failed
+ * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function update(projectPaper_id, newProjectPaperData) {
-    let id = await db.query(
-        'SELECT project_id FROM public.' + db.TABLES.projectPapers + ' WHERE "id" = $1',
-        [projectPaper_id]);
+
 
     let res = await db.query(
             'UPDATE public.' + db.TABLES.projectPapers + ' SET "date_last_modified" = $1,  "data" = $2 WHERE "id" = $3',
             [new Date(), newProjectPaperData, projectPaper_id]
             );
-    
-    if(id.rows[0]){
-        let upd = await db.query(
-            'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
-            [new Date(), id.rows[0].project_id]
-        );
-    }
 
     return res.rowCount;
 }
@@ -81,33 +66,22 @@ async function update(projectPaper_id, newProjectPaperData) {
 
 /**
  *  * delete a projectPaper
- * @param {integer} projectPaper_id
- * @returns {integer} number of row affected , 1 if ok, 0 if failed
+ * @param {int} projectPaper_id
+ * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function deletes(projectPaper_id) {
-    console.log("searching for " + projectPaper_id + " to delete");
-    let id = await db.query(
-        'SELECT project_id FROM public.' + db.TABLES.projectPapers + ' WHERE "id" = $1',
-        [projectPaper_id]);
-    console.log("FOUND");
-    console.log(id.rows[0]);
+
     let res = await db.query(
             'DELETE FROM public.' + db.TABLES.projectPapers + ' WHERE id = $1',
             [projectPaper_id]
             );
-    if(id.rows[0]){
-        let upd = await db.query(
-            'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1 WHERE "id" = $2',
-            [new Date(), id.rows[0].project_id]
-        );
-    }
 
     return res.rowCount;
 }
 
 /**
  * select a projectPaper
- * @param {integer} projectPaper_id
+ * @param {int} projectPaper_id
  * @returns {object} projectPaper found
  */
 async function selectById(projectPaper_id) {
@@ -241,6 +215,29 @@ async function checkExistenceByEids(arrayEid, project_id) {
     }
     return array;
 }
+/*
+* get project id of projectPaper by projectPaper id
+* @param {int} projectPaper_id
+* @returns {int} project id if there is projectPaper, -1 if it isn't exist
+*/
+async function getProjectIdByProjectPaperId(projectPaper_id) {
+
+
+    let res = await db.query(
+        'SELECT project_id FROM public.' + db.TABLES.projectPapers + '  WHERE  id = $1 ; ',
+        [projectPaper_id]
+    );
+
+    let output = -1;
+    if(res.rows.length > 0){
+        output = parseInt(res.rows[0].project_id);
+    }
+
+
+    return output;
+
+}
+
 
 
 module.exports = {
@@ -252,5 +249,6 @@ module.exports = {
     selectByProject,
     //selectByIdAndProjectId,
     searchPaperByProject,
-    checkExistenceByEids
+    checkExistenceByEids,
+    getProjectIdByProjectPaperId
 };
