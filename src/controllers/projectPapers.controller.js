@@ -36,18 +36,12 @@ router.get('/papers', async (req, res, next) => {
 });
 
 
-//insert a new projectPaper
+//insert a new projectPaper by eids
 router.post('/papers', async (req, res, next) => {
     try {
-        let projectPaper = null;
         let arrayEid = req.body.arrayEid;
         let project_id = req.body.project_id;
-        if(arrayEid){
-            projectPaper = await projectPapersDelegate.insertFromPaper(arrayEid, project_id);
-        }else{
-            let newPaper = req.body.paper;
-            projectPaper = await projectPapersDelegate.insertCustomPaper(newPaper, project_id);
-        }
+        let projectPaper = await projectPapersDelegate.insertFromPaper(arrayEid, project_id);
         res.status(201).json(projectPaper);
     }
     catch (e) {
@@ -55,6 +49,23 @@ router.post('/papers', async (req, res, next) => {
         next(e);
     }
 });
+
+//insert a new projectPaper manual
+router.post('/customPapers', async (req, res, next) => {
+    try {
+
+        let project_id = req.body.project_id;
+        let newPaper = req.body.paper;
+        let projectPaper = await projectPapersDelegate.insertCustomPaper(newPaper, project_id);
+
+        res.status(201).json(projectPaper);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
 
 
 //get a projectPaper

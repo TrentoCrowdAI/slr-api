@@ -103,9 +103,9 @@ describe('good cases', () => {
         //let result = await response.body;
     });
 
-    test('POST /papers should return 201(on paper object)', async () => {
+    test('POST /customPapers should return 201(on paper object)', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/papers').send(validExampleForPost2).set('Accept', 'application/json');
+        let response = await request(app).post('/customPapers').send(validExampleForPost2).set('Accept', 'application/json');
         expect(response.status).toBe(201);
         //let result = await response.body;
     });    
@@ -184,17 +184,19 @@ describe('bad cases', () => {
         expect(response.status).toBe(400);
     });
 
-    test('POST /papers should return 400 if paper has missing fields', async () => {
-        jest.setTimeout(10000);
-        let response = await request(app).post('/papers').send(notValidExampleForPost3).set('Accept', 'application/json');;
-        expect(response.status).toBe(400);
-    });
-
     test('POST /papers should return 400 if mandatory field has wrong type', async () => {
         jest.setTimeout(10000);
         let response = await request(app).post('/papers').send(notValidExampleForPost2).set('Accept', 'application/json');;
         expect(response.status).toBe(400);
     });
+
+    test('POST /customPapers should return 400 if paper has missing fields', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).post('/customPapers').send(notValidExampleForPost3).set('Accept', 'application/json');;
+        expect(response.status).toBe(400);
+    });
+
+
 
 
     test('PUT /papers/3 should return 400 if mandatory field is not valid', async () => {

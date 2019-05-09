@@ -62,8 +62,7 @@ const paper = {
             "isNotEmpty": true
         },
         "doi": {
-            "type": "string",
-            "isNotEmpty": true
+            "type": "string"
         }
     },
     "required": ["authors", "title", "year", "source_title", "link", "abstract", "document_type", "source", "abstract_structured", "filter_oa_include", "filter_study_include", "notes", "manual", "doi"]

@@ -193,7 +193,7 @@ paths:
 
     post:
       summary: add new paper to specific project
-      description: copy the paper into a project_paper table
+      description: copy the paper from local paper table into a project_paper table
       tags:
         - Projects Papers
       parameters:
@@ -272,7 +272,30 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
+  '/customPapers':
 
+    post:
+      summary: add new manual paper to specific project
+      description: insert the new paper by form
+      consumes:
+        - application/pdf
+      tags:
+        - Projects Papers
+      parameters:
+        - $ref: '#/parameters/Project_paper_custom_post_body'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/Project_paper'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
 
 
 
@@ -482,6 +505,14 @@ definitions:
         items:
           type: string
           example: "2-s2.0-85062651974"
+
+
+  Project_paper_custom_for_post:
+    type: object
+    properties:
+      project_id:
+        type: integer
+        example: "1"
       authors:
         type: string
         example: >-
@@ -494,6 +525,11 @@ definitions:
         example: "2017"
         format: date
         pattern: "YYYY"
+      date:
+        type: string
+        example: "2017-10-01"
+        format: date
+        pattern: "YYYY-MM-DD"
       source_title:
         type: string
         example: Educations in y
@@ -537,7 +573,6 @@ definitions:
       doi:
         type: string
         example: "10.1000/182"
-
 
 
   Project_data:
@@ -726,15 +761,39 @@ parameters:
   Project_paper_post_body:
     in: body
     name: body
-    description: project_id and arrayEid or new paper object
+    description: project_id and arrayEid
     required: true
     schema:
       $ref: "#/definitions/Project_paper_for_post"
       required:
         - project_id
+        - arrayEid
 
-
-
+  Project_paper_custom_post_body:
+    in: body
+    name: body
+    description: project_id and new paper object
+    required: true
+    schema:
+      $ref: "#/definitions/Project_paper_custom_for_post"
+      required:
+        - project_id
+        - authors
+        - title
+        - year
+        - date
+        - source_title
+        - link
+        - abstract
+        - document_type
+        - source
+        - eid
+        - abstract_structured
+        - filter_oa_include
+        - filter_study_include
+        - notes
+        - manual
+        - doi
 
 # are not used yet =============================
 
