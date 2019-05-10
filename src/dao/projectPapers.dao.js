@@ -37,8 +37,8 @@ async function insertFromPaper(arrayEid, project_id) {
     }
 
     let res = await db.query(
-            'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", $1 FROM public.' + db.TABLES.papers + ' WHERE data->>\'eid\' IN (' + joinString + ') ) RETURNING *',
-            [project_id]
+            'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT $1, $2, "date_deleted", "data", $3 FROM public.' + db.TABLES.papers + ' WHERE data->>\'eid\' IN (' + joinString + ') ) RETURNING *',
+            [new Date(), new Date(), project_id]
             );
 
 
