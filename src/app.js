@@ -16,6 +16,8 @@ const projectsController = require('./controllers/projects.controller');
 const projectPapersController = require('./controllers/projectPapers.controller');
 //controller for uploadFile
 const uploadFileController = require('./controllers/uploadFile.controller');
+//controller for users management
+const usersController = require('./controllers/users.controller');
 
 const app = express();
 
@@ -48,6 +50,7 @@ app.use(papersController);
 app.use(projectsController);
 app.use(projectPapersController);
 app.use(uploadFileController);
+app.use(usersController);
 
 
 //manages the object error threw by level delegate
