@@ -2,6 +2,8 @@ const request = require('supertest');
 const app = require(__base + 'app');
 
 
+const validTokenId = "123456";
+
 
 test('dummy test', () => {
     expect(true).toBe(true);
@@ -12,7 +14,7 @@ describe('good cases', () => {
 
     test('GET /search should return 200 if find any papers', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/search?query=2015');
+        let response = await request(app).get('/search?query=2015').set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 
@@ -66,17 +68,17 @@ describe('bad cases', () => {
 
     test('GET /search should return 400 if mandatory field is not present', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/search');
+        let response = await request(app).get('/search').set('Authorization', validTokenId);
         expect(response.status).toBe(400)
     });
    test('GET /search should return 400 if optional field has illegal value', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/search?query=a&count=-1');
+        let response = await request(app).get('/search?query=a&count=-1').set('Authorization', validTokenId);
         expect(response.status).toBe(400)
     });
     test('GET /search should return 404 if it finds nothing', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/search?query=uaidafha');
+        let response = await request(app).get('/search?query=uaidafha').set('Authorization', validTokenId);
         expect(response.status).toBe(404)
     });
     

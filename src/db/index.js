@@ -88,7 +88,8 @@ const end = () => pool.end();
 const TABLES = Object.freeze({
     papers: 'papers',
     projects: 'projects',
-    projectPapers: 'project_papers'
+    projectPapers: 'project_papers',
+    users: 'users',
     
     //it will be add the new table names
 });

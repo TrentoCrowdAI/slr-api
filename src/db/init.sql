@@ -2,6 +2,7 @@
 DROP TABLE IF EXISTS "public"."papers";
 DROP TABLE IF EXISTS "public"."project_papers";
 DROP TABLE IF EXISTS "public"."projects";
+DROP TABLE IF EXISTS "public"."users";
 
 -- papers: {
 --  id: <serial8>, //paper id
@@ -64,6 +65,26 @@ CREATE TABLE "public"."project_papers" (
 "project_id" int8 NOT NULL,
 PRIMARY KEY ("id", "project_id"),
 CONSTRAINT "project_id" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON DELETE CASCADE ON UPDATE CASCADE
+)
+WITH (OIDS=FALSE)
+;
+
+-- users: {
+--  id: <serial8>, //users id
+--	date_created: <timestamp>, //creation date of users
+--	date_last_modified: <timestamp>,  // last modified date of users
+--	date_deleted: <timestamp>,  // date of elimination of users
+--	data: <jsonb>,        // json field that stores the user data
+-- }
+
+
+CREATE TABLE "public"."users" (
+"id" serial8 NOT NULL,
+"date_created" timestamptz NOT NULL,
+"date_last_modified" timestamptz NOT NULL,
+"date_deleted" timestamptz,
+"data" jsonb NOT NULL,
+PRIMARY KEY ("id")
 )
 WITH (OIDS=FALSE)
 ;

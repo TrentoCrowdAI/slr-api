@@ -49,3 +49,7 @@ INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "dat
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 1 FROM "public"."papers" WHERE id = 8 );
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 1 FROM "public"."papers" WHERE id = 9 );
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 1 FROM "public"."papers" WHERE id = 10 );
+
+
+--users data
+INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"aud": "282160526683-84sdnoqh3bc1obojfpepcbonnfg3uks4.apps.googleusercontent.com", "azp": "282160526683-84sdnoqh3bc1obojfpepcbonnfg3uks4.apps.googleusercontent.com", "exp": 1558194405, "iat": 1558190805, "iss": "accounts.google.com", "jti": "cbc0998b102d47ecb6714e1749a141a63b0b2a4c", "sub": "123456", "name": "miku club", "email": "123456@gmail.com", "locale": "zh-CN", "at_hash": "y-u6ybm3z_clCqlQitJMKA", "picture": "https://lh4.googleusercontent.com/-r-lbLfOxy1Y/AAAAAAAAAAI/AAAAAAAAAEA/8Ow_GV8FitI/s96-c/photo.jpg", "token_id": "123456", "given_name": "miku", "family_name": "club", "email_verified": true}');

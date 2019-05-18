@@ -1,3 +1,7 @@
+//library to check validity of google token
+const {OAuth2Client} = require('google-auth-library');
+
+const usersDao = require(__base + 'dao/users.dao');
 
 //error handler
 const errHandler = require(__base + 'utils/errors');
@@ -5,9 +9,12 @@ const errHandler = require(__base + 'utils/errors');
 const support = require(__base + 'utils/support');
 //fetch request
 const conn = require(__base + 'utils/conn');
+//the config file
+const config = require(__base + 'config');
+
 
 /**
- * gets the users info and logs him in
+ * gets the users info and logs him in database
  */
 async function userLogin(tokenId) {
 
@@ -16,27 +23,63 @@ async function userLogin(tokenId) {
     }
 
     //call Google api
-    let res = await conn.get("https://www.googleapis.com/oauth2/v3/tokeninfo", {"id_token" : tokenId});
-
-    if(!res.email){
-        throw errHandler.createBadRequestError("the token is incorrect!");
+    const oAuth2Client = new OAuth2Client(config.google_login_client_id);
+    let ticket;
+    try {
+        ticket = await oAuth2Client.verifyIdToken({
+            idToken: tokenId,
+            audience: config.google_login_client_id,
+        });
+    }
+    catch (e) {
+        throw errHandler.createBadRequestError("the token is incorrect: "+e.message);
     }
 
-    //in case of success do the following steps
-    //(1) check if the user exists
-    //(1.1) add the user to the Users table if it doesn't exist
-    
-    //(2) generate token for user and add him to the ActiveUsers table
+    //get user object from response of google
+    let user = ticket.getPayload();
+    //set token_id
+    user.token_id = tokenId;
 
-    //(3) send token and user data to client
+    //check user's existence
+    let existOfUser = await usersDao.checkUserByGoogleId(user.sub);
 
-    return  {
-            "user": {"email" : res.email, "name" : res.given_name, "surname" : res.family_name, "image" : res.picture}, 
-            "token": 123
-            };
+    let res;
+    //if is a new user
+    if(!existOfUser){
+        res= await usersDao.insert(user);
+    }
+    else{
+        res= await usersDao.updateByGoogleId(user.sub, user);
+    }
+
+    return {
+        "user": {"email": user.email, "name": user.given_name, "surname": user.family_name, "image": user.picture},
+        "token": tokenId
+    };
+}
+
+/**
+ * check user's existence by token Id
+ * @param {int} token_id
+ * @returns {boolean} true if found, false if not found
+ */
+async function checkUserByTokenId(tokenId) {
+
+    if (!tokenId || tokenId === 'null') {
+        throw errHandler.createBadRequestError("empty token id in header, the user must first login!");
+    }
+
+    //check user's existence in database
+    let res =  await usersDao.checkUserByTokenId(tokenId);
+    //if do not exist
+    if(!res){
+        throw errHandler.createBadRequestError("the token does not match any user!");
+    }
+
 }
 
 
 module.exports = {
-    userLogin
+    userLogin,
+    checkUserByTokenId,
 };

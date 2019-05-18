@@ -36,7 +36,7 @@ app.all('*', function (req, res, next) {
     //enable the cookie sending
     res.header('Access-Control-Allow-Credentials', 'true');
     res.header('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE, PUT');
-    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Accept, Cache-Control, Content-Type');
+    res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Accept, Cache-Control, Content-Type, Authorization');
 
     if (req.method === "OPTIONS") {
         res.sendStatus(200);
@@ -46,18 +46,19 @@ app.all('*', function (req, res, next) {
 });
 
 // define routes here
+app.use(usersController);
 app.use(papersController);
 app.use(projectsController);
 app.use(projectPapersController);
 app.use(uploadFileController);
-app.use(usersController);
+
 
 
 //manages the object error threw by level delegate
 app.use((e, req, res, next) => {
 
 
-    console.error('[Error]', e);
+    //console.error('[Error]', e);
 
     let error = errorsHelper.createBoomErrorForService(e);
 
