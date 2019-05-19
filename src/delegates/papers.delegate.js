@@ -132,7 +132,7 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
      temporary parameter
      * ============ */
 
-    orderBy = orderBy || "date";
+    orderBy = orderBy || "title";
     if (orderBy !== "date" && orderBy !== "title" ) {
         throw errHandler.createBadRequestError('orderBy has a not valid value!');
     }
@@ -267,6 +267,122 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
 
 }
 
+/**
+ *
+ * find similar papers
+ * @param {file} file to search
+ * @param {string} keyword paper title or url
+ * @param {int} start offset position where we begin to get
+ * @param {int} count number of papers
+ * @returns {Object} array of papers and total number of result
+ */
+async function similarSearch(file, keyword, start, count) {
+
+    
+    start = support.setAndCheckValidStart(start);
+    count = support.setAndCheckValidCount(count);
+
+
+    //error check
+    if(!file && !keyword){
+        throw errHandler.createBadRequestError('the file and keyword are empty!');
+    }
+    if(file && keyword && keyword !== ""){
+        throw errHandler.createBadRequestError("you can't input both a file and a keyword");
+    }
+    if(file && file.mimetype.indexOf("application/pdf")=== -1){
+        throw errHandler.createBadRequestError('the file is not a pdf!');
+    }
+
+    //prepare the query object
+    let queryData = {};
+
+    //number of papers and offset
+    queryData.start = start;
+    queryData.count =count;
+
+    //fetchData from scopus
+    let response = null;
+
+    //###########################################
+    //call for the service
+    //###########################################
+
+
+    //if we have a file and the service allows file upload we can sende the file
+    if(file){
+        //temporary fake call for 'search similar service
+        response = await scopusSearch("Trento", undefined, undefined, undefined, "ASC", start, count);
+        //this can be the call when a good 'search similar' service will be found
+        //response = await conn.post(config.search_similar_server, {"file" : fs.createReadStream(file.path), ...queryData});
+    }
+    //else if we have a query we search for similar papers based on the query(the query could be ad url to a specific paper or a DOI in the future)
+    else{
+        queryData.query=keyword;
+
+        //temporary fake call for 'search similar service
+        response = await scopusSearch(keyword, undefined, undefined, undefined, "ASC", start, count);
+        //response = await conn.get(config.search_similar_server, queryData);
+    }
+
+    //###########################################
+    //handle the response from the server(this may change based on the service used)
+    //###########################################
+
+    //if there is the error from fetch
+    if (response.message) {
+        throw errHandler.createBadImplementationError(response.message);
+    }
+
+    //number of results
+    let totalResults = response.totalResults;
+
+    //if results if 0, return the 404 error
+    if (totalResults === "0")
+    {
+        throw errHandler.createNotFoundError('the result is empty!');
+    }
+
+    //get paper array
+    let arrayResults = response.results;
+
+    //store a new paper array
+    let arrayPapers=[];
+    //a eids array for our new paper array
+    let arrayEid = [];
+
+    //create a new paper array with our format(this will change a lot based on the service used)
+    for(let i = 0; i < arrayResults.length; i++) {
+
+        let paper = arrayResults[i];
+
+        //push element in array
+        arrayPapers.push(paper);
+        arrayEid.push(arrayResults[i].eid);
+    }
+
+
+    //###########################################
+    //save the results in our local database before returning it
+    //###########################################
+
+    //return array of eids where in which the paper with same eid are already stored  in DB
+    let arrayEidExisting = await  papersDao.checkExistenceByEids(arrayEid);
+    //remove the paper already present in DB
+    let arrayPapersToInsert = support.removeElementFromArrayByEids(arrayPapers, arrayEidExisting);
+
+    //if there are the new papers
+    if(arrayPapersToInsert.length > 0){
+
+        //insert the papers in DB
+        let res = await papersDao.insertByList(arrayPapersToInsert);
+    }
+
+
+    //return the array of papers get from scopus and total number of results
+    return {"results": arrayPapers, "totalResults": totalResults};
+
+}
 
 /**
  * deprecated function selectBySingleKeyword and selectAll
@@ -365,5 +481,6 @@ module.exports = {
     selectById,
     //selectAll,
     //selectBySingleKeyword,
-    scopusSearch
+    scopusSearch,
+    similarSearch
 };

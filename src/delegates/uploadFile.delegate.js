@@ -18,7 +18,7 @@ async function parsePdf(file) {
 
     //error check
     if(!file){
-        throw errHandler.createBadRequestError('the file is not exist!');
+        throw errHandler.createBadRequestError('the file does not exist!');
     }
     if(file.mimetype.indexOf("application/pdf")=== -1){
         throw errHandler.createBadRequestError('the file is not a pdf!');

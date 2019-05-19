@@ -25,7 +25,9 @@ module.exports = {
     },
 
     "pdf_parse_server": "http://scienceparse.allenai.org/v1",
+    "search_similar_server" : undefined, //here you can put the url of the remote(or local) service that will search for similar papers
+
     "google_oauth": "https://oauth2.googleapis.com/tokeninfo",
-    "google_login_client_id": "282160526683-84sdnoqh3bc1obojfpepcbonnfg3uks4.apps.googleusercontent.com",
+    "google_login_client_id": "282160526683-84sdnoqh3bc1obojfpepcbonnfg3uks4.apps.googleusercontent.com"
 
 };

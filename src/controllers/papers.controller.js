@@ -31,6 +31,29 @@ router.get('/search', async (req, res, next) => {
     }
 });
 
+//search for a word in the papers
+router.post('/search/similar', async (req, res, next) => {
+    try
+    {
+        //input
+        let query = req.body.query;
+        let file = req.body.file;
+
+        //pagination parameters
+        let start = req.body.start;
+        let count = req.body.count;
+
+        let papers = await papersDelegate.similarSearch(file, query, start, count);
+
+        res.status(200).json(papers);
+    }
+    catch (e)
+    {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
 
 /*
  * 

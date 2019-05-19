@@ -18,6 +18,13 @@ describe('good cases', () => {
         expect(response.status).toBe(200);
     });
 
+    test('POST /search/similar should return 200 if find any papers', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).post('/search/similar').send({"query" : "2015"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(200);
+    });
+
+
     /* deprecated ----------------------------------
      * 
 
@@ -80,6 +87,11 @@ describe('bad cases', () => {
         jest.setTimeout(10000);
         let response = await request(app).get('/search?query=uaidafha').set('Authorization', validTokenId);
         expect(response.status).toBe(404)
+    });
+    test('POST /search/similar should return 404 if it finds nothing', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).post('/search/similar').send({"query" : "uaidafafa"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(404);
     });
     
         /* deprecated ----------------------------------

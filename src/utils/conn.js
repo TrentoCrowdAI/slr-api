@@ -111,6 +111,7 @@ async function post(url, bodyData = "") {
     let options = {
         "method": 'POST',
         "headers": jsonHeaders,
+        "encoding": null,
         "body": body,
     };
 
