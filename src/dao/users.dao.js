@@ -23,17 +23,32 @@ async function insert(newUserData) {
  */
 async function updateByGoogleId(google_id, newUserData) {
     let res = await db.query(
-        'UPDATE public.' + db.TABLES.projects + ' SET "date_last_modified" = $1,  "data" = $2 WHERE data->>\'sub\' = $3',
+        'UPDATE public.' + db.TABLES.users + ' SET "date_last_modified" = $1,  "data" = $2 WHERE data->>\'sub\' = $3',
         [new Date(), newUserData, google_id]
     );
     return res.rowCount;
 }
 
+/**
+ *  * logout a user by tokenId
+ * @param {int}  tokenId
+ * @returns {int} number of row affected , 1 if ok, 0 if failed
+ */
+async function logoutByTokenId(tokenId) {
+
+    let res = await db.query(
+        'UPDATE public.' + db.TABLES.users + ' SET "date_last_modified" = $1,  "data" = jsonb_set(data, \'{token_id}\' , \'""\', true)  WHERE data->>\'token_id\' = $2',
+        [new Date(), tokenId]
+    );
+    return res.rowCount;
+}
+
+
 
 /**
  * check user's existence by Google Id
  * @param {int} google_id
- * @returns {boolean} true if found, false if not found
+ * @returns {int} number of row affected , 1 if ok, 0 if not found
  */
 async function checkUserByGoogleId(google_id) {
     let res = await db.query(
@@ -41,12 +56,7 @@ async function checkUserByGoogleId(google_id) {
         [google_id]
     );
 
-    let flag = false;
-    if(res.rowCount > 0){
-        flag = true;
-    }
-
-    return flag;
+    return res.rowCount;
 }
 
 
@@ -54,7 +64,7 @@ async function checkUserByGoogleId(google_id) {
 /**
  * check user's existence by token Id
  * @param {int} token_id
- * @returns {boolean} true if found, false if not found
+ * @returns {int} number of row affected , 1 if ok, 0 if not found
  */
 async function checkUserByTokenId(token_id) {
     let res = await db.query(
@@ -62,12 +72,7 @@ async function checkUserByTokenId(token_id) {
         [token_id]
     );
 
-    let flag = false;
-    if(res.rowCount > 0){
-        flag = true;
-    }
-
-    return flag;
+    return res.rowCount;
 }
 
 /**
@@ -89,5 +94,6 @@ module.exports = {
     checkUserByGoogleId,
     checkUserByTokenId,
     updateByGoogleId,
-    getUserByTokenId
+    getUserByTokenId,
+    logoutByTokenId
 };

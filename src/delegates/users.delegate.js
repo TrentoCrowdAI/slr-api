@@ -45,7 +45,7 @@ async function userLogin(tokenId) {
 
     let res;
     //if is a new user
-    if(!existOfUser){
+    if(existOfUser===0){
         res= await usersDao.insert(user);
     }
     else{
@@ -56,6 +56,22 @@ async function userLogin(tokenId) {
         "user": {"email": user.email, "name": user.given_name, "surname": user.family_name, "image": user.picture},
         "token": tokenId
     };
+}
+
+
+/**
+    logout the users , delete the specific token from database
+ */
+async function userLogout(tokenId) {
+
+    if (!tokenId || tokenId === 'null') {
+        throw errHandler.createBadRequestError("empty token id in header, the user must first login!");
+    }
+
+    let res = await usersDao.logoutByTokenId(tokenId);
+    if(res===0){
+        throw errHandler.createBadRequestError("the token does not match any user or user has already logged!");
+    }
 }
 
 /**
@@ -72,7 +88,7 @@ async function checkUserByTokenId(tokenId) {
     //check user's existence in database
     let res =  await usersDao.checkUserByTokenId(tokenId);
     //if do not exist
-    if(!res){
+    if(res===0){
         throw errHandler.createBadRequestError("the token does not match any user!");
     }
 
@@ -96,7 +112,6 @@ async function getUserByTokenId(tokenId) {
         throw errHandler.createBadRequestError("the token does not match any user!");
     }
 
-    console.log(res);
 
     return {
         "user": {"email": res.data.email, "name": res.data.given_name, "surname": res.data.family_name, "image": res.data.picture},
@@ -106,6 +121,7 @@ async function getUserByTokenId(tokenId) {
 
 module.exports = {
     userLogin,
+    userLogout,
     checkUserByTokenId,
     getUserByTokenId
 };
