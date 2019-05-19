@@ -5,7 +5,8 @@ const Boom = require('boom');
 const errorNames = {
     badRequest : "badRequest",
     notFound : "notFound",
-    badImplementation: "badImplementation"
+    badImplementation: "badImplementation",
+    unauthorized: "unauthorized",
      //to add the other error names
     
 };
@@ -32,6 +33,8 @@ const createNotFoundError = msg => {
     return e;
 };
 
+
+
 /**
  * Creates and returns a error object with error.name "badImplementation".
  * @param {String} msg error message
@@ -43,6 +46,16 @@ const createBadImplementationError = msg => {
     return e;
 };
 
+/**
+ * Creates and returns a error object with error.name "unauthorized".
+ * @param {String} msg error message
+ * @returns {Error} object error
+ */
+const createUnauthorizedError = msg => {
+    let e = new Error(msg);
+    e.name = errorNames.unauthorized;
+    return e;
+};
 
 /**
  * Creates an boom error object that the service layer returns. It uses the boom library.
@@ -66,6 +79,9 @@ const createBoomErrorForService = e => {
    else if(e.name === errorNames.badImplementation){
         errorBoom = Boom.badImplementation(e.message);
     }
+    else if(e.name === errorNames.unauthorized){
+        errorBoom = Boom.unauthorized(e.message);
+    }
     //when the error isn't threw by delegate level
     else if(e.status === 401){
         let message = 'Not authorized to perform the request';
@@ -76,9 +92,12 @@ const createBoomErrorForService = e => {
     return errorBoom;
 };
 
+
 module.exports = {
     createBadRequestError,
     createNotFoundError,
     createBadImplementationError,
-    createBoomErrorForService
+    createBoomErrorForService,
+    createUnauthorizedError,
+
 };

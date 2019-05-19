@@ -284,6 +284,21 @@ function isValidArray(array) {
 
 }
 
+/**
+ * check the validation of token_id
+ * @param {String} tokenId
+ */
+function isValidTokenId(tokenId) {
+
+    //if it is empty or a "null" string
+    if (!tokenId || tokenId === 'null') {
+        throw errHandler.createBadRequestError("empty token id in header, the user must first login!");
+    }
+
+}
+
+
+
 
 module.exports = {
     arrayToString,
@@ -299,5 +314,6 @@ module.exports = {
     setAndCheckValidCount,
     isValidKeyword,
     isValidArray,
+    isValidTokenId,
 
 };

@@ -74,9 +74,24 @@ async function selectById(project_id) {
 }
 
 /**
+ * select a project by id and userId
+ * @param {int} project_id
+ *  * @param {int} user_id
+ * @returns {object} project found
+ */
+async function selectByIdAndUserId(project_id, user_id) {
+    let res = await db.query(
+        'SELECT * FROM public.' + db.TABLES.projects + ' WHERE id = $1 AND data->>\'user_id\' = $2 ',
+        [project_id, user_id]
+    );
+
+    return res.rows[0];
+}
+
+/**
  * select all project
  * @param {string} orderBy [id, date_created, date_last_modified, date_deleted}
- * @param {string} sort {ASC or DESC}
+ * @param {string} sort [ASC or DESC]
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
  * @returns {Object} array of projects and total number of result
@@ -96,6 +111,29 @@ async function selectAll(orderBy, sort, start, count) {
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 }
 
+/**
+ * select all project of a specific user
+ * @param {int} user_id
+ * @param {string} orderBy [id, date_created, date_last_modified, date_deleted]
+ * @param {string} sort [ASC or DESC]
+ * @param {int} start offset position where we begin to get
+ * @param {int} count number of projects
+ * @returns {Object} array of projects and total number of result
+ */
+async function selectAllByUserId(user_id, orderBy, sort, start, count) {
+
+    //query to get projects
+    let res = await db.query(
+        'SELECT * FROM public.' + db.TABLES.projects + ' WHERE data->>\'user_id\' = $1  ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $2 OFFSET $3',
+        [user_id, count, start]
+    );
+
+    //query to get total number of result
+    let resForTotalNumber = await db.query(
+        'SELECT COUNT(*) FROM public.' + db.TABLES.projects);
+
+    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
+}
 
 /**
  * select project by a single keyword
@@ -105,7 +143,7 @@ async function selectAll(orderBy, sort, start, count) {
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
  * @returns {Object} array of projects and total number of result
- */
+ *//*
 async function selectBySingleKeyword(keyword, orderBy, sort, start, count) {
 
 
@@ -124,7 +162,7 @@ async function selectBySingleKeyword(keyword, orderBy, sort, start, count) {
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 
 }
-
+*/
 
 module.exports = {
     insert,
@@ -133,6 +171,8 @@ module.exports = {
     deletes,
     selectById,
     selectAll,
-    selectBySingleKeyword
+    selectAllByUserId,
+    selectByIdAndUserId,
+    //selectBySingleKeyword
 
 };

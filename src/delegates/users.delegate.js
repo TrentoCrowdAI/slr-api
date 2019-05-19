@@ -64,9 +64,8 @@ async function userLogin(tokenId) {
  */
 async function userLogout(tokenId) {
 
-    if (!tokenId || tokenId === 'null') {
-        throw errHandler.createBadRequestError("empty token id in header, the user must first login!");
-    }
+    //error check for tokenId
+    support.isValidTokenId(tokenId);
 
     let res = await usersDao.logoutByTokenId(tokenId);
     if(res===0){
@@ -81,9 +80,8 @@ async function userLogout(tokenId) {
  */
 async function checkUserByTokenId(tokenId) {
 
-    if (!tokenId || tokenId === 'null') {
-        throw errHandler.createBadRequestError("empty token id in header, the user must first login!");
-    }
+    //error check for tokenId
+    support.isValidTokenId(tokenId);
 
     //check user's existence in database
     let res =  await usersDao.checkUserByTokenId(tokenId);
@@ -101,9 +99,8 @@ async function checkUserByTokenId(tokenId) {
  */
 async function getUserByTokenId(tokenId) {
 
-    if (!tokenId || tokenId === 'null') {
-        throw errHandler.createBadRequestError("empty token id in header, the user must first login!");
-    }
+    //error check for tokenId
+    support.isValidTokenId(tokenId);
 
     //check user's existence in database
     let res =  await usersDao.getUserByTokenId(tokenId);
