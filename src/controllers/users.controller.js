@@ -21,6 +21,21 @@ router.post('/auth/login', async (req, res, next) => {
     }
 });
 
+//gets the logged in user info
+router.get('/user-info', async (req, res, next) => {
+
+    try {
+        let authorization = req.headers["authorization"];
+        console.log("Authorization " + authorization);
+        let userData = await usersDelegate.getUserByTokenId(authorization);
+        res.status(201).json(userData);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
 //check the validity  of token on all request
 router.all('*', async function (req, res, next) {
     try {

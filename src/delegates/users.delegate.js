@@ -78,8 +78,34 @@ async function checkUserByTokenId(tokenId) {
 
 }
 
+/**
+ * get user data by token Id
+ * @param {int} token_id
+ * @returns {object} user found
+ */
+async function getUserByTokenId(tokenId) {
+
+    if (!tokenId || tokenId === 'null') {
+        throw errHandler.createBadRequestError("empty token id in header, the user must first login!");
+    }
+
+    //check user's existence in database
+    let res =  await usersDao.getUserByTokenId(tokenId);
+    //if do not exist
+    if(!res){
+        throw errHandler.createBadRequestError("the token does not match any user!");
+    }
+
+    console.log(res);
+
+    return {
+        "user": {"email": res.data.email, "name": res.data.given_name, "surname": res.data.family_name, "image": res.data.picture},
+    };
+}
+
 
 module.exports = {
     userLogin,
     checkUserByTokenId,
+    getUserByTokenId
 };

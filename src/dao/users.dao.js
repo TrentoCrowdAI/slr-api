@@ -70,11 +70,24 @@ async function checkUserByTokenId(token_id) {
     return flag;
 }
 
+/**
+ * get user by tokenId
+ * @param {int} token_id
+ * @returns {object} user found
+ */
+async function getUserByTokenId(token_id) {
+    let res = await db.query(
+        'SELECT * FROM public.' + db.TABLES.users + ' WHERE data->>\'token_id\' = $1',
+        [token_id]
+    );
+    return res.rows[0];
+}
+
 
 module.exports = {
     insert,
     checkUserByGoogleId,
     checkUserByTokenId,
     updateByGoogleId,
-
+    getUserByTokenId
 };
