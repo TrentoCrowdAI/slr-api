@@ -8,7 +8,7 @@ const usersDelegate = require(__base + 'delegates/users.delegate');
 
 
 //gets the users info and logs him in database
-router.get('/auth/login', async (req, res, next) => {
+router.post('/auth/login', async (req, res, next) => {
 
     try {
         let tokenId = req.body.tokenId;

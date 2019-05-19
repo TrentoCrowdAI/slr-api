@@ -20,5 +20,12 @@ Under development.
 - *checkout on the develop branch  ```git checkout develop```*
 - run ```npm install``` to install its modules
 
+### initial database
+- You need to connect an appropriate POSTGRES database by change the variable DATABASE_URL in [ .env file](https://github.com/TrentoCrowdAI/slr-api/blob/develop/.env)
+- then run ```node init_db/setud.js``` to initialize the database
+
+
 ### calling the API
 The server will be listening on ```http://localhost:3001/``` and you can find the documentation about the API calls [here](https://ese1.docs.apiary.io/#reference)
+
+

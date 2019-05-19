@@ -35,6 +35,7 @@ router.get('/search', async (req, res, next) => {
 router.post('/search/similar', async (req, res, next) => {
     try
     {
+
         //input
         let query = req.body.query;
         let file = req.body.file;
