@@ -26,6 +26,7 @@ Under development.
 
 
 ### calling the API
+- run ```npm start``` to start the service
 The server will be listening on ```http://localhost:3001/``` and you can find the documentation about the API calls [here](https://ese1.docs.apiary.io/#reference)
 
 
