@@ -18,6 +18,12 @@ tags:
     description: Manage the projects
   - name: Projects Papers
     description: Manage the papers of a project
+  - name: Users
+    description: Manage the users
+    
+
+
+    
 paths:
 
   '/search':
@@ -28,6 +34,9 @@ paths:
         ID. Multiple options can be set for the search
       tags:
         - Papers
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Query'
         - $ref: '#/parameters/SearchBy'
@@ -59,6 +68,9 @@ paths:
         Returns a list of projects(max 10)
       tags:
         - Projects
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Query_optional'
         - $ref: '#/parameters/OrderBy'
@@ -85,6 +97,9 @@ paths:
         Add an empty project with a given title and description
       tags:
         - Projects
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Project_post_put_body'
       responses:
@@ -107,6 +122,9 @@ paths:
       description: Get the basic data of a project
       tags:
         - Projects
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Project_id_in_path'
       responses:
@@ -128,6 +146,9 @@ paths:
       description: Overwrites the existing project
       tags:
         - Projects
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Project_id_in_path'
         - $ref: '#/parameters/Project_post_put_body'
@@ -147,6 +168,9 @@ paths:
       summary: delete a specific project
       tags:
         - Projects
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Project_id_in_path'
       responses:
@@ -167,6 +191,9 @@ paths:
       description: Get a list of projectPapers associated with a project
       tags:
         - Projects Papers
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Project_id'
         - $ref: '#/parameters/Query_optional'
@@ -196,6 +223,9 @@ paths:
       description: copy the paper from local paper table into a project_paper table
       tags:
         - Projects Papers
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Project_paper_post_body'
       responses:
@@ -219,6 +249,9 @@ paths:
       description: This works only with internals id
       tags:
         - Projects Papers
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Project_paper_id_in_path'
 
@@ -241,6 +274,9 @@ paths:
       description: Overwrites the existing paper
       tags:
         - Projects Papers
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Project_paper_id_in_path'
         - $ref: '#/parameters/Paper_post_put_body'
@@ -260,6 +296,9 @@ paths:
       summary: delete a specific paper of a project
       tags:
         - Projects Papers
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Project_paper_id_in_path'
       responses:
@@ -277,10 +316,11 @@ paths:
     post:
       summary: add new manual paper to specific project
       description: insert the new paper by form
-      consumes:
-        - application/pdf
       tags:
         - Projects Papers
+      security:
+        - basicAuth: []
+        
       parameters:
         - $ref: '#/parameters/Project_paper_custom_post_body'
       responses:
@@ -297,8 +337,61 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
+  '/pdf':
+
+    post:
+      summary: update the pdf file
+      description: update and parse pdf file and return the fileds by json
+      tags:
+        - Projects Papers
+      security:
+        - basicAuth: []
+      consumes:
+        - multipart/form-data
+        
+      parameters:
+        - $ref: '#/parameters/Pdf_post_body'
+   
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Pdf'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
 
 
+  '/auth/login':
+
+    post:
+      summary: login
+      description: login
+      tags:
+        - Users
+      parameters:
+        - $ref: '#/parameters/User_post_body'
+   
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
 
 
 
@@ -345,6 +438,8 @@ responses:
     description: Internal Server Error
     schema:
       $ref: '#/definitions/Error'
+
+
 
 
 
@@ -619,7 +714,37 @@ definitions:
       totalResults:
         type: integer
 
-
+  Pdf:
+    type: object
+    properties:
+      title:
+        type: string
+        description: the title of paper parsed
+        example: the machine learning is future
+      abstract:
+        type: string
+        description: the abstract of paper parsed
+        example:  bra bra bra bra bra bra
+      year:
+        type: integer
+        example:  2017
+      authors:
+        type: string
+        example: mario rosi, luigi mr, aa bbb
+        
+  User:
+    type: object
+    properties:
+      email:
+        type: string
+      name:
+        type: string
+      surname:
+        type: string
+      image:
+        type: string
+      token:
+        type: string
 
 
 
@@ -794,6 +919,26 @@ parameters:
         - notes
         - manual
         - doi
+        
+  Pdf_post_body:
+    in: formData
+    name: file
+    type: file
+    description: the pdf file to parse
+    required: true
+    
+  User_post_body:
+    in: body
+    name: body
+    description: the tokenId of user
+    schema:
+      type: object
+      properties:
+        tokenId:
+          type: string
+      required:
+        - tokenId
+    required: true
 
 # are not used yet =============================
 
@@ -816,6 +961,10 @@ parameters:
       - computer science
       - physics
     description: the subject of the papers to search
+    
 
+securityDefinitions:
+  basicAuth:
+    type: basic
 
 
