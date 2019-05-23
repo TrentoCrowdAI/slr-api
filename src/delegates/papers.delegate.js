@@ -9,6 +9,7 @@ const config = require(__base + 'config');
 //supply the auxiliary function
 const errHandler = require(__base + 'utils/errors');
 const support = require(__base + 'utils/support');
+const errorCheck = require(__base + 'utils/errorCheck');
 const conn = require(__base + 'utils/conn');
 //the packaged for input validation
 const ajv = require(__base + 'utils/ajv');
@@ -74,7 +75,7 @@ async function deletes(paper_id) {
 
 
     //check validation of paper_id and transform the value in integer
-    paper_id = support.setAndCheckValidPaperId(paper_id);
+    paper_id = errorCheck.setAndCheckValidPaperId(paper_id);
 
     //call DAO layer
     let numberRow = await papersDao.deletes(paper_id);
@@ -94,7 +95,7 @@ async function deletes(paper_id) {
 async function selectById(paper_id) {
 
     //check validation of paper_id and transform the value in integer
-    paper_id = support.setAndCheckValidPaperId(paper_id);
+    paper_id = errorCheck.setAndCheckValidPaperId(paper_id);
 
     //call DAO layer
     let res = await papersDao.selectById(paper_id);
@@ -123,10 +124,10 @@ async function selectById(paper_id) {
 async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count) {
 
     //check the validation of parameters
-    support.isValidKeyword(keyword);
-    sort = support.setAndCheckValidSort(sort);
-    start = support.setAndCheckValidStart(start);
-    count = support.setAndCheckValidCount(count);
+    errorCheck.isValidKeyword(keyword);
+    sort = errorCheck.setAndCheckValidSort(sort);
+    start = errorCheck.setAndCheckValidStart(start);
+    count = errorCheck.setAndCheckValidCount(count);
 
     /*=============
      temporary parameter
@@ -279,8 +280,8 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
 async function similarSearch(file, keyword, start, count) {
 
     
-    start = support.setAndCheckValidStart(start);
-    count = support.setAndCheckValidCount(count);
+    start = errorCheck.setAndCheckValidStart(start);
+    count = errorCheck.setAndCheckValidCount(count);
 
 
     //error check
@@ -403,7 +404,7 @@ async function similarSearch(file, keyword, start, count) {
  offset = Number(offset);
 
  //will return not empty string if they are not valid
- let errorMessage = support.areValidListParameters(number, 1, orderBy, sort);//temporary fix for pagination
+ let errorMessage = errorCheck.areValidListParameters(number, 1, orderBy, sort);//temporary fix for pagination
  if (errorMessage !== "")
  {
  throw errHandler.createBadRequestError(errorMessage);
@@ -456,7 +457,7 @@ async function similarSearch(file, keyword, start, count) {
  throw errHandler.createBadRequestError('the keyword is empty!');
  }
  //error check
- let errorMessage = support.areValidPaginationParameters(number, after, before, "id", "ASC");//the last ones are not used yet
+ let errorMessage = errorCheck.areValidPaginationParameters(number, after, before, "id", "ASC");//the last ones are not used yet
  if (errorMessage !== "")
  {
  throw errHandler.createBadRequestError(errorMessage);

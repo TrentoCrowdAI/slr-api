@@ -6,7 +6,7 @@ const router = express.Router();
 
 const usersDelegate = require(__base + 'delegates/users.delegate');
 
-
+/*
 //gets the users info and logs him in database
 router.post('/auth/login', async (req, res, next) => {
 
@@ -19,8 +19,8 @@ router.post('/auth/login', async (req, res, next) => {
         // catch the error threw from delegate and we delegate to the error-handling middleware
         next(e);
     }
-});
-
+});*/
+/*
 //logout the users , delete the specific token from database
 router.get('/auth/logout', async (req, res, next) => {
 
@@ -36,17 +36,17 @@ router.get('/auth/logout', async (req, res, next) => {
     }
 });
 
-
+*/
 
 
 //check the validity  of token on all request
 router.all('*', async function (req, res, next) {
     try {
         //get token id from header
-        let authorization = req.headers["authorization"];
+        let tokenId = req.headers["authorization"];
 
-        //check user's existence
-        await usersDelegate.checkUserByTokenId(authorization);
+        //verify the validity of token and return google id
+        res.locals.google_id = await usersDelegate.verifyToken(tokenId);
         //if it is ok, proceeds
         next();
     }
@@ -58,7 +58,7 @@ router.all('*', async function (req, res, next) {
 });
 
 
-
+/*
 //gets the logged in user info
 router.get('/user-info', async (req, res, next) => {
 
@@ -73,6 +73,7 @@ router.get('/user-info', async (req, res, next) => {
         next(e);
     }
 });
+*/
 
 
 module.exports = router;

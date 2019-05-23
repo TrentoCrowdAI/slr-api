@@ -9,6 +9,7 @@ const projectsDao = require(__base + 'dao/projects.dao');
 const errHandler = require(__base + 'utils/errors');
 //supply the auxiliary function
 const support = require(__base + 'utils/support');
+const errorCheck = require(__base + 'utils/errorCheck');
 //the packaged for input validation
 const ajv = require(__base + 'utils/ajv');
 const validationSchemes = require(__base + 'utils/validation.schemes');
@@ -23,9 +24,9 @@ const validationSchemes = require(__base + 'utils/validation.schemes');
 async function insertFromPaper(arrayEid, project_id) {
 
     //check the validation of array
-    support.isValidArray(arrayEid);
+    errorCheck.isValidArray(arrayEid);
     //check validation of project id and transform the value in integer
-    project_id = support.setAndCheckValidProjectId(project_id);
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
     let arrayEidExisting = await  projectPapersDao.checkExistenceByEids(arrayEid, project_id);
     arrayEid = support.differenceOperation(arrayEid, arrayEidExisting);
@@ -53,7 +54,7 @@ async function insertFromPaper(arrayEid, project_id) {
 async function insertCustomPaper(newPaper, project_id) {
 
     //check validation of project id and transform the value in integer
-    project_id = support.setAndCheckValidProjectId(project_id);
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
     //check input format
     let valid = ajv.validate(validationSchemes.paper, newPaper);
@@ -85,7 +86,7 @@ async function insertCustomPaper(newPaper, project_id) {
 async function update(projectPaper_id, newProjectPaperData) {
 
     //check validation of projectPaper_id and transform the value in integer
-    projectPaper_id = support.setAndCheckValidProjectPaperId(projectPaper_id);
+    projectPaper_id = errorCheck.setAndCheckValidProjectPaperId(projectPaper_id);
 
     //check input format
     let valid = ajv.validate(validationSchemes.projectPaper, newProjectPaperData);
@@ -129,7 +130,7 @@ async function update(projectPaper_id, newProjectPaperData) {
 async function deletes(projectPaper_id) {
 
     //check validation of projectPaper_id and transform the value in integer
-    projectPaper_id = support.setAndCheckValidProjectPaperId(projectPaper_id);
+    projectPaper_id = errorCheck.setAndCheckValidProjectPaperId(projectPaper_id);
 
     //get project id by projectPaper id
     let project_id = await projectPapersDao.getProjectIdByProjectPaperId(projectPaper_id);
@@ -165,7 +166,7 @@ async function deletes(projectPaper_id) {
 async function selectById(projectPaper_id)  {
 
     //check validation of projectPaper_id and transform the value in integer
-    projectPaper_id = support.setAndCheckValidProjectPaperId(projectPaper_id);
+    projectPaper_id = errorCheck.setAndCheckValidProjectPaperId(projectPaper_id);
 
     //call DAO layer
     let res = await projectPapersDao.selectById(projectPaper_id);
@@ -194,11 +195,11 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
 
     //check the validation of parameters
     //check validation of project id and transform the value in integer
-    project_id = support.setAndCheckValidProjectId(project_id);
-    orderBy = support.setAndCheckValidProjectPaperOrderBy(orderBy);
-    sort = support.setAndCheckValidSort(sort);
-    start = support.setAndCheckValidStart(start);
-    count = support.setAndCheckValidCount(count);
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
+    orderBy = errorCheck.setAndCheckValidProjectPaperOrderBy(orderBy);
+    sort = errorCheck.setAndCheckValidSort(sort);
+    start = errorCheck.setAndCheckValidStart(start);
+    count = errorCheck.setAndCheckValidCount(count);
 
     //call DAO layer
     let res = await projectPapersDao.selectByProject(project_id, orderBy, sort, start, count);
@@ -226,9 +227,9 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
 async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count) {
 
     //check the validation of parameters
-    support.isValidKeyword(keyword);
+    errorCheck.isValidKeyword(keyword);
     //check validation of project id and transform the value in integer
-    project_id = support.setAndCheckValidProjectId(project_id);
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
     /*=============
      temporary parameter
@@ -244,10 +245,10 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
 
     /*================= */
 
-    orderBy = support.setAndCheckValidProjectPaperOrderBy(orderBy);
-    sort = support.setAndCheckValidSort(sort);
-    start = support.setAndCheckValidStart(start);
-    count = support.setAndCheckValidCount(count);
+    orderBy = errorCheck.setAndCheckValidProjectPaperOrderBy(orderBy);
+    sort = errorCheck.setAndCheckValidSort(sort);
+    start = errorCheck.setAndCheckValidStart(start);
+    count = errorCheck.setAndCheckValidCount(count);
 
     //call DAO layer
     let res = await projectPapersDao.searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count);

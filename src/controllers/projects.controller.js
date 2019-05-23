@@ -13,7 +13,7 @@ const router = express.Router();
 router.get('/projects', async (req, res, next) => {
     try
     {
-        let tokenId = req.headers["authorization"];
+        let google_id = res.locals.google_id;
         let projects = undefined;
         let orderBy = req.query.orderBy;
         let sort = req.query.sort;
@@ -21,7 +21,7 @@ router.get('/projects', async (req, res, next) => {
         let count = req.query.count;
         let query = req.query.query;
        // if(query === undefined){
-            projects = await projectsDelegate.selectAllByUserId(tokenId,orderBy, sort, start, count);
+            projects = await projectsDelegate.selectAllByUserId(google_id,orderBy, sort, start, count);
      //   }else{
       //      projects = await projectsDelegate.selectBySingleKeyword(query, orderBy, sort, start, count);
       //  }
@@ -39,10 +39,10 @@ router.get('/projects', async (req, res, next) => {
 router.post('/projects', async (req, res, next) => {
     try
     {
-        let tokenId = req.headers["authorization"];
+        let google_id = res.locals.google_id;
         //the data of new project to insert
         let newProjectData = req.body;
-        let project = await projectsDelegate.insert(tokenId, newProjectData);
+        let project = await projectsDelegate.insert(google_id, newProjectData);
         res.status(201).json(project);
     }
     catch (e)
@@ -58,9 +58,9 @@ router.post('/projects', async (req, res, next) => {
 router.get('/projects/:id', async (req, res, next) => {
     try
     {
-        let tokenId = req.headers["authorization"];
+        let google_id = res.locals.google_id;
         let project_id = req.params.id;
-        let project = await projectsDelegate.selectById(project_id, tokenId);
+        let project = await projectsDelegate.selectById(google_id, tokenId);
         res.status(200).json(project);
     }
     catch (e)
@@ -75,12 +75,12 @@ router.put('/projects/:id', async (req, res, next) => {
     try
     {
 
-        let tokenId = req.headers["authorization"];
+        let google_id = res.locals.google_id;
         let project_id = req.params.id;
         //the new data of project to update
         let newProjectData = req.body;
         
-        await projectsDelegate.update(project_id, tokenId, newProjectData);
+        await projectsDelegate.update(project_id, google_id, newProjectData);
         res.sendStatus(204);
     }
     catch (e)
@@ -94,9 +94,9 @@ router.put('/projects/:id', async (req, res, next) => {
 router.delete('/projects/:id', async (req, res, next) => {
     try
     {
-        let tokenId = req.headers["authorization"];
+        let google_id = res.locals.google_id;
         let project_id = req.params.id;
-        await projectsDelegate.deletes(project_id, tokenId);
+        await projectsDelegate.deletes(project_id, google_id);
         res.sendStatus(204);
     }
     catch (e)

@@ -20,20 +20,20 @@ async function insert(newUserData) {
  * @param {int}  project_id
  * @param {object} newProjectData
  * @returns {int} number of row affected , 1 if ok, 0 if failed
- */
+ *//*
 async function updateByGoogleId(google_id, newUserData) {
     let res = await db.query(
-        'UPDATE public.' + db.TABLES.users + ' SET "date_last_modified" = $1,  "data" = $2 WHERE data->>\'sub\' = $3',
+        'UPDATE public.' + db.TABLES.users + ' SET "date_last_modified" = $1,  "data" = $2 WHERE data->>\'google_id\' = $3',
         [new Date(), newUserData, google_id]
     );
     return res.rowCount;
-}
+}*/
 
 /**
  *  * logout a user by tokenId
  * @param {int}  tokenId
  * @returns {int} number of row affected , 1 if ok, 0 if failed
- */
+ *//*
 async function logoutByTokenId(tokenId) {
 
     let res = await db.query(
@@ -41,18 +41,18 @@ async function logoutByTokenId(tokenId) {
         [new Date(), tokenId]
     );
     return res.rowCount;
-}
+}*/
 
 
 
 /**
- * check user's existence by Google Id
+ * get user by Google Id
  * @param {int} google_id
  * @returns {int} number of row affected , 1 if ok, 0 if not found
  */
-async function checkUserByGoogleId(google_id) {
+async function getUserByGoogleId(google_id) {
     let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.users + ' WHERE data->>\'sub\' = $1',
+        'SELECT * FROM public.' + db.TABLES.users + ' WHERE data->>\'google_id\' = $1',
         [google_id]
     );
 
@@ -65,7 +65,7 @@ async function checkUserByGoogleId(google_id) {
  * check user's existence by token Id
  * @param {int} token_id
  * @returns {int} number of row affected , 1 if ok, 0 if not found
- */
+ *//*
 async function checkUserByTokenId(token_id) {
     let res = await db.query(
         'SELECT * FROM public.' + db.TABLES.users + ' WHERE data->>\'token_id\' = $1',
@@ -73,27 +73,27 @@ async function checkUserByTokenId(token_id) {
     );
 
     return res.rowCount;
-}
+}*/
 
 /**
  * get user by tokenId
  * @param {int} token_id
  * @returns {object} user found
- */
+ *//*
 async function getUserByTokenId(token_id) {
     let res = await db.query(
         'SELECT * FROM public.' + db.TABLES.users + ' WHERE data->>\'token_id\' = $1',
         [token_id]
     );
     return res.rows[0];
-}
+}*/
 
 
 module.exports = {
     insert,
-    checkUserByGoogleId,
-    checkUserByTokenId,
-    updateByGoogleId,
-    getUserByTokenId,
-    logoutByTokenId
+    getUserByGoogleId,
+    //checkUserByTokenId,
+    //updateByGoogleId,
+    //getUserByTokenId,
+    //logoutByTokenId
 };
