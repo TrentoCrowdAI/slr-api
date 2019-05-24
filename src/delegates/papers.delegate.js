@@ -37,7 +37,7 @@ async function insert(newPaperData) {
 
 /**
  *  * update a paper
- * @param {int}  paper_id
+ * @param {string}  paper_id
  * @param {object} newPaperData
  */
 async function update(paper_id, newPaperData) {
@@ -69,7 +69,7 @@ async function update(paper_id, newPaperData) {
 
 /**
  *  * delete a paper
- * @param {number} paper_id
+ * @param {string} paper_id
  */
 async function deletes(paper_id) {
 
@@ -89,7 +89,7 @@ async function deletes(paper_id) {
 
 /**
  * select a paper
- * @param {number} paper_id
+ * @param {string} paper_id
  * @returns {object} paper found
  */
 async function selectById(paper_id) {
@@ -117,8 +117,8 @@ async function selectById(paper_id) {
  * @param {string} year specific year to search
  * @param {string} orderBy [date, title]
  * @param {string} sort {ASC or DESC}
- * @param {int} start offset position where we begin to get
- * @param {int} count number of papers
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of papers
  * @returns {Object} array of papers and total number of result
  */
 async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count) {
@@ -273,8 +273,8 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
  * find similar papers
  * @param {file} file to search
  * @param {string} keyword paper title or url
- * @param {int} start offset position where we begin to get
- * @param {int} count number of papers
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of papers
  * @returns {Object} array of papers and total number of result
  */
 async function similarSearch(file, keyword, start, count) {
@@ -390,8 +390,8 @@ async function similarSearch(file, keyword, start, count) {
  *==========================================================================
  *
  * select all paper
- * @param {int} number number of papers
- * @param {int} offset position where we begin to get
+ * @param {string} number number of papers
+ * @param {string} offset position where we begin to get
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
  * @returns {Array[]} array of papers
@@ -425,9 +425,9 @@ async function similarSearch(file, keyword, start, count) {
  *
  * select paper by a single keyword
  * @param {string} keyword to search
- * @param {integer} number number of papers
- * @param {integer} after id where we begin to get
- * @param {integer} before id where we begin to get backwards
+ * @param {string} number number of papers
+ * @param {string} after id where we begin to get
+ * @param {string} before id where we begin to get backwards
  * @param {string} orderBy
  * @param {string} sort {ASC or DESC}
  * @returns {Array[Object]} array of papers

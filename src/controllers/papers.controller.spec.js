@@ -2,7 +2,7 @@ const request = require('supertest');
 const app = require(__base + 'app');
 
 
-const validTokenId = "123456";
+const validTokenId = "test";
 
 
 test('dummy test', () => {

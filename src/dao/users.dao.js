@@ -47,8 +47,8 @@ async function logoutByTokenId(tokenId) {
 
 /**
  * get user by Google Id
- * @param {int} google_id
- * @returns {int} number of row affected , 1 if ok, 0 if not found
+ * @param {string} google_id
+ * @returns {object} user found
  */
 async function getUserByGoogleId(google_id) {
     let res = await db.query(
@@ -56,7 +56,7 @@ async function getUserByGoogleId(google_id) {
         [google_id]
     );
 
-    return res.rowCount;
+    return res.rows[0];
 }
 
 

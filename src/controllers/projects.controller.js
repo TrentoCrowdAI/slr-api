@@ -14,6 +14,7 @@ router.get('/projects', async (req, res, next) => {
     try
     {
         let google_id = res.locals.google_id;
+
         let projects = undefined;
         let orderBy = req.query.orderBy;
         let sort = req.query.sort;
@@ -60,7 +61,7 @@ router.get('/projects/:id', async (req, res, next) => {
     {
         let google_id = res.locals.google_id;
         let project_id = req.params.id;
-        let project = await projectsDelegate.selectById(google_id, tokenId);
+        let project = await projectsDelegate.selectById(google_id, project_id);
         res.status(200).json(project);
     }
     catch (e)
@@ -80,7 +81,7 @@ router.put('/projects/:id', async (req, res, next) => {
         //the new data of project to update
         let newProjectData = req.body;
         
-        await projectsDelegate.update(project_id, google_id, newProjectData);
+        await projectsDelegate.update(google_id, project_id,  newProjectData);
         res.sendStatus(204);
     }
     catch (e)
@@ -96,7 +97,7 @@ router.delete('/projects/:id', async (req, res, next) => {
     {
         let google_id = res.locals.google_id;
         let project_id = req.params.id;
-        await projectsDelegate.deletes(project_id, google_id);
+        await projectsDelegate.deletes(google_id, project_id );
         res.sendStatus(204);
     }
     catch (e)

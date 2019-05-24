@@ -1,8 +1,7 @@
 const request = require('supertest');
 const app = require(__base + 'app');
 
-//not valid example
-var notValidExampleForLogin = {"tokenId" : "A"};
+
 
 const notValidTokenId = "654321";
 

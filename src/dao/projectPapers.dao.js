@@ -219,7 +219,7 @@ async function checkExistenceByEids(arrayEid, project_id) {
 * get project id of projectPaper by projectPaper id
 * @param {int} projectPaper_id
 * @returns {int} project id if there is projectPaper, -1 if it isn't exist
-*/
+*//*
 async function getProjectIdByProjectPaperId(projectPaper_id) {
 
 
@@ -236,7 +236,7 @@ async function getProjectIdByProjectPaperId(projectPaper_id) {
 
     return output;
 
-}
+}*/
 
 
 
@@ -250,5 +250,5 @@ module.exports = {
     //selectByIdAndProjectId,
     searchPaperByProject,
     checkExistenceByEids,
-    getProjectIdByProjectPaperId
+    //getProjectIdByProjectPaperId
 };

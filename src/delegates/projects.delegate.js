@@ -37,7 +37,7 @@ async function insert(google_id, newProjectData ) {
     }
 
     //get user info
-    let user = usersDao.getUserByGoogleId(google_id);
+    let user = await usersDao.getUserByGoogleId(google_id);
     //add the user_id in project data
     newProjectData.user_id = user.id;
 
@@ -50,11 +50,11 @@ async function insert(google_id, newProjectData ) {
 
 /**
  *  * update a project
- * @param {int}  project_id
  * @param {string} google_id of user
+ * @param {string}  project_id
  * @param {object} newProjectData
  */
-async function update(project_id, google_id, newProjectData) {
+async function update(google_id, project_id, newProjectData) {
 
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
@@ -70,7 +70,7 @@ async function update(project_id, google_id, newProjectData) {
     }
 
     //get user info
-    let user = usersDao.getUserByGoogleId(google_id);
+    let user = await usersDao.getUserByGoogleId(google_id);
     //add the user_id in project data
     newProjectData.user_id = user.id;
 
@@ -92,10 +92,10 @@ async function update(project_id, google_id, newProjectData) {
 
 /**
  *  * delete a project
- * @param {int} project_id
  * @param {string} google_id of user
+ * @param {string} project_id
  */
-async function deletes(project_id, google_id) {
+async function deletes(google_id, project_id ) {
 
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
@@ -103,9 +103,7 @@ async function deletes(project_id, google_id) {
     errorCheck.isValidGoogleId(google_id);
 
     //get user info
-    let user = usersDao.getUserByGoogleId(google_id);
-    //add the user_id in project data
-    newProjectData.user_id = user.id;
+    let user = await usersDao.getUserByGoogleId(google_id);
 
     //check relationship between the project and user
     let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
@@ -124,11 +122,11 @@ async function deletes(project_id, google_id) {
 
 /**
  * select a project
- * @param {int} project_id
  * @param {string} google_id of user
+ * @param {string} project_id
  * @returns {object} project found
  */
-async function selectById(project_id, google_id) {
+async function selectById(google_id, project_id ) {
 
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
@@ -136,7 +134,7 @@ async function selectById(project_id, google_id) {
     errorCheck.isValidGoogleId(google_id);
 
     //get user info
-    let user = usersDao.getUserByGoogleId(google_id);
+    let user = await usersDao.getUserByGoogleId(google_id);
 
     //get relative project and check relationship between the project and user
     let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
@@ -151,8 +149,8 @@ async function selectById(project_id, google_id) {
  * select all project
  * @param {string} orderBy [id, date_created, date_last_modified, date_deleted]
  * @param {string} sort [ASC or DESC]
- * @param {int} start offset position where we begin to get
- * @param {int} count number of projects
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of projects
  * @returns {Object} array of projects and total number of result
  *//*
 async function selectAll(orderBy, sort, start, count) {
@@ -179,8 +177,8 @@ async function selectAll(orderBy, sort, start, count) {
  * @param {string} google_id of user
  * @param {string} orderBy [id, date_created, date_last_modified, date_deleted]
  * @param {string} sort [ASC or DESC]
- * @param {int} start offset position where we begin to get
- * @param {int} count number of projects
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of projects
  * @returns {Object} array of projects and total number of result
  */
 async function selectAllByUserId(google_id, orderBy, sort, start, count) {
@@ -197,7 +195,7 @@ async function selectAllByUserId(google_id, orderBy, sort, start, count) {
     //error check for google_id
     errorCheck.isValidGoogleId(google_id);
     //get user info
-    let user = usersDao.getUserByGoogleId(google_id);
+    let user = await usersDao.getUserByGoogleId(google_id);
 
     let res = await projectsDao.selectAllByUserId(user.id, orderBy, sort, start, count);
 
@@ -215,8 +213,8 @@ async function selectAllByUserId(google_id, orderBy, sort, start, count) {
  * @param {string} keyword to search
  * @param {string} orderBy [id, date_created, date_last_modified, date_deleted}
  * @param {string} sort {ASC or DESC}
- * @param {int} start offset position where we begin to get
- * @param {int} count number of projects
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of projects
  * @returns {Object} array of projects and total number of result
  *//*
 async function selectBySingleKeyword(keyword, orderBy, sort, start, count) {
@@ -249,7 +247,7 @@ module.exports = {
     update,
     deletes,
     selectById,
-    selectAll,
+    //selectAll,
     selectAllByUserId,
     //selectBySingleKeyword,
 

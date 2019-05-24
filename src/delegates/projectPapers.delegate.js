@@ -4,6 +4,7 @@
 
 const projectPapersDao = require(__base + 'dao/projectPapers.dao');
 const projectsDao = require(__base + 'dao/projects.dao');
+const usersDao = require(__base + 'dao/users.dao');
 
 //error handler
 const errHandler = require(__base + 'utils/errors');
@@ -17,42 +18,53 @@ const validationSchemes = require(__base + 'utils/validation.schemes');
 
 /**
  * insert a list of projectPaper by copy from fake_paper table
+ * @param {string} google_id of user
  * @param {array[]} arrayEid array of paper eid
- * @param {number} project_id
+ * @param {string} project_id
  * @returns {array[]} projectPaper created
  */
-async function insertFromPaper(arrayEid, project_id) {
+async function insertFromPaper(google_id, arrayEid, project_id) {
 
+    //error check for google_id
+    errorCheck.isValidGoogleId(google_id);
     //check the validation of array
     errorCheck.isValidArray(arrayEid);
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
-    let arrayEidExisting = await  projectPapersDao.checkExistenceByEids(arrayEid, project_id);
+    //get user info
+    let user = await usersDao.getUserByGoogleId(google_id);
+    //check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+
+    let arrayEidExisting = await projectPapersDao.checkExistenceByEids(arrayEid, project_id);
     arrayEid = support.differenceOperation(arrayEid, arrayEidExisting);
     //call DAO layer
     let res = await projectPapersDao.insertFromPaper(arrayEid, project_id);
 
-    //update the last modified date
-    let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
-    //error check
-    if (updateProjectDate === 0)
-    {
-        throw errHandler.createNotFoundError('the project doesn\'t exist!');
+    //if at least one post is inserted
+    if (arrayEid.length > 0) {
+        //update the last modified date
+        let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
     }
 
-    return  res;
+    return res;
 }
 
 
 /**
  * insert a custom paper into a project
+ * @param {string} google_id of user
+ * @param {string} project_id
  * @param {object} newPaper
- * @param {number} project_id
  * @returns {object} projectPaper created
  */
-async function insertCustomPaper(newPaper, project_id) {
+async function insertCustomPaper(google_id, project_id, newPaper) {
 
+    //error check for google_id
+    errorCheck.isValidGoogleId(google_id);
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
@@ -63,27 +75,32 @@ async function insertCustomPaper(newPaper, project_id) {
         throw errHandler.createBadRequestError('the new paper data is not valid! (' + ajv.errorsText() + ')');
     }
 
+    //get user info
+    let user = await usersDao.getUserByGoogleId(google_id);
+    //check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+
     //call DAO layer
     let res = await projectPapersDao.insert(newPaper, project_id);
 
     //update the last modified date
     let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
-    //error check
-    if (updateProjectDate === 0)
-    {
-        throw errHandler.createNotFoundError('the project doesn\'t exist!');
-    }
 
-    return  res;
+    return res;
 }
 
 /**
  *  * update a projectPaper
- * @param {number} projectPaper_id
+ * @param {string} google_id of user
+ * @param {string} projectPaper_id
  * @param {object} newProjectPaperData
- * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
-async function update(projectPaper_id, newProjectPaperData) {
+async function update(google_id, projectPaper_id, newProjectPaperData) {
+
+    //error check for google_id
+    errorCheck.isValidGoogleId(google_id);
 
     //check validation of projectPaper_id and transform the value in integer
     projectPaper_id = errorCheck.setAndCheckValidProjectPaperId(projectPaper_id);
@@ -91,31 +108,26 @@ async function update(projectPaper_id, newProjectPaperData) {
     //check input format
     let valid = ajv.validate(validationSchemes.projectPaper, newProjectPaperData);
     //if is not a valid input
-    if (!valid)
-    {
+    if (!valid) {
         throw errHandler.createBadRequestError('the new projectPaper data for update is not valid!');
     }
 
     //get project id by projectPaper id
-    let project_id = await projectPapersDao.getProjectIdByProjectPaperId(projectPaper_id);
-    if(project_id === -1){
-        throw errHandler.createNotFoundError('ProjectPaper does not exist!');
-    }
+    let projectPaper = await projectPapersDao.selectById(projectPaper_id);
+    errorCheck.isValidProjectPaper(projectPaper);
+
+    //get user info
+    let user = await usersDao.getUserByGoogleId(google_id);
+    //check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(projectPaper.project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+
     //update the last modified date
-    let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
-    //error check
-    if (updateProjectDate === 0)
-    {
-        throw errHandler.createNotFoundError('the project doesn\'t exist!');
-    }
+    let updateProjectDate = await projectsDao.updateLastModifiedDate(projectPaper.project_id);
 
     //call DAO layer
     let numberRow = await projectPapersDao.update(projectPaper_id, newProjectPaperData);
-    //error check
-    if (numberRow === 0)
-    {
-        throw errHandler.createNotFoundError('ProjectPaper does not exist!');
-    }
 
 
 
@@ -124,35 +136,33 @@ async function update(projectPaper_id, newProjectPaperData) {
 
 /**
  *  * delete a projectPaper
- * @param {number} projectPaper_id
- * @returns {int} number of row affected , 1 if ok, 0 if failed
+ * @param {string} google_id of user
+ * @param {string} projectPaper_id
  */
-async function deletes(projectPaper_id) {
+async function deletes(google_id, projectPaper_id) {
+
+    //error check for google_id
+    errorCheck.isValidGoogleId(google_id);
 
     //check validation of projectPaper_id and transform the value in integer
     projectPaper_id = errorCheck.setAndCheckValidProjectPaperId(projectPaper_id);
 
     //get project id by projectPaper id
-    let project_id = await projectPapersDao.getProjectIdByProjectPaperId(projectPaper_id);
-    if(project_id === -1){
-        throw errHandler.createNotFoundError('ProjectPaper does not exist!');
-    }
-    //update the last modified date
-    let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
-    //error check
-    if (updateProjectDate === 0)
-    {
-        throw errHandler.createNotFoundError('the project doesn\'t exist!');
-    }
+    let projectPaper = await projectPapersDao.selectById(projectPaper_id);
+    errorCheck.isValidProjectPaper(projectPaper);
 
-    
+    //get user info
+    let user = await usersDao.getUserByGoogleId(google_id);
+    //check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(projectPaper.project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+
+    //update the last modified date
+    let updateProjectDate = await projectsDao.updateLastModifiedDate(projectPaper.project_id);
+
     //call DAO layer
     let numberRow = await projectPapersDao.deletes(projectPaper_id);
-    //error check
-    if (numberRow === 0)
-    {
-        throw errHandler.createNotFoundError('ProjectPaper does not exist!');
-    }
 
 
 }
@@ -160,38 +170,41 @@ async function deletes(projectPaper_id) {
 
 /**
  * select a projectPaper
- * @param {int} projectPaper_id
+ * @param {string} projectPaper_id
  * @returns {object} projectPaper found
+ *//*
+ async function selectById(projectPaper_id)  {
+
+ //check validation of projectPaper_id and transform the value in integer
+ projectPaper_id = errorCheck.setAndCheckValidProjectPaperId(projectPaper_id);
+
+ //call DAO layer
+ let res = await projectPapersDao.selectById(projectPaper_id);
+
+ //error check
+ if (res === undefined)
+ {
+ throw errHandler.createNotFoundError('ProjectPaper does not exist!');
+ }
+
+ return res;
+ }
  */
-async function selectById(projectPaper_id)  {
-
-    //check validation of projectPaper_id and transform the value in integer
-    projectPaper_id = errorCheck.setAndCheckValidProjectPaperId(projectPaper_id);
-
-    //call DAO layer
-    let res = await projectPapersDao.selectById(projectPaper_id);
-
-    //error check
-    if (res === undefined)
-    {
-        throw errHandler.createNotFoundError('ProjectPaper does not exist!');
-    }
-
-
-
-    return res;
-}
 
 /**
  * select all projectPaper associated with a project
- * @param {int} project_id
+ * @param {string} google_id of user
+ * @param {string} project_id
  * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
- * @param {int} start offset position where we begin to get
- * @param {int} count number of projects
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of projects
  * @returns {Object} array of projectPapers and total number of result
  */
-async function selectByProject(project_id, orderBy, sort, start, count) {
+async function selectByProject(google_id, project_id, orderBy, sort, start, count) {
+
+    //error check for google_id
+    errorCheck.isValidGoogleId(google_id);
 
     //check the validation of parameters
     //check validation of project id and transform the value in integer
@@ -201,12 +214,18 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
     start = errorCheck.setAndCheckValidStart(start);
     count = errorCheck.setAndCheckValidCount(count);
 
+    //get user info
+    let user = await usersDao.getUserByGoogleId(google_id);
+    //check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+
     //call DAO layer
     let res = await projectPapersDao.selectByProject(project_id, orderBy, sort, start, count);
 
     //error check
-    if (res.results.length === 0)
-    {
+    if (res.results.length === 0) {
         throw errHandler.createNotFoundError('the list is empty!');
     }
     return res;
@@ -214,17 +233,18 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
 
 /**
  * search papers belonging to a project
+ * @param {string} google_id of user
  * @param {string} keyword to search
- * @param {int} project_id
+ * @param {string} project_id
  * @param {string} searchBy [all, author, content] "content" means title+description
- * @param year specific year to search
+ * @param {string} year specific year to search
  * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
- * @param {int} start offset position where we begin to get
- * @param {int} count number of papers
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of papers
  * @returns {Object} array of projectPapers and total number of result
- */
-async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count) {
+ *//*
+async function searchPaperByProject(google_id, keyword, project_id, searchBy, year, orderBy, sort, start, count) {
 
     //check the validation of parameters
     errorCheck.isValidKeyword(keyword);
@@ -233,17 +253,17 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
 
     /*=============
      temporary parameter
-    * ============ */
+     * ============ *//*
     searchBy = searchBy || "all";
     if (searchBy !== "all" && searchBy !== "author" && searchBy !== "content") {
         throw errHandler.createBadRequestError('searchBy has a not valid value!');
     }
     year = Number(year) || "";
-    if(year !== "" && !Number.isInteger(year)){
+    if (year !== "" && !Number.isInteger(year)) {
         throw errHandler.createBadRequestError('year has a not valid value!');
     }
 
-    /*================= */
+    /*================= *//*
 
     orderBy = errorCheck.setAndCheckValidProjectPaperOrderBy(orderBy);
     sort = errorCheck.setAndCheckValidSort(sort);
@@ -253,12 +273,11 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
     //call DAO layer
     let res = await projectPapersDao.searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count);
     //error check
-    if (res.results.length === 0)
-    {
+    if (res.results.length === 0) {
         throw errHandler.createNotFoundError('the list is empty!');
     }
     return res;
-}
+}*/
 
 
 module.exports = {
@@ -266,7 +285,7 @@ module.exports = {
     insertFromPaper,
     update,
     deletes,
-    selectById,
+    //selectById,
     selectByProject,
-    searchPaperByProject
+    //searchPaperByProject
 };

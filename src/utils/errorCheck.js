@@ -262,6 +262,19 @@ function isValidProjectOwner(project) {
     }
 
 }
+/**
+ * check if the projectPaper is empty
+ * @param {Object} projectPaper
+ */
+function isValidProjectPaper(projectPaper) {
+
+    //if it is empty
+    if (!projectPaper) {
+        throw errHandler.createUnauthorizedError("ProjectPaper does not exist!");
+    }
+
+}
+
 
 
 
@@ -279,6 +292,7 @@ module.exports = {
     isValidTokenId,
     isValidGoogleId,
     isValidProjectOwner,
+    isValidProjectPaper,
 
 
 };
