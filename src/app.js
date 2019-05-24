@@ -30,8 +30,10 @@ app.get('/', (req, res) => {
     res.json({msg: 'Hello world!'});
 });
 
-//enabling CORS
+
+//enabling CORS for all request from any domain
 app.all('*', function (req, res, next) {
+
     res.header("Access-Control-Allow-Origin", req.headers.origin);
     //enable the cookie sending
     res.header('Access-Control-Allow-Credentials', 'true');
@@ -40,7 +42,8 @@ app.all('*', function (req, res, next) {
 
     if (req.method === "OPTIONS") {
         res.sendStatus(200);
-    } else {
+    }
+    else {
         next();
     }
 });
@@ -53,12 +56,11 @@ app.use(projectPapersController);
 app.use(uploadFileController);
 
 
-
 //manages the object error threw by level delegate
 app.use((e, req, res, next) => {
 
-
-   // console.error('[Error]', e);
+    //print the error object in the console
+    // console.error('[Error]', e);
 
     let error = errorsHelper.createBoomErrorForService(e);
 

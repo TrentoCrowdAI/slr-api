@@ -85,14 +85,7 @@ const end = () => pool.end();
 
 
 /*object that contains all table names*/
-const TABLES = Object.freeze({
-    papers: 'papers',
-    projects: 'projects',
-    projectPapers: 'project_papers',
-    users: 'users',
-    
-    //it will be add the new table names
-});
+const TABLES = config.db_tables;
 
 
 module.exports = {

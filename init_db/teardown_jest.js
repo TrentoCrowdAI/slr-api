@@ -2,6 +2,7 @@
 
 const fs = require("fs");
 const db = require(__base + "db/index");
+
 /**
  * async function to read the file and return a promise object that contains the content of file
  * @param {string} dir dir of file
@@ -10,12 +11,10 @@ const db = require(__base + "db/index");
 function read(dir) {
     return new Promise((resolve, reject) => {
         fs.readFile(dir, 'utf-8', (err, data) => {
-            if (err)
-            {
+            if (err) {
                 reject(console.log(err));
             }
-            else
-            {
+            else {
                 resolve(data);
             }
         });
@@ -30,22 +29,22 @@ function read(dir) {
 function returnData(data) {
     return data;
 }
+
 /**
- * function to create the DB tmp and insert the data for test
- 
+ * function to destroy the DB tmp
  */
 async function destroyDB() {
-    
+
     //get destroy sql
     var destroySql = await read('src/db/destroy.sql').then(returnData);
     //excute destroy sql
-    await db.queryNotParameter(destroySql).catch (function(error){
+    await db.queryNotParameter(destroySql).catch(function (error) {
         console.error(error);
-    }) ;
+    });
     //close db connection;
     await db.end();
     console.log("database destroyed-------------------------------------------");
-    
+
 }
 
 

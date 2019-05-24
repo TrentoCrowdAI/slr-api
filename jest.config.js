@@ -11,6 +11,6 @@ module.exports = {
         __base: __dirname + '/src/'
     },
     collectCoverageFrom: ['src/**/*.js'],
-    globalSetup: './jest/setup.js',
-    globalTeardown: './jest/teardown.js'
+    globalSetup: './init_db/setup_jest.js',
+    globalTeardown: './init_db/teardown_jest.js'
 };

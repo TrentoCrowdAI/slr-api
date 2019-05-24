@@ -13,7 +13,7 @@ const validationSchemes = require(__base + 'utils/validation.schemes');
 function setAndCheckValidPaperId(paper_id) {
     //error check
     if (paper_id === undefined || paper_id === null) {
-        throw errHandler.createBadRequestError('projectPaper_id is not defined!');
+        throw errHandler.createBadRequestError('paper_id is not defined!');
     }
     //cast paper_id to integer type
     paper_id = Number(paper_id);
@@ -25,15 +25,6 @@ function setAndCheckValidPaperId(paper_id) {
 }
 
 
-
-
-
-/*------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-
-
-/*------------------------------------------------------------------------------------------------------------------------------------------------*/
-
 /**
  * check validation of project id and transform the value in integer
  * @param {number} project_id
@@ -44,6 +35,7 @@ function setAndCheckValidProjectId(project_id) {
     if (project_id === undefined || project_id === null) {
         throw errHandler.createBadRequestError('Project id is not defined!');
     }
+
     //cast project_id to integer type
     project_id = Number(project_id);
     //error check
@@ -71,9 +63,6 @@ function setAndCheckValidProjectOrderBy(orderBy) {
 }
 
 
-/*------------------------------------------------------------------------------------------------------------------------------------------------*/
-
-
 /**
  * check validation of projectPaper id and transform the value in integer
  * @param {number} projectPaper_id
@@ -84,12 +73,14 @@ function setAndCheckValidProjectPaperId(projectPaper_id) {
     if (projectPaper_id === undefined || projectPaper_id === null) {
         throw errHandler.createBadRequestError('projectPaper_id is not defined!');
     }
+
     //cast project_id to integer type
     projectPaper_id = Number(projectPaper_id);
     //error check
     if (!Number.isInteger(projectPaper_id)) {
         throw errHandler.createBadRequestError('projectPaper_id is not a integer!');
     }
+
     return projectPaper_id;
 }
 
@@ -102,8 +93,10 @@ function setAndCheckValidProjectPaperOrderBy(orderBy) {
 
     //set default value if isn't defined, set the default value
     orderBy = orderBy || "date_created";
+
     //get array that includes all properties name of a projectPaper
     let arrayKeys = Object.keys(validationSchemes.projectPaper.properties);
+
     //if orderBy isn't included in this array, and isn't "date_created"
     if (!arrayKeys.includes(orderBy) && orderBy !== "date_created") {
         throw errHandler.createBadRequestError('the orderBy has a not valid value!');
@@ -112,10 +105,6 @@ function setAndCheckValidProjectPaperOrderBy(orderBy) {
     return orderBy;
 }
 
-
-
-
-/*------------------------------------------------------------------------------------------------------------------------------------------------*/
 
 
 
@@ -146,10 +135,10 @@ function setAndCheckValidSort(sort) {
 function setAndCheckValidStart(start) {
 
     //set default value as 0 if isn't defined
-    if(start !== undefined){
+    if (start !== undefined) {
         start = Number(start);
     }
-    else{
+    else {
         start = 0;
     }
 
@@ -169,11 +158,11 @@ function setAndCheckValidStart(start) {
  */
 function setAndCheckValidCount(count) {
 
-    if(count !== undefined){
+    if (count !== undefined) {
         count = Number(count)
     }
-    else{
-        count =config.pagination.defaultCount;
+    else {
+        count = config.pagination.defaultCount;
     }
 
     //check its validation
@@ -262,6 +251,7 @@ function isValidProjectOwner(project) {
     }
 
 }
+
 /**
  * check if the projectPaper is empty
  * @param {Object} projectPaper
@@ -274,8 +264,6 @@ function isValidProjectPaper(projectPaper) {
     }
 
 }
-
-
 
 
 module.exports = {

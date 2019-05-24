@@ -22,9 +22,6 @@ yarn-error.log*
 
 config.json
 
-#init DB
-
-
 #netbeans files
 .netbeans.xml
 
@@ -32,3 +29,9 @@ config.json
 
 #temp file
 tmp
+
+#env
+.env
+.env.test
+
+

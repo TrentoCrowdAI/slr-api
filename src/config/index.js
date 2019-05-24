@@ -1,6 +1,5 @@
 
 
-
 module.exports = {
     "db": {
         // were not used
@@ -13,21 +12,31 @@ module.exports = {
         // heroku postgres adds automatically DATABASE_URL.
         url: process.env.DATABASE_URL
     },
+    "db_tables":{
+        papers: 'papers',
+        projects: 'projects',
+        projectPapers: 'project_papers',
+        users: 'users',
+    },
 
+    //local port to start the service
+    "listening_port": 3001,
+    //the number of element for each page
     "pagination":{
         defaultCount: 10
-
     },
-
+    //the scopus parameters
     "scopus":{
-        apiKey: "1c828574217f856f6cf496239684fed4",
+        apiKey: process.env.SCOPUS_APIKEY ,
         url: "https://api.elsevier.com/content/search/scopus",
     },
-
+    //the pdf parse service
     "pdf_parse_server": "http://scienceparse.allenai.org/v1",
+    //the similar paper service
     "search_similar_server" : undefined, //here you can put the url of the remote(or local) service that will search for similar papers
 
+    //the google authentication service
     "google_oauth": "https://oauth2.googleapis.com/tokeninfo",
-    "google_login_client_id": "282160526683-84sdnoqh3bc1obojfpepcbonnfg3uks4.apps.googleusercontent.com"
+    "google_login_client_id": process.env.GOOGLE_LOGIN_CLIENT_ID
 
 };

@@ -1,4 +1,3 @@
-
 //scheme of paper, has 13 attributes, it is used only for the validation of the custom paper
 const paper = {
     "type": "object",
@@ -86,9 +85,6 @@ const project = {
     },
     "required": ["name", "description"]
 };
-
-
-
 
 
 module.exports = {

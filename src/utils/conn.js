@@ -9,24 +9,18 @@ const fs= require('fs');
 //10seconds for timeout
 const timeOutTime = 10 * 1000;
 
-//object to export
-const http = {
-    get,
-    post,
-    postPdf
-};
 
 
 /**
  * create a basic fetch request
  * @param url
- * @param options request config
+ * @param options for request
  * @param {int} timeOutTime
  * @return {object} response data
  */
 async function request(url, options, timeOutTime) {
     try {
-        //console.log("================================\n"+url);
+
 
         //create a new abortController for this request
         let abortController = new AbortController();
@@ -54,12 +48,13 @@ async function request(url, options, timeOutTime) {
         let data = await parseResponseData(response);
         //response error check
         checkResponseStatus(response,data);
+
         return  data;
 
     }
     catch (error) {
-       // console.dir(error.message);
 
+       // console.dir(error.message);
         return error;
 
     }
@@ -72,7 +67,9 @@ async function request(url, options, timeOutTime) {
  * @return {object} response data
  */
 async function get(url, queryData = "") {
+
     let query = "";
+    //concatenate the parameters in url
     if (queryData !== "") {
         query = "?";
         for (let key in queryData) {
@@ -82,6 +79,7 @@ async function get(url, queryData = "") {
         query = query.slice(0, query.length - 1);
     }
 
+    //create a header
     let jsonHeaders = new Headers();
     jsonHeaders.append('Accept', 'application/json');
     jsonHeaders.append('Content-Type', 'application/json;charset=UTF-8');
@@ -104,10 +102,13 @@ async function get(url, queryData = "") {
  */
 async function post(url, bodyData = "") {
 
+    //create a header
     let jsonHeaders = new Headers();
     jsonHeaders.append('Accept', 'application/json');
     jsonHeaders.append('Content-Type', 'application/json;charset=UTF-8');
+
     let body = JSON.stringify(bodyData, null, 2);
+
     let options = {
         "method": 'POST',
         "headers": jsonHeaders,
@@ -130,10 +131,12 @@ async function postPdf(url, fsStream) {
     //custom timeout for request
     let customTimeOutTime= 60 * 1000;
 
+    //create a header
     let jsonHeaders = new Headers();
     jsonHeaders.append('Accept', 'application/json, text/plain, */*');
     //jsonHeaders.append('Cache-Control', 'no-cache');
     jsonHeaders.append('Content-Type', 'application/pdf');
+
     let options = {
         "method": 'POST',
         "headers": jsonHeaders,
@@ -159,7 +162,7 @@ function checkResponseStatus(response, data) {
         let error = new Error(response.statusText);
         error.data = response;
 
-        //if is the scoupus error
+        //if is a scopus error
         if(data["service-error"]){
             let scopusErrorStatus = data["service-error"].status;
             error.message = scopusErrorStatus.statusCode+" : "+scopusErrorStatus.statusText;
@@ -176,9 +179,11 @@ function checkResponseStatus(response, data) {
  * @return {object} data parsed
  */
 async function parseResponseData(response) {
+
     //get response data type
     const contentType = response.headers.get('Content-Type');
     let data = null;
+
     //parse the data by its type
     if (contentType != null) {
         if (contentType.indexOf('text') > -1) {
@@ -194,8 +199,16 @@ async function parseResponseData(response) {
     else if (response != null) {
         data = await response.text();
     }
+
     return data;
 }
+
+//object to export
+const http = {
+    get,
+    post,
+    postPdf
+};
 
 
 module.exports = http;
