@@ -33,14 +33,13 @@ router.post('/search/similar', async (req, res, next) => {
     try {
 
         //input
-        let query = req.body.query;
-        let file = req.body.file;
+        let similarPaper = req.body.paperData;
 
         //pagination parameters
         let start = req.body.start;
         let count = req.body.count;
 
-        let papers = await papersDelegate.similarSearch(file, query, start, count);
+        let papers = await papersDelegate.similarSearch(similarPaper, start, count);
 
         res.status(200).json(papers);
     }

@@ -271,13 +271,12 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
 /**
  *
  * find similar papers
- * @param {file} file to search
- * @param {string} keyword paper title or url
+ * @param {Object} paperData of the paper to search for similarity
  * @param {string} start offset position where we begin to get
  * @param {string} count number of papers
  * @returns {Object} array of papers and total number of result
  */
-async function similarSearch(file, keyword, start, count) {
+async function similarSearch(paperData, start, count) {
 
     
     start = errorCheck.setAndCheckValidStart(start);
@@ -285,14 +284,17 @@ async function similarSearch(file, keyword, start, count) {
 
 
     //error check
-    if(!file && !keyword){
-        throw errHandler.createBadRequestError('the file and keyword are empty!');
+    if(!paperData){
+        throw errHandler.createBadRequestError("there's no paper to search for!");
     }
-    if(file && keyword && keyword !== ""){
-        throw errHandler.createBadRequestError("you can't input both a file and a keyword");
+    if(paperData.file && paperData.title && paperData.title !== ""){
+        throw errHandler.createBadRequestError("you can't input both a file and paper data");
     }
-    if(file && file.mimetype.indexOf("application/pdf")=== -1){
+    if(paperData.file && paperData.file.mimetype.indexOf("application/pdf")=== -1){
         throw errHandler.createBadRequestError('the file is not a pdf!');
+    }
+    if(!paperData.title){
+        throw errHandler.createBadRequestError('no paper title found');
     }
 
     //prepare the query object
@@ -311,7 +313,7 @@ async function similarSearch(file, keyword, start, count) {
 
 
     //if we have a file and the service allows file upload we can sende the file
-    if(file){
+    if(paperData.file){
         //temporary fake call for 'search similar service
         response = await scopusSearch("Trento", undefined, undefined, undefined, "ASC", start, count);
         //this can be the call when a good 'search similar' service will be found
@@ -319,10 +321,19 @@ async function similarSearch(file, keyword, start, count) {
     }
     //else if we have a query we search for similar papers based on the query(the query could be ad url to a specific paper or a DOI in the future)
     else{
-        queryData.query=keyword;
+        queryData.query=paperData.title;
 
         //temporary fake call for 'search similar service
-        response = await scopusSearch(keyword, undefined, undefined, undefined, "ASC", start, count);
+        let splitted = paperData.title.split(" ");
+        let relevantQuery = splitted[0];
+        //In practice I pick the first word of the title and I search for it on scopus
+        for(let i = 0; i<splitted.length; i++){
+            if(splitted[i].length !== 1){
+                relevantQuery = splitted[i];
+                break;
+            }
+        }
+        response = await scopusSearch(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
         //response = await conn.get(config.search_similar_server, queryData);
     }
 
