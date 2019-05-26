@@ -41,22 +41,17 @@ async function insert(newPaperData) {
  * @param {object} newPaperData
  */
 async function update(paper_id, newPaperData) {
-    //error check
-    if (paper_id === undefined || paper_id === null) {
-        throw errHandler.createBadRequestError('Paper id is not defined!');
-    }
-    //cast paper_id to integer type
-    paper_id = Number(paper_id);
-    //error check
-    if (!Number.isInteger(paper_id)) {
-        throw errHandler.createBadRequestError('Paper id  is not a integer!');
-    }
+
+    //check validation of paper_id and transform the value in integer
+    paper_id = errorCheck.setAndCheckValidPaperId(paper_id);
+
     //check input format
     let valid = ajv.validate(validationSchemes.paper, newPaperData);
     //if is not a valid input
     if (!valid) {
         throw errHandler.createBadRequestError('the new paper data for update is not valid!');
     }
+
     //call DAO layer
     let numberRow = await papersDao.update(paper_id, newPaperData);
     //error check
@@ -101,7 +96,7 @@ async function selectById(paper_id) {
     let res = await papersDao.selectById(paper_id);
     //error check
 
-    if (res === undefined) {
+    if (!res) {
         throw errHandler.createNotFoundError('Paper does not exist!');
     }
 
@@ -129,27 +124,9 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
     start = errorCheck.setAndCheckValidStart(start);
     count = errorCheck.setAndCheckValidCount(count);
 
-    /*=============
-     temporary parameter
-     * ============ */
-
-    orderBy = orderBy || "title";
-    if (orderBy !== "date" && orderBy !== "title" ) {
-        throw errHandler.createBadRequestError('orderBy has a not valid value!');
-    }
-
-    searchBy = searchBy || "all";
-    if (searchBy !== "all" && searchBy !== "author" && searchBy !== "content" && searchBy !== "advanced"  ) {
-        throw errHandler.createBadRequestError('searchBy has a not valid value!');
-    }
-
-    year = Number(year) || "";
-    if (year !== "" && !Number.isInteger(year)) {
-        throw errHandler.createBadRequestError('year has a not valid value!');
-    }
-
-    /*================= */
-
+    orderBy = errorCheck.setAndCheckValidOrderByForScopus(orderBy);
+    searchBy = errorCheck.setAndCheckValidSearchByForScopus(searchBy);
+    year = errorCheck.setAndCheckValidYearForScopus(year);
 
     //prepare the query object
     let queryData = {};
@@ -157,46 +134,47 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
     //searchBy condition
     let query;
     switch (searchBy) {
-        case "all":
-            query = "ALL(\""+keyword+"\")";
+        case config.scopus.validSearchBy[0]:
+            query = "ALL(\"" + keyword + "\")";
             break;
-        case "author":
-            query = "AUTHOR-NAME(\""+keyword+"\")";
+        case config.scopus.validSearchBy[1]:
+            query = "AUTHOR-NAME(\"" + keyword + "\")";
             break;
-        case "content":
-            query = "TITLE-ABS-KEY(\""+keyword+"\")";
+        case config.scopus.validSearchBy[2]:
+            query = "TITLE-ABS-KEY(\"" + keyword + "\")";
             break;
-        case "advanced":
-            query =keyword;
+        case config.scopus.validSearchBy[3]:
+            query = keyword;
             break;
     }
     queryData.query = query;
 
     //date range condition
-    if(year !== ""){
+    if (year !== "") {
         queryData.date = year;
     }
 
     //sort condition
-    if(orderBy === "date"){
+    if (orderBy === "date") {
         orderBy = "coverDate";
     }
-    else{
+    else {
         orderBy = "publicationName";
     }
-    if(sort === "ASC"){
-        sort ="+";
+
+    if (sort === "ASC") {
+        sort = "+";
     }
-    else{
-        sort ="-";
+    else {
+        sort = "-";
     }
-    queryData.sort=sort+orderBy;
+    queryData.sort = sort + orderBy;
 
     //number of papers and offset
     queryData.start = start;
-    queryData.count =count;
+    queryData.count = count;
 
-    //fetchData from scopus
+    //send request get to scopus service
     let response = await conn.get(config.scopus.url, queryData);
 
     //if there is the error from fetch
@@ -206,9 +184,9 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
 
     //get total number of results
     let totalResults = response['search-results']['opensearch:totalResults'];
+
     //if results if 0, return the 404 error
-    if (totalResults === "0")
-    {
+    if (totalResults === "0") {
         throw errHandler.createNotFoundError('the result is empty!');
     }
 
@@ -216,17 +194,17 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
     let arrayResults = response['search-results']['entry'];
 
     //store a new paper array
-    let arrayPapers=[];
+    let arrayPapers = [];
     //a eids array for our new paper array
     let arrayEid = [];
 
     //create a new paper array with our format
-    for(let i = 0; i < arrayResults.length; i++) {
+    for (let i = 0; i < arrayResults.length; i++) {
 
         let paper = {};
         paper.authors = arrayResults[i]["dc:creator"] || ""; //authors can be empty
         paper.title = arrayResults[i]["dc:title"] || "";
-        paper.year = arrayResults[i]["prism:coverDate"].slice(0,4) || ""; //slice only the part of year
+        paper.year = arrayResults[i]["prism:coverDate"].slice(0, 4) || ""; //slice only the part of year
         paper.date = arrayResults[i]["prism:coverDate"] || "";
         paper.source_title = arrayResults[i]["prism:publicationName"] || "";
         paper.link = arrayResults[i].link || "";
@@ -238,11 +216,11 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
         paper.source = "Scopus";
         paper.eid = arrayResults[i].eid || "";
 
-        paper.abstract_structured ="";
-        paper.filter_oa_include ="";
-        paper.filter_study_include ="";
-        paper.notes ="";
-        paper.manual ="0";
+        paper.abstract_structured = "";
+        paper.filter_oa_include = "";
+        paper.filter_study_include = "";
+        paper.notes = "";
+        paper.manual = "0";
 
         //push element in array
         arrayPapers.push(paper);
@@ -251,12 +229,12 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
 
 
     //return array of eids where in which the paper with same eid are already stored  in DB
-    let arrayEidExisting = await  papersDao.checkExistenceByEids(arrayEid);
-    //remove the paper already present in DB
+    let arrayEidExisting = await papersDao.checkExistenceByEids(arrayEid);
+    //remove the eids already presented in DB
     let arrayPapersToInsert = support.removeElementFromArrayByEids(arrayPapers, arrayEidExisting);
 
     //if there are the new papers
-    if(arrayPapersToInsert.length > 0){
+    if (arrayPapersToInsert.length > 0) {
 
         //insert the papers in DB
         let res = await papersDao.insertByList(arrayPapersToInsert);
@@ -271,28 +249,30 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
 /**
  *
  * find similar papers
- * @param {file} file to search
- * @param {string} keyword paper title or url
+ * @param {Object} paperData of the paper to search for similarity
  * @param {string} start offset position where we begin to get
  * @param {string} count number of papers
  * @returns {Object} array of papers and total number of result
  */
-async function similarSearch(file, keyword, start, count) {
+async function similarSearch(paperData, start, count) {
 
-    
+
     start = errorCheck.setAndCheckValidStart(start);
     count = errorCheck.setAndCheckValidCount(count);
 
 
     //error check
-    if(!file && !keyword){
-        throw errHandler.createBadRequestError('the file and keyword are empty!');
+    if(!paperData){
+        throw errHandler.createBadRequestError("there's no paper to search for!");
     }
-    if(file && keyword && keyword !== ""){
-        throw errHandler.createBadRequestError("you can't input both a file and a keyword");
+    if(paperData.file && paperData.title && paperData.title !== ""){
+        throw errHandler.createBadRequestError("you can't input both a file and paper data");
     }
-    if(file && file.mimetype.indexOf("application/pdf")=== -1){
+    if(paperData.file && paperData.file.mimetype.indexOf("application/pdf")=== -1){
         throw errHandler.createBadRequestError('the file is not a pdf!');
+    }
+    if(!paperData.title){
+        throw errHandler.createBadRequestError('no paper title found');
     }
 
     //prepare the query object
@@ -311,7 +291,7 @@ async function similarSearch(file, keyword, start, count) {
 
 
     //if we have a file and the service allows file upload we can sende the file
-    if(file){
+    if(paperData.file){
         //temporary fake call for 'search similar service
         response = await scopusSearch("Trento", undefined, undefined, undefined, "ASC", start, count);
         //this can be the call when a good 'search similar' service will be found
@@ -319,10 +299,19 @@ async function similarSearch(file, keyword, start, count) {
     }
     //else if we have a query we search for similar papers based on the query(the query could be ad url to a specific paper or a DOI in the future)
     else{
-        queryData.query=keyword;
+        queryData.query=paperData.title;
 
         //temporary fake call for 'search similar service
-        response = await scopusSearch(keyword, undefined, undefined, undefined, "ASC", start, count);
+        let splitted = paperData.title.split(" ");
+        let relevantQuery = splitted[0];
+        //In practice I pick the first word of the title and I search for it on scopus
+        for(let i = 0; i<splitted.length; i++){
+            if(splitted[i].length !== 1){
+                relevantQuery = splitted[i];
+                break;
+            }
+        }
+        response = await scopusSearch(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
         //response = await conn.get(config.search_similar_server, queryData);
     }
 
@@ -368,12 +357,12 @@ async function similarSearch(file, keyword, start, count) {
     //###########################################
 
     //return array of eids where in which the paper with same eid are already stored  in DB
-    let arrayEidExisting = await  papersDao.checkExistenceByEids(arrayEid);
+    let arrayEidExisting = await papersDao.checkExistenceByEids(arrayEid);
     //remove the paper already present in DB
     let arrayPapersToInsert = support.removeElementFromArrayByEids(arrayPapers, arrayEidExisting);
 
     //if there are the new papers
-    if(arrayPapersToInsert.length > 0){
+    if (arrayPapersToInsert.length > 0) {
 
         //insert the papers in DB
         let res = await papersDao.insertByList(arrayPapersToInsert);

@@ -1,4 +1,3 @@
-
 const db = require(__base + "db/index");
 //supply the auxiliary function
 const support = require(__base + 'utils/support');
@@ -30,17 +29,17 @@ async function insert(newProjectPaperData, project_id) {
 async function insertFromPaper(arrayEid, project_id) {
 
     //transform array in string where each element is surrounded by '
-    let joinString = support.arrayToString(arrayEid, "," , "'");
+    let joinString = support.arrayToString(arrayEid, ",", "'");
     //if joinString is empty
     if (joinString === "") {
         joinString = "''";
     }
 
+    //first, get the paper records from papers table by array of EID, then insert them into projectPapers table
     let res = await db.query(
-            'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT $1, $2, $3, "data", $4 FROM public.' + db.TABLES.papers + ' WHERE data->>\'eid\' IN (' + joinString + ') ) RETURNING *',
-            [new Date(), new Date(), null ,project_id]
-            );
-
+        'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT $1, $2, $3, "data", $4 FROM public.' + db.TABLES.papers + ' WHERE data->>\'eid\' IN (' + joinString + ') ) RETURNING *',
+        [new Date(), new Date(), null, project_id]
+    );
 
 
     return res.rows;
@@ -56,9 +55,9 @@ async function update(projectPaper_id, newProjectPaperData) {
 
 
     let res = await db.query(
-            'UPDATE public.' + db.TABLES.projectPapers + ' SET "date_last_modified" = $1,  "data" = $2 WHERE "id" = $3',
-            [new Date(), newProjectPaperData, projectPaper_id]
-            );
+        'UPDATE public.' + db.TABLES.projectPapers + ' SET "date_last_modified" = $1,  "data" = $2 WHERE "id" = $3',
+        [new Date(), newProjectPaperData, projectPaper_id]
+    );
 
     return res.rowCount;
 }
@@ -72,9 +71,9 @@ async function update(projectPaper_id, newProjectPaperData) {
 async function deletes(projectPaper_id) {
 
     let res = await db.query(
-            'DELETE FROM public.' + db.TABLES.projectPapers + ' WHERE id = $1',
-            [projectPaper_id]
-            );
+        'DELETE FROM public.' + db.TABLES.projectPapers + ' WHERE id = $1',
+        [projectPaper_id]
+    );
 
     return res.rowCount;
 }
@@ -84,17 +83,18 @@ async function deletes(projectPaper_id) {
  * @param {int} projectPaper_id
  * @returns {object} projectPaper found
  */
+
 async function selectById(projectPaper_id) {
     let res = await db.query(
-            'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE id = $1',
-            [projectPaper_id]
-            );
+        'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE id = $1',
+        [projectPaper_id]
+    );
 
     return res.rows[0];
 }
 
 /**
- * select all projectPaper associated with a project
+ * select the projectPapers associated with a project
  * @param {int} project_id
  * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
@@ -104,14 +104,15 @@ async function selectById(projectPaper_id) {
  */
 async function selectByProject(project_id, orderBy, sort, start, count) {
 
-    if(orderBy !== "date_created"){
-        orderBy = "data->>'"+orderBy+"'";
+    //if the orderBy is based on the propriety of json data
+    if (orderBy !== "date_created") {
+        orderBy = "data->>'" + orderBy + "'";
     }
 
-    //query to get projects
+    //query to get projectPapers
     let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1  ORDER BY  '+orderBy +'   '+ sort + ' LIMIT $2 OFFSET $3',
-        [project_id,  count, start]
+        'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1  ORDER BY  ' + orderBy + '   ' + sort + ' LIMIT $2 OFFSET $3',
+        [project_id, count, start]
     );
 
     //query to get total number of result
@@ -128,7 +129,7 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
  * @param {string} keyword to search
  * @param {int} project_id
  * @param {string} searchBy [all, author, content] "content" means title+description
- * @param year specific year to search
+ * @param {string} year specific year to search
  * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
  * @param {int} start offset position where we begin to get
@@ -137,7 +138,7 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
  */
 async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count) {
 
-    //set sql where condition by searchBy value
+    //set first sql condition by searchBy value
     let condition;
     switch (searchBy) {
         case "all":
@@ -151,14 +152,14 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
             break;
     }
 
-    //set sql where condition2 by year
+    //set second sql condition by year
     let conditionOnYear = "";
     //if year isn't empty, set sql condition on year
     if (year !== "") {
         conditionOnYear = " AND ( data->>'year' = '" + year + "' )";
     }
 
-    //query to get papers
+    //query to get progetPapers
     let res = await db.query(
         'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE  project_id = $1 ' + condition + ' ' + conditionOnYear + '  ORDER BY data->>$2 ' + sort + ' LIMIT $3 OFFSET $4',
         [project_id, orderBy, count, start]
@@ -174,22 +175,23 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
 }
 
 /*=== deprecated function ===
-async function selectByIdAndProjectId(paper_id, project_id){
-    let paper_eid = await db.query(//I retrieve the eid of the paper to add
-        'SELECT data->>\'EID\' as eid FROM public.' + db.TABLES.papers + ' WHERE id = $1',
-        [paper_id]
-    );
-    paper_eid = paper_eid.rows[0].eid;
-    let res = await db.query(//I check if the paper with the current eid is already in the project
-        'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND data ->>\'EID\' = $2',
-        [project_id, paper_eid]
-    );
-    return res.rows[0];//this will be defined only if the paper is already in the project
-}*/
+ async function selectByIdAndProjectId(paper_id, project_id){
+ let paper_eid = await db.query(//I retrieve the eid of the paper to add
+ 'SELECT data->>\'EID\' as eid FROM public.' + db.TABLES.papers + ' WHERE id = $1',
+ [paper_id]
+ );
+ paper_eid = paper_eid.rows[0].eid;
+ let res = await db.query(//I check if the paper with the current eid is already in the project
+ 'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND data ->>\'EID\' = $2',
+ [project_id, paper_eid]
+ );
+ return res.rows[0];//this will be defined only if the paper is already in the project
+ }*/
 
 
 /**
  * internal function==========================================================
+ *
  * check existence of papers in tables
  * @param {array[]} arrayEid of paper to check
  * @param {int} project_id
@@ -198,7 +200,7 @@ async function selectByIdAndProjectId(paper_id, project_id){
 async function checkExistenceByEids(arrayEid, project_id) {
 
     //transform array in string where each element is surrounded by '
-    let joinString = support.arrayToString(arrayEid, "," , "'");
+    let joinString = support.arrayToString(arrayEid, ",", "'");
     //if joinString is empty
     if (joinString === "") {
         joinString = "''";
@@ -209,35 +211,35 @@ async function checkExistenceByEids(arrayEid, project_id) {
         [project_id]
     );
 
-    let array =[];
-    for(let i =0; i<res.rows.length; i++){
+    let array = [];
+    for (let i = 0; i < res.rows.length; i++) {
         array.push(res.rows[i].eid);
     }
     return array;
 }
+
 /*
-* get project id of projectPaper by projectPaper id
-* @param {int} projectPaper_id
-* @returns {int} project id if there is projectPaper, -1 if it isn't exist
-*//*
-async function getProjectIdByProjectPaperId(projectPaper_id) {
+ * get project id of projectPaper by projectPaper id
+ * @param {int} projectPaper_id
+ * @returns {int} project id if there is projectPaper, -1 if it isn't exist
+ *//*
+ async function getProjectIdByProjectPaperId(projectPaper_id) {
 
 
-    let res = await db.query(
-        'SELECT project_id FROM public.' + db.TABLES.projectPapers + '  WHERE  id = $1 ; ',
-        [projectPaper_id]
-    );
+ let res = await db.query(
+ 'SELECT project_id FROM public.' + db.TABLES.projectPapers + '  WHERE  id = $1 ; ',
+ [projectPaper_id]
+ );
 
-    let output = -1;
-    if(res.rows.length > 0){
-        output = parseInt(res.rows[0].project_id);
-    }
+ let output = -1;
+ if(res.rows.length > 0){
+ output = parseInt(res.rows[0].project_id);
+ }
 
 
-    return output;
+ return output;
 
-}*/
-
+ }*/
 
 
 module.exports = {

@@ -13,42 +13,42 @@ const errHandler = require(__base + 'utils/errors');
 const conn = require(__base + 'utils/conn');
 
 
-
+/**
+ * send the pdf file to remote service and return the result of parse
+ * @param {file}file
+ * @return {object} result of parse
+ */
 async function parsePdf(file) {
 
     //error check
-    if(!file){
+    //if the file doesn't exist
+    if (!file) {
         throw errHandler.createBadRequestError('the file does not exist!');
     }
-    if(file.mimetype.indexOf("application/pdf")=== -1){
+    //if the file doesn't a pdf
+    if (file.mimetype.indexOf("application/pdf") === -1) {
         throw errHandler.createBadRequestError('the file is not a pdf!');
-   }
+    }
 
-    //console.log('type：%s', file.mimetype);
-    //console.log('name：%s', file.originalname);
-    //console.log('size：%s', file.size);
-    //console.log('path：%s', file.path);
-
-    //fetch with file stream
+    //send a post request with readStream of file, so file will be converted in the binary data in request
     let response = await conn.postPdf(config.pdf_parse_server, fs.createReadStream(file.path));
 
-    //if there is the error from fetch
+    //if there is the error from post request
     if (response.message) {
         throw errHandler.createBadImplementationError(response.message);
     }
 
     //prepare the result
-    let result={
+    let result = {
         title: response.title,
-        abstract : response.abstractText,
+        abstract: response.abstractText,
         year: response.year,
     };
-
-    //get a string of author's name from array of authors
+    //format a string of author's name from array of authors
     result.authors = "";
-    for(let i=0; i<response.authors.length; i++){
+    for (let i = 0; i < response.authors.length; i++) {
         result.authors += response.authors[i].name;
-        if(i !== response.authors.length-1 ){
+        if (i !== response.authors.length - 1) {
             result.authors += ",";
         }
     }

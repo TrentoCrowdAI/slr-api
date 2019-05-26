@@ -34,7 +34,7 @@ function arrayToString(arraySource, separator, surroundedBy) {
  */
 function differenceOperation(arrayA, arrayB) {
 
-    //return true if exist, false if not
+    //return true if not exist, false if exist
     function checkExistenceOfElement(element) {
         return !arrayB.includes(element);
     }
@@ -53,7 +53,7 @@ function differenceOperation(arrayA, arrayB) {
  */
 function removeElementFromArrayByEids(arrayA, arrayB) {
 
-    //return true if exist, false if not
+    //return true if not exist, false if exist
     function checkExistenceOfElement(element) {
         return !arrayB.includes(element.eid);
     }

@@ -13,14 +13,14 @@ test('dummy test', () => {
 describe('good cases', () => {
 
     test('GET /search should return 200 if find any papers', async () => {
-        jest.setTimeout(10000);
+        jest.setTimeout(15000);
         let response = await request(app).get('/search?query=2015').set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 
     test('POST /search/similar should return 200 if find any papers', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/search/similar').send({"query" : "2015"}).set('Authorization', validTokenId);
+        let response = await request(app).post('/search/similar').send({"paperData" : {"title" : "Crowdsourcing developement"}}).set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 
@@ -90,7 +90,7 @@ describe('bad cases', () => {
     });
     test('POST /search/similar should return 404 if it finds nothing', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).post('/search/similar').send({"query" : "uaidafafa"}).set('Authorization', validTokenId);
+        let response = await request(app).post('/search/similar').send({"paperData" : {"title" : "."}}).set('Authorization', validTokenId);
         expect(response.status).toBe(404);
     });
     

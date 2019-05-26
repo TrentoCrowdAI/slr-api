@@ -179,6 +179,51 @@ function setAndCheckValidCount(count) {
 
 
 /**
+ * set a default value if orderBy isn't defined and check its validation
+ * @param {string} orderBy
+ * @return {string} valid orderBy
+ */
+function setAndCheckValidOrderByForScopus(orderBy) {
+
+    orderBy = orderBy || "title";
+    if (orderBy !== "date" && orderBy !== "title" ) {
+        throw errHandler.createBadRequestError('orderBy has a not valid value!');
+    }
+    return orderBy;
+}
+
+/**
+ * set a default value if orderBy isn't defined and check its validation
+ * @param {string} searchBy
+ * @return {string} valid searchBy
+ */
+function setAndCheckValidSearchByForScopus(searchBy) {
+
+    searchBy = searchBy || "all";
+    //if the value doesn't correspond to any default value
+    if (!config.scopus.validSearchBy.includes(searchBy)) {
+        throw errHandler.createBadRequestError('searchBy has a not valid value!');
+    }
+    return searchBy;
+}
+
+/**
+ * set a default empty string if year isn't defined and check its validation
+ * @param {string} searchBy
+ * @return {string} valid searchBy
+ */
+function setAndCheckValidYearForScopus(year) {
+
+    year = Number(year) || "";
+    if (year !== "" && !Number.isInteger(year)) {
+        throw errHandler.createBadRequestError('year has a not valid value!');
+    }
+
+    return year;
+}
+
+
+/**
  * check the validation of keyword
  * @param {string} keyword
  */
@@ -275,6 +320,9 @@ module.exports = {
     setAndCheckValidSort,
     setAndCheckValidStart,
     setAndCheckValidCount,
+    setAndCheckValidOrderByForScopus,
+    setAndCheckValidSearchByForScopus,
+    setAndCheckValidYearForScopus,
     isValidKeyword,
     isValidArray,
     isValidTokenId,

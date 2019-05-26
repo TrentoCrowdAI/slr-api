@@ -76,7 +76,7 @@ async function selectById(project_id) {
 /**
  * select a project by id and userId
  * @param {int} project_id
- *  * @param {int} user_id
+ * @param {int} user_id
  * @returns {object} project found
  */
 async function selectByIdAndUserId(project_id, user_id) {
@@ -112,7 +112,7 @@ async function selectAll(orderBy, sort, start, count) {
 }
 
 /**
- * select all project of a specific user
+ * select the project by a specific user
  * @param {int} user_id
  * @param {string} orderBy [id, date_created, date_last_modified, date_deleted]
  * @param {string} sort [ASC or DESC]

@@ -10,6 +10,7 @@ const usersDao = require(__base + 'dao/users.dao');
 const errHandler = require(__base + 'utils/errors');
 //supply the auxiliary function
 const support = require(__base + 'utils/support');
+//error check function
 const errorCheck = require(__base + 'utils/errorCheck');
 //the packaged for input validation
 const ajv = require(__base + 'utils/ajv');
@@ -39,14 +40,17 @@ async function insertFromPaper(google_id, arrayEid, project_id) {
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
+    //get array of eids where they are already presented in DB
     let arrayEidExisting = await projectPapersDao.checkExistenceByEids(arrayEid, project_id);
+    //remove the eids already exist in DB
     arrayEid = support.differenceOperation(arrayEid, arrayEidExisting);
+
     //call DAO layer
     let res = await projectPapersDao.insertFromPaper(arrayEid, project_id);
 
     //if at least one post is inserted
     if (arrayEid.length > 0) {
-        //update the last modified date
+        //update the last modified date of project
         let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
     }
 
@@ -112,7 +116,7 @@ async function update(google_id, projectPaper_id, newProjectPaperData) {
         throw errHandler.createBadRequestError('the new projectPaper data for update is not valid!');
     }
 
-    //get project id by projectPaper id
+    //get projectPaper object by projectPaper id
     let projectPaper = await projectPapersDao.selectById(projectPaper_id);
     errorCheck.isValidProjectPaper(projectPaper);
 
@@ -128,7 +132,6 @@ async function update(google_id, projectPaper_id, newProjectPaperData) {
 
     //call DAO layer
     let numberRow = await projectPapersDao.update(projectPaper_id, newProjectPaperData);
-
 
 
 }
@@ -147,7 +150,7 @@ async function deletes(google_id, projectPaper_id) {
     //check validation of projectPaper_id and transform the value in integer
     projectPaper_id = errorCheck.setAndCheckValidProjectPaperId(projectPaper_id);
 
-    //get project id by projectPaper id
+    //get projectPaper object by projectPaper id
     let projectPaper = await projectPapersDao.selectById(projectPaper_id);
     errorCheck.isValidProjectPaper(projectPaper);
 
@@ -228,6 +231,7 @@ async function selectByProject(google_id, project_id, orderBy, sort, start, coun
     if (res.results.length === 0) {
         throw errHandler.createNotFoundError('the list is empty!');
     }
+    
     return res;
 }
 
@@ -244,40 +248,40 @@ async function selectByProject(google_id, project_id, orderBy, sort, start, coun
  * @param {string} count number of papers
  * @returns {Object} array of projectPapers and total number of result
  *//*
-async function searchPaperByProject(google_id, keyword, project_id, searchBy, year, orderBy, sort, start, count) {
+ async function searchPaperByProject(google_id, keyword, project_id, searchBy, year, orderBy, sort, start, count) {
 
-    //check the validation of parameters
-    errorCheck.isValidKeyword(keyword);
-    //check validation of project id and transform the value in integer
-    project_id = errorCheck.setAndCheckValidProjectId(project_id);
+ //check the validation of parameters
+ errorCheck.isValidKeyword(keyword);
+ //check validation of project id and transform the value in integer
+ project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
-    /*=============
-     temporary parameter
-     * ============ *//*
-    searchBy = searchBy || "all";
-    if (searchBy !== "all" && searchBy !== "author" && searchBy !== "content") {
-        throw errHandler.createBadRequestError('searchBy has a not valid value!');
-    }
-    year = Number(year) || "";
-    if (year !== "" && !Number.isInteger(year)) {
-        throw errHandler.createBadRequestError('year has a not valid value!');
-    }
+ /*=============
+ temporary parameter
+ * ============ *//*
+ searchBy = searchBy || "all";
+ if (searchBy !== "all" && searchBy !== "author" && searchBy !== "content") {
+ throw errHandler.createBadRequestError('searchBy has a not valid value!');
+ }
+ year = Number(year) || "";
+ if (year !== "" && !Number.isInteger(year)) {
+ throw errHandler.createBadRequestError('year has a not valid value!');
+ }
 
-    /*================= *//*
+ /*================= *//*
 
-    orderBy = errorCheck.setAndCheckValidProjectPaperOrderBy(orderBy);
-    sort = errorCheck.setAndCheckValidSort(sort);
-    start = errorCheck.setAndCheckValidStart(start);
-    count = errorCheck.setAndCheckValidCount(count);
+ orderBy = errorCheck.setAndCheckValidProjectPaperOrderBy(orderBy);
+ sort = errorCheck.setAndCheckValidSort(sort);
+ start = errorCheck.setAndCheckValidStart(start);
+ count = errorCheck.setAndCheckValidCount(count);
 
-    //call DAO layer
-    let res = await projectPapersDao.searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count);
-    //error check
-    if (res.results.length === 0) {
-        throw errHandler.createNotFoundError('the list is empty!');
-    }
-    return res;
-}*/
+ //call DAO layer
+ let res = await projectPapersDao.searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count);
+ //error check
+ if (res.results.length === 0) {
+ throw errHandler.createNotFoundError('the list is empty!');
+ }
+ return res;
+ }*/
 
 
 module.exports = {

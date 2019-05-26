@@ -1,4 +1,4 @@
-// this file exposes the logic implemented in projectPapers.delegate.js
+// this file exposes the logic implemented in uploadFile.delegate.js
 // as services using express
 
 const express = require('express');
@@ -8,11 +8,11 @@ const multer = require('multer');
 const fs = require('fs');
 
 const uploadFileDelegate = require(__base + 'delegates/uploadFile.delegate');
-
-
 const router = express.Router();
 
+
 //create a temp folder to save the tmp file
+//the path of temp folder
 const uploadFolder = './tmp/';
 const createFolder = function(folder){
     try{
@@ -36,7 +36,7 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 
-
+/*received the multi-file by post, the filed name of form must be "file" */
 router.post('/pdf', upload.single('file'), async (req, res, next) => {
     try
     {

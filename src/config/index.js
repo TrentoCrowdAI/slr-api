@@ -29,6 +29,7 @@ module.exports = {
     "scopus":{
         apiKey: process.env.SCOPUS_APIKEY ,
         url: "https://api.elsevier.com/content/search/scopus",
+        validSearchBy: ["all","author","content","advanced"],
     },
     //the pdf parse service
     "pdf_parse_server": "http://scienceparse.allenai.org/v1",

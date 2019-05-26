@@ -5,7 +5,7 @@ const usersDao = require(__base + 'dao/users.dao');
 
 //error handler
 const errHandler = require(__base + 'utils/errors');
-//supply the auxiliary function
+//error check function
 const errorCheck = require(__base + 'utils/errorCheck');
 //fetch request
 const conn = require(__base + 'utils/conn');
@@ -17,7 +17,8 @@ const config = require(__base + 'config');
  * gets the users info and logs him in database
  * @param {string} tokenId
  * @returns {Object} user
- *//*
+ */
+/*
  async function userLogin(tokenId) {
 
  if (!tokenId) {
@@ -63,7 +64,8 @@ const config = require(__base + 'config');
 
 /**
  logout the users , delete the specific token from database
- *//*
+ */
+/*
  async function userLogout(tokenId) {
 
  //error check for tokenId
@@ -79,7 +81,8 @@ const config = require(__base + 'config');
  * check user's existence by token Id
  * @param {string} tokenId
  * @returns {boolean} true if found, false if not found
- *//*
+ */
+/*
  async function checkUserByTokenId(tokenId) {
 
  //error check for tokenId
@@ -98,7 +101,9 @@ const config = require(__base + 'config');
  * get user data by token Id
  * @param {string} tokenId
  * @returns {object} user found
- *//*
+ */
+
+/*
  async function getUserByTokenId(tokenId) {
 
  //error check for tokenId
@@ -153,22 +158,23 @@ async function verifyToken(tokenId) {
                 audience: config.google_login_client_id,
             });
         }
-        catch (e) {
-            throw errHandler.createBadRequestError("the token is not valid: " + e.message);
+        catch (error) {
+            throw errHandler.createBadRequestError("the token is not valid: " + error.message);
         }
 
-        //get user object from response of google
+        //get response object from response of google
         let googleResponse = ticket.getPayload();
-        //create user object
+        //create user object with propriety "google_id"
         let user = {
             google_id: googleResponse.sub,
         };
 
-        //check user's existence
+        //check user's existence by google id
         let userFromDB = await usersDao.getUserByGoogleId(user.google_id);
 
-        //if is a new user
+        //if it doesn't exist in DB yet
         if (!userFromDB) {
+            //insert it
             let res = await usersDao.insert(user);
         }
 

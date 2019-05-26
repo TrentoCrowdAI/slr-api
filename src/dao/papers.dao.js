@@ -22,10 +22,10 @@ async function insert(newPaperData) {
  */
 async function insertByList(arrayPaperData) {
 
-    let values="";
-
+    let values = "";
+    //create sql values by array of papers
     for (let i = 0; i < arrayPaperData.length; i++) {
-        values += " ( now() , now() , " + null + " , $" + (i+1) + " ) ";
+        values += " ( now() , now() , " + null + " , $" + (i + 1) + " ) ";
         //if isn't last cycle, add a comma ad end of string
         if (i < arrayPaperData.length - 1) {
             values += ",";
@@ -33,13 +33,11 @@ async function insertByList(arrayPaperData) {
     }
 
     let res = await db.query(
-        'INSERT INTO public.' + db.TABLES.papers + '("date_created", "date_last_modified", "date_deleted", "data") VALUES '+values+' RETURNING *'
-    , [...arrayPaperData]
+        'INSERT INTO public.' + db.TABLES.papers + '("date_created", "date_last_modified", "date_deleted", "data") VALUES ' + values + ' RETURNING *'
+        , [...arrayPaperData]
     );
     return res.rows;
 }
-
-
 
 
 /**
@@ -54,8 +52,6 @@ async function selectById(paper_id) {
     );
     return res.rows[0];
 }
-
-
 
 
 /**
@@ -87,8 +83,6 @@ async function deletes(paper_id) {
 }
 
 
-
-
 /**
  *  internal function==========================================================
  * check existence of papers in tables
@@ -98,7 +92,7 @@ async function deletes(paper_id) {
 async function checkExistenceByEids(arrayEid) {
 
     //transform array in string where each element is surrounded by '
-    let joinString = support.arrayToString(arrayEid, "," , "'");
+    let joinString = support.arrayToString(arrayEid, ",", "'");
     //if joinString is empty
     if (joinString === "") {
         joinString = "''";
@@ -108,8 +102,8 @@ async function checkExistenceByEids(arrayEid) {
         'SELECT data->>\'eid\' AS eid FROM public.' + db.TABLES.papers + ' WHERE data->>\'eid\' IN (' + joinString + ');'
     );
 
-    let array =[];
-    for(let i =0; i<res.rows.length; i++){
+    let array = [];
+    for (let i = 0; i < res.rows.length; i++) {
         array.push(res.rows[i].eid);
     }
     return array;
@@ -178,14 +172,14 @@ async function checkExistenceByEids(arrayEid) {
  * @param {string} sort {ASC or DESC}
  * @returns {Array[]} array of papers
  *//*
-async function selectAll(number, offset, orderBy, sort) {
-    let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.papers + ' ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $1 OFFSET $2',
-        [number, offset]
-    );
+ async function selectAll(number, offset, orderBy, sort) {
+ let res = await db.query(
+ 'SELECT * FROM public.' + db.TABLES.papers + ' ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $1 OFFSET $2',
+ [number, offset]
+ );
 
-    return res.rows;
-}
+ return res.rows;
+ }
 
  ===============================================================*/
 
