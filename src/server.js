@@ -2,7 +2,7 @@
 require('dotenv').config();
 
 //the config file
-const config = require(__base + 'config');
+const config = require(__dirname  + "/" + 'config');
 
 const app = require('./app');
 
