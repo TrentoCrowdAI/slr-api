@@ -22,7 +22,7 @@ Under development.
 - rename file ".env.example" to ".env" and modify its variables
 
 ### initial database
-- You need to connect an appropriate POSTGRES database by change the variable DATABASE_URL in [ .env file](https://github.com/TrentoCrowdAI/slr-api/blob/develop/.env)
+- You need to connect an appropriate POSTGRES database by change the variable DATABASE_URL in .env file
 - then run ```node init_db/setup.js``` to initialize the database
 
 
