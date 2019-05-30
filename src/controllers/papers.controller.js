@@ -18,7 +18,9 @@ router.get('/search', async (req, res, next) => {
         let sort = req.query.sort;
         let start = req.query.start;
         let count = req.query.count;
-        let papers = await papersDelegate.scopusSearch(query, searchBy, year, orderBy, sort, start, count);
+        let scopus = req.query.scopus;
+        let arXiv = req.query.arXiv;
+        let papers = await papersDelegate.search(query, searchBy, year, orderBy, sort, start, count, scopus, arXiv);
 
         res.status(200).json(papers);
     }

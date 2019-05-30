@@ -201,7 +201,7 @@ function setAndCheckValidSearchByForScopus(searchBy) {
 
     searchBy = searchBy || "all";
     //if the value doesn't correspond to any default value
-    if (!config.scopus.validSearchBy.includes(searchBy)) {
+    if (!config.validSearchBy.includes(searchBy)) {
         throw errHandler.createBadRequestError('searchBy has a not valid value!');
     }
     return searchBy;

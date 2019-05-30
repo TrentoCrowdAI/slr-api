@@ -1,6 +1,12 @@
 // this modules is responsible for allowing to publish HITs in
 // any of the supported platforms. Also to implement any other 
 // functionality related to HITs.
+//library to parse XML string to object
+const XMLParser = require('fast-xml-parser');
+const parserOptions = {
+    ignoreAttributes : false,
+};
+
 
 const papersDao = require(__base + 'dao/papers.dao');
 
@@ -103,6 +109,38 @@ async function selectById(paper_id) {
     return res;
 }
 
+/**
+ * wrapper function for searching
+ * @param {string} keyword
+ * @param {string} searchBy
+ * @param {string} year
+ * @param {string} orderBy
+ * @param {string} sort
+ * @param {string} start
+ * @param {string} count
+ * @param {string} scopus
+ * @param {string} arXiv
+ * @returns {Object} array of papers and total number of result
+ */
+async function search(keyword, searchBy, year, orderBy, sort, start, count, scopus, arXiv) {
+
+    let res;
+
+    if(scopus==="true"){
+
+        res = await scopusSearch(keyword, searchBy, year, orderBy, sort, start, count);
+    }
+    else if(arXiv==="true"){
+
+        res = await arxivSearch(keyword, searchBy, orderBy, sort, start, count);
+    }
+    else{
+        throw errHandler.createBadRequestError("the source of search is empty");
+    }
+
+    return res;
+
+}
 
 /**
  *
@@ -120,34 +158,34 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
 
     //check the validation of parameters
     errorCheck.isValidKeyword(keyword);
+    searchBy = errorCheck.setAndCheckValidSearchByForScopus(searchBy);
+    year = errorCheck.setAndCheckValidYearForScopus(year);
+    orderBy = errorCheck.setAndCheckValidOrderByForScopus(orderBy);
     sort = errorCheck.setAndCheckValidSort(sort);
     start = errorCheck.setAndCheckValidStart(start);
     count = errorCheck.setAndCheckValidCount(count);
 
-    orderBy = errorCheck.setAndCheckValidOrderByForScopus(orderBy);
-    searchBy = errorCheck.setAndCheckValidSearchByForScopus(searchBy);
-    year = errorCheck.setAndCheckValidYearForScopus(year);
 
     //prepare the query object
     let queryData = {};
     queryData.apiKey = config.scopus.apiKey;
+
     //searchBy condition
-    let query;
     switch (searchBy) {
-        case config.scopus.validSearchBy[0]:
-            query = "ALL(\"" + keyword + "\")";
+        case config.validSearchBy[0]:
+            queryData.query = "ALL(\"" + keyword + "\")";
             break;
-        case config.scopus.validSearchBy[1]:
-            query = "AUTHOR-NAME(\"" + keyword + "\")";
+        case config.validSearchBy[1]:
+            queryData.query = "AUTHOR-NAME(\"" + keyword + "\")";
             break;
-        case config.scopus.validSearchBy[2]:
-            query = "TITLE-ABS-KEY(\"" + keyword + "\")";
+        case config.validSearchBy[2]:
+            queryData.query = "TITLE-ABS-KEY(\"" + keyword + "\")";
             break;
-        case config.scopus.validSearchBy[3]:
-            query = keyword;
+        case config.validSearchBy[3]:
+            queryData.query = keyword;
             break;
     }
-    queryData.query = query;
+
 
     //date range condition
     if (year !== "") {
@@ -246,6 +284,170 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
 
 }
 
+
+/**
+ *
+ * find papers by searching with the arXiv APIs
+ * @param {string} keyword to search
+ * @param {string} searchBy [all, author, content, advanced] "content" means abstracts+keywords+titles.
+ * @param {string} year specific year to search
+ * @param {string} orderBy [date, title]
+ * @param {string} sort {ASC or DESC}
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of papers
+ * @returns {Object} array of papers and total number of result
+ */
+async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
+
+    //check the validation of parameters
+    errorCheck.isValidKeyword(keyword);
+    searchBy = errorCheck.setAndCheckValidSearchByForScopus(searchBy);
+    orderBy = errorCheck.setAndCheckValidOrderByForScopus(orderBy);
+    sort = errorCheck.setAndCheckValidSort(sort);
+    start = errorCheck.setAndCheckValidStart(start);
+    count = errorCheck.setAndCheckValidCount(count);
+
+
+    //prepare the query object
+    let queryData = {};
+
+    //searchBy condition
+    switch (searchBy) {
+        case config.validSearchBy[0]:
+            queryData.search_query = "all:\"" + keyword + "\"";
+            break;
+        case config.validSearchBy[1]:
+            queryData.search_query = "au:\"" + keyword + "\"";
+            break;
+        case config.validSearchBy[2]:
+            queryData.search_query = "ti:\"" + keyword + "\" OR abs:\"" + keyword + "\"";
+            break;
+        case config.validSearchBy[3]:
+            queryData.search_query = keyword;
+            break;
+    }
+
+    //sort condition
+    if (orderBy === "date") {
+        queryData.sortBy = "submittedDate";
+    }
+    else {
+        queryData.sortBy = "relevance";
+    }
+
+    if (sort === "ASC") {
+        queryData.sortOrder = "ascending";
+    }
+    else {
+        queryData.sortOrder = "descending";
+    }
+
+    //number of papers and offset
+    queryData.start = start;
+    queryData.max_results = count;
+
+    //send request get to scopus service
+    let responseXML = await conn.getRaw(config.arxiv.url, queryData);
+    //console.log(responseXML);
+    //if the error.data is defined
+    if(responseXML.data) {
+        throw errHandler.createBadImplementationError("error connecting to arXiv");
+    }
+    let respnseObject = XMLParser.parse(responseXML, parserOptions);
+    let results = respnseObject.feed;
+
+    //get total number of results
+    let totalResults = results['opensearch:totalResults']['#text'];
+    //if results if 0, return the 404 error
+    if (totalResults === 0) {
+        throw errHandler.createNotFoundError('the result is empty!');
+    }
+
+
+
+    //get paper array
+    let arrayResults = results.entry;
+
+    //store a new paper array
+    let arrayPapers = [];
+    //a ids array for our new paper array
+    let arrayId = [];
+
+    //create a new paper array with our format
+    for (let i = 0; i < arrayResults.length; i++) {
+
+        let paper = {};
+
+        let authors = arrayResults[i]["author"];
+        //if is an array of author
+        if(Array.isArray(authors)){
+            paper.authors = support.arrayOfObjectToString(authors, "name", "," , "");
+        }
+        //else if is a single author object
+        else if(authors.name){
+            paper.authors = authors.name;
+        }
+        else{
+            paper.authors = "";
+        }
+
+        paper.title = arrayResults[i]["title"] || "";
+        paper.year = arrayResults[i]["published"].slice(0, 4) || ""; //slice only the part of year
+        paper.date = arrayResults[i]["published"] || "";
+        paper.source_title = arrayResults[i]["title"] || "";
+        paper.link = arrayResults[i].link || "";
+        if(arrayResults[i]["arxiv:doi"]){
+            paper.doi = arrayResults[i]["arxiv:doi"]["#text"];
+        }
+        else{
+            paper.doi = "";
+        }
+
+        paper.abstract = arrayResults[i]["summary"] || "";
+
+        paper.document_type = "";
+        paper.source = "arXiv";
+
+        //set id
+        //ex: http://arxiv.org/abs/1607.01400v1
+        let arXivId = arrayResults[i].id;
+        //get index of last "/"
+        let index = arXivId.lastIndexOf("/");
+        //split id string , ex: 1607.01400v1
+        paper.eid = arXivId.slice(index+1, arXivId.length) || "";
+
+        paper.abstract_structured = "";
+        paper.filter_oa_include = "";
+        paper.filter_study_include = "";
+        paper.notes = "";
+        paper.manual = "0";
+
+        //push element in array
+        arrayPapers.push(paper);
+        arrayId.push(arrayResults[i].eid);
+    }
+
+
+
+    //return array of eids where in which the paper with same eid are already stored  in DB
+    let arrayIdExisting = await papersDao.checkExistenceByEids(arrayId);
+    //remove the eids already presented in DB
+    let arrayPapersToInsert = support.removeElementFromArrayByEids(arrayPapers, arrayIdExisting);
+
+    //if there are the new papers
+    if (arrayPapersToInsert.length > 0) {
+
+        //insert the papers in DB
+        let res = await papersDao.insertByList(arrayPapersToInsert);
+    }
+
+
+    //return the array of papers get from scopus and total number of results
+    return {"results": arrayPapers, "totalResults": totalResults};
+
+}
+
+
 /**
  *
  * find similar papers
@@ -262,16 +464,16 @@ async function similarSearch(paperData, start, count) {
 
 
     //error check
-    if(!paperData){
+    if (!paperData) {
         throw errHandler.createBadRequestError("there's no paper to search for!");
     }
-    if(paperData.file && paperData.title && paperData.title !== ""){
+    if (paperData.file && paperData.title && paperData.title !== "") {
         throw errHandler.createBadRequestError("you can't input both a file and paper data");
     }
-    if(paperData.file && paperData.file.mimetype.indexOf("application/pdf")=== -1){
+    if (paperData.file && paperData.file.mimetype.indexOf("application/pdf") === -1) {
         throw errHandler.createBadRequestError('the file is not a pdf!');
     }
-    if(!paperData.title){
+    if (!paperData.title) {
         throw errHandler.createBadRequestError('no paper title found');
     }
 
@@ -280,7 +482,7 @@ async function similarSearch(paperData, start, count) {
 
     //number of papers and offset
     queryData.start = start;
-    queryData.count =count;
+    queryData.count = count;
 
     //fetchData from scopus
     let response = null;
@@ -291,22 +493,22 @@ async function similarSearch(paperData, start, count) {
 
 
     //if we have a file and the service allows file upload we can sende the file
-    if(paperData.file){
+    if (paperData.file) {
         //temporary fake call for 'search similar service
         response = await scopusSearch("Trento", undefined, undefined, undefined, "ASC", start, count);
         //this can be the call when a good 'search similar' service will be found
         //response = await conn.post(config.search_similar_server, {"file" : fs.createReadStream(file.path), ...queryData});
     }
     //else if we have a query we search for similar papers based on the query(the query could be ad url to a specific paper or a DOI in the future)
-    else{
-        queryData.query=paperData.title;
+    else {
+        queryData.query = paperData.title;
 
         //temporary fake call for 'search similar service
         let splitted = paperData.title.split(" ");
         let relevantQuery = splitted[0];
         //In practice I pick the first word of the title and I search for it on scopus
-        for(let i = 0; i<splitted.length; i++){
-            if(splitted[i].length !== 1){
+        for (let i = 0; i < splitted.length; i++) {
+            if (splitted[i].length !== 1) {
                 relevantQuery = splitted[i];
                 break;
             }
@@ -328,8 +530,7 @@ async function similarSearch(paperData, start, count) {
     let totalResults = response.totalResults;
 
     //if results if 0, return the 404 error
-    if (totalResults === "0")
-    {
+    if (totalResults === "0") {
         throw errHandler.createNotFoundError('the result is empty!');
     }
 
@@ -337,12 +538,12 @@ async function similarSearch(paperData, start, count) {
     let arrayResults = response.results;
 
     //store a new paper array
-    let arrayPapers=[];
+    let arrayPapers = [];
     //a eids array for our new paper array
     let arrayEid = [];
 
     //create a new paper array with our format(this will change a lot based on the service used)
-    for(let i = 0; i < arrayResults.length; i++) {
+    for (let i = 0; i < arrayResults.length; i++) {
 
         let paper = arrayResults[i];
 
@@ -471,6 +672,8 @@ module.exports = {
     selectById,
     //selectAll,
     //selectBySingleKeyword,
+    search,
     scopusSearch,
+    arxivSearch,
     similarSearch
 };

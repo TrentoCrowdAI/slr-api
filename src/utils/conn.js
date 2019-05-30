@@ -29,7 +29,7 @@ async function request(url, options, timeOutTime) {
         let requestOptions = Object.assign(
             {
                 //enable the  sending of cookie
-                credentials: 'include',
+             //   credentials: 'include',
                 "mode": 'cors',
                 "signal": signal
             },
@@ -48,6 +48,7 @@ async function request(url, options, timeOutTime) {
         let data = await parseResponseData(response);
         //response error check
         checkResponseStatus(response,data);
+
 
         return  data;
 
@@ -92,6 +93,33 @@ async function get(url, queryData = "") {
     return await request(url + query, options, timeOutTime);
 }
 
+
+/**
+ * raw get method
+ * @param url
+ * @param queryData query string
+ * @return {object} response data
+ */
+async function getRaw(url, queryData = "") {
+
+    let query = "";
+    //concatenate the parameters in url
+    if (queryData !== "") {
+        query = "?";
+        for (let key in queryData) {
+            query += key + "=" + encodeURIComponent(queryData[key]).replace(/\(/g, "%28").replace(/\)/g, "%29") + "&";
+        }
+        //delete the last &
+        query = query.slice(0, query.length - 1);
+    }
+
+
+    let options = {
+        "method": 'GET',
+    };
+
+    return await request(url + query, options, timeOutTime);
+}
 
 
 /**
@@ -189,11 +217,14 @@ async function parseResponseData(response) {
         if (contentType.indexOf('text') > -1) {
             data = await response.text()
         }
-        if (contentType.indexOf('video') > -1) {
+        else if (contentType.indexOf('video') > -1) {
             data = await response.blob();
         }
-        if (contentType.indexOf('json') > -1) {
+        else if (contentType.indexOf('json') > -1) {
             data = await response.json();
+        }
+        else{
+            data = await response.text();
         }
     }
     else if (response != null) {
@@ -206,6 +237,7 @@ async function parseResponseData(response) {
 //object to export
 const http = {
     get,
+    getRaw,
     post,
     postPdf
 };

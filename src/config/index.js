@@ -25,19 +25,28 @@ module.exports = {
     "pagination":{
         defaultCount: 10
     },
-    //the scopus parameters
-    "scopus":{
-        apiKey: process.env.SCOPUS_APIKEY ,
-        url: "https://api.elsevier.com/content/search/scopus",
-        validSearchBy: ["all","author","content","advanced"],
-    },
+
+
     //the pdf parse service
     "pdf_parse_server": "http://scienceparse.allenai.org/v1",
     //the similar paper service
     "search_similar_server" : undefined, //here you can put the url of the remote(or local) service that will search for similar papers
 
     //the google authentication service
-    "google_oauth": "https://oauth2.googleapis.com/tokeninfo",
-    "google_login_client_id": process.env.GOOGLE_LOGIN_CLIENT_ID
+    //"google_oauth": "https://oauth2.googleapis.com/tokeninfo",
+    "google_login_client_id": process.env.GOOGLE_LOGIN_CLIENT_ID,
+
+    //valid keywords for searchBy
+    validSearchBy: ["all","author","content","advanced"],
+    //the arXiv parameters
+    "arxiv":{
+        url: "http://export.arxiv.org/api/query"
+    },
+    //the scopus parameters
+    "scopus":{
+        apiKey: process.env.SCOPUS_APIKEY ,
+        url: "https://api.elsevier.com/content/search/scopus",
+    },
+
 
 };

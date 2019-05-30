@@ -27,6 +27,32 @@ function arrayToString(arraySource, separator, surroundedBy) {
 }
 
 /**
+ * transform the field's value of object array to string
+ * @param arraySource source array
+ * @param fieldName field name
+ * @param separator between element
+ * @param surroundedBy symbols that surround the element
+ * @return {string} toString of array
+ */
+function arrayOfObjectToString(arraySource, fieldName, separator, surroundedBy) {
+
+
+    let output = "";
+    for (let i = 0; i < arraySource.length; i++) {
+        output += surroundedBy + arraySource[i][fieldName] + surroundedBy;
+        //if isn't last element, add a comma ad end of string
+        if (i < arraySource.length - 1) {
+            output += separator;
+        }
+    }
+
+    return output;
+
+}
+
+
+
+/**
  * difference operation of two arrays A - B
  * @param {array[]} arrayA
  * @param {array[]} arrayB
@@ -65,8 +91,10 @@ function removeElementFromArrayByEids(arrayA, arrayB) {
 }
 
 
+
 module.exports = {
     arrayToString,
+    arrayOfObjectToString,
     differenceOperation,
     removeElementFromArrayByEids,
 

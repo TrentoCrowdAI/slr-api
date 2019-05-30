@@ -12,11 +12,17 @@ test('dummy test', () => {
 /* good cases*/
 describe('good cases', () => {
 
-    test('GET /search should return 200 if find any papers', async () => {
+    test('GET /search should return 200 if find any papers on scopus', async () => {
         jest.setTimeout(15000);
-        let response = await request(app).get('/search?query=2015').set('Authorization', validTokenId);
+        let response = await request(app).get('/search?query=2015&scopus=true').set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
+    test('GET /search should return 200 if find any papers on arXiv', async () => {
+        jest.setTimeout(15000);
+        let response = await request(app).get('/search?query=2015&arXiv=true').set('Authorization', validTokenId);
+        expect(response.status).toBe(200);
+    });
+
 
     test('POST /search/similar should return 200 if find any papers', async () => {
         jest.setTimeout(10000);
@@ -72,20 +78,25 @@ describe('good cases', () => {
 /*bad cases*/
 describe('bad cases', () => {
 
+    test('GET /search should return 400 if there aren\'t any source', async () => {
+        jest.setTimeout(15000);
+        let response = await request(app).get('/search?query=2015').set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+    });
 
     test('GET /search should return 400 if mandatory field is not present', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/search').set('Authorization', validTokenId);
+        let response = await request(app).get('/search?scopus=true').set('Authorization', validTokenId);
         expect(response.status).toBe(400)
     });
    test('GET /search should return 400 if optional field has illegal value', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/search?query=a&count=-1').set('Authorization', validTokenId);
+        let response = await request(app).get('/search?query=a&count=-1&scopus=true').set('Authorization', validTokenId);
         expect(response.status).toBe(400)
     });
     test('GET /search should return 404 if it finds nothing', async () => {
         jest.setTimeout(10000);
-        let response = await request(app).get('/search?query=uaidafha').set('Authorization', validTokenId);
+        let response = await request(app).get('/search?query=uaidafha&scopus=true').set('Authorization', validTokenId);
         expect(response.status).toBe(404)
     });
     test('POST /search/similar should return 404 if it finds nothing', async () => {

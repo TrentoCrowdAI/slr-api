@@ -9,6 +9,8 @@ const fs = require('fs');
 const config = require(__base + 'config');
 //error handler
 const errHandler = require(__base + 'utils/errors');
+//supply the auxiliary function
+const support = require(__base + 'utils/support');
 //fetch request
 const conn = require(__base + 'utils/conn');
 
@@ -45,13 +47,7 @@ async function parsePdf(file) {
         year: response.year,
     };
     //format a string of author's name from array of authors
-    result.authors = "";
-    for (let i = 0; i < response.authors.length; i++) {
-        result.authors += response.authors[i].name;
-        if (i !== response.authors.length - 1) {
-            result.authors += ",";
-        }
-    }
+    result.authors = support.arrayOfObjectToString(response.authors, "name", "," , "");
 
     return result;
 
