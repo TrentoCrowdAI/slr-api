@@ -78,17 +78,25 @@ describe('good cases', () => {
     });
 
 
-    test('POST /projects/1/share should return 204', async () => {
+    test('POST /projects/1/collaborators should return 204', async () => {
         jest.setTimeout(10000);
-        response = await request(app).post('/projects/1/share').send(validEmail).set('Authorization', validTokenId);
+        response = await request(app).post('/projects/1/collaborators').send(validEmail).set('Authorization', validTokenId);
         expect(response.status).toBe(204);
     });
 
-    test('POST /projects/3/deleteShare should return 204', async () => {
+    test('DELETE /projects/3/collaborators should return 204', async () => {
         jest.setTimeout(10000);
-        response = await request(app).post('/projects/3/deleteShare').send(validEmail2).set('Authorization', validTokenId);
+        response = await request(app).delete('/projects/3/collaborators').send(validEmail2).set('Authorization', validTokenId);
         expect(response.status).toBe(204);
     });
+
+    test('GET /projects/1/collaborators should return 200', async () => {
+        jest.setTimeout(10000);
+        let response = await request(app).get('/projects/1/collaborators').set('Authorization', validTokenId);
+        expect(response.status).toBe(200);
+    });
+
+
 });
 
 
@@ -188,27 +196,27 @@ describe('bad cases', () => {
     */
 
 
-    test('POST /projects/1/share should return 400 if the email isn\'t valid', async () => {
+    test('POST /projects/1/collaborators should return 400 if the email isn\'t valid', async () => {
         jest.setTimeout(10000);
-        response = await request(app).post('/projects/1/share').send(notValidEmail).set('Authorization', validTokenId);
+        response = await request(app).post('/projects/1/collaborators').send(notValidEmail).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
     });
 
-    test('POST /projects/1/share should return 400 if the shared user is already present in this project', async () => {
+    test('POST /projects/1/collaborators should return 400 if the shared user is already present in this project', async () => {
         jest.setTimeout(10000);
-        response = await request(app).post('/projects/1/share').send(validEmail2).set('Authorization', validTokenId);
+        response = await request(app).post('/projects/1/collaborators').send(validEmail2).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
     });
 
-    test('POST /projects/1/deleteShare should return 400 if the shared user with this email isn\'t exist in DB', async () => {
+    test('DELETE /projects/1/collaborators should return 400 if the shared user with this email isn\'t exist in DB', async () => {
         jest.setTimeout(10000);
-        response = await request(app).post('/projects/1/deleteShare').send(notExistEmail).set('Authorization', validTokenId);
+        response = await request(app).delete('/projects/1/collaborators').send(notExistEmail).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
     });
 
-    test('POST /projects/1/deleteShare should return 400 if the shared user isn\'t present in this project', async () => {
+    test('DELETE /projects/1/collaborators should return 400 if the shared user isn\'t present in this project', async () => {
         jest.setTimeout(10000);
-        response = await request(app).post('/projects/2/deleteShare').send(validEmail).set('Authorization', validTokenId);
+        response = await request(app).delete('/projects/2/collaborators').send(validEmail).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
     });
 

@@ -3,6 +3,7 @@
 
 const express = require('express');
 const projectsDelegate = require(__base + 'delegates/projects.delegate');
+const usersDelegate = require(__base + 'delegates/users.delegate');
 
 const router = express.Router();
 
@@ -47,35 +48,7 @@ router.post('/projects', async (req, res, next) => {
     }
 });
 
-//share the project with other user
-router.post('/projects/:id/share', async (req, res, next) => {
-    try {
-        let user_email = res.locals.user_email;
-        let project_id = req.params.id;
-        let shared_email = req.body.email;
-        await projectsDelegate.shareProject(user_email, project_id, shared_email);
-        res.sendStatus(204);
-    }
-    catch (e) {
-        // catch the error threw from delegate and we delegate to the error-handling middleware
-        next(e);
-    }
-});
 
-//share the project with other user
-router.post('/projects/:id/deleteShare', async (req, res, next) => {
-    try {
-        let user_email = res.locals.user_email;
-        let project_id = req.params.id;
-        let shared_email = req.body.email;
-        await projectsDelegate.deleteShareProject(user_email, project_id, shared_email);
-        res.sendStatus(204);
-    }
-    catch (e) {
-        // catch the error threw from delegate and we delegate to the error-handling middleware
-        next(e);
-    }
-});
 
 
 //get a project by id
@@ -123,6 +96,55 @@ router.delete('/projects/:id', async (req, res, next) => {
         next(e);
     }
 });
+
+
+
+//get a user list by project
+router.get('/projects/:id/collaborators', async (req, res, next) => {
+
+    try {
+        let user_email = res.locals.user_email;
+        let project_id = req.params.id;
+        let userData = await usersDelegate.getUsersByProjectId(user_email, project_id);
+        res.status(200).json(userData);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+//share the project with other user
+router.post('/projects/:id/collaborators', async (req, res, next) => {
+    try {
+        let user_email = res.locals.user_email;
+        let project_id = req.params.id;
+        let shared_email = req.body.email;
+        await projectsDelegate.shareProject(user_email, project_id, shared_email);
+        res.sendStatus(204);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+//share the project with other user
+router.delete('/projects/:id/collaborators', async (req, res, next) => {
+    try {
+        let user_email = res.locals.user_email;
+        let project_id = req.params.id;
+        let shared_email = req.body.email;
+        await projectsDelegate.deleteShareProject(user_email, project_id, shared_email);
+        res.sendStatus(204);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+
 
 
 module.exports = router;
