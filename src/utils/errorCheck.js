@@ -310,6 +310,22 @@ function isValidProjectPaper(projectPaper) {
 
 }
 
+/**
+ * check if the email is a valid google email
+ * @param {string} email
+ */
+function isValidGoogleEmail(email) {
+
+    //if it is empty
+    if (!email) {
+        throw errHandler.createBadRequestError("the email is empty!");
+    }
+    if(email.toLowerCase().indexOf("@gmail.com") === -1){
+        throw errHandler.createBadRequestError("the email isn't a valid google email!");
+    }
+
+}
+
 
 module.exports = {
     setAndCheckValidPaperId,
@@ -329,6 +345,6 @@ module.exports = {
     isValidGoogleId,
     isValidProjectOwner,
     isValidProjectPaper,
-
+    isValidGoogleEmail,
 
 };

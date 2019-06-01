@@ -19,22 +19,22 @@ const validationSchemes = require(__base + 'utils/validation.schemes');
 
 /**
  * insert a list of projectPaper by copy from fake_paper table
- * @param {string} google_id of user
+ * @param {string} user_email of user
  * @param {array[]} arrayEid array of paper eid
  * @param {string} project_id
  * @returns {array[]} projectPaper created
  */
-async function insertFromPaper(google_id, arrayEid, project_id) {
+async function insertFromPaper(user_email, arrayEid, project_id) {
 
-    //error check for google_id
-    errorCheck.isValidGoogleId(google_id);
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
     //check the validation of array
     errorCheck.isValidArray(arrayEid);
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
     //get user info
-    let user = await usersDao.getUserByGoogleId(google_id);
+    let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
     let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
     //if the user isn't project's owner
@@ -60,15 +60,15 @@ async function insertFromPaper(google_id, arrayEid, project_id) {
 
 /**
  * insert a custom paper into a project
- * @param {string} google_id of user
+ * @param {string} user_email of user
  * @param {string} project_id
  * @param {object} newPaper
  * @returns {object} projectPaper created
  */
-async function insertCustomPaper(google_id, project_id, newPaper) {
+async function insertCustomPaper(user_email, project_id, newPaper) {
 
-    //error check for google_id
-    errorCheck.isValidGoogleId(google_id);
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
@@ -80,7 +80,7 @@ async function insertCustomPaper(google_id, project_id, newPaper) {
     }
 
     //get user info
-    let user = await usersDao.getUserByGoogleId(google_id);
+    let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
     let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
     //if the user isn't project's owner
@@ -97,14 +97,14 @@ async function insertCustomPaper(google_id, project_id, newPaper) {
 
 /**
  *  * update a projectPaper
- * @param {string} google_id of user
+ * @param {string} user_email of user
  * @param {string} projectPaper_id
  * @param {object} newProjectPaperData
  */
-async function update(google_id, projectPaper_id, newProjectPaperData) {
+async function update(user_email, projectPaper_id, newProjectPaperData) {
 
-    //error check for google_id
-    errorCheck.isValidGoogleId(google_id);
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
 
     //check validation of projectPaper_id and transform the value in integer
     projectPaper_id = errorCheck.setAndCheckValidProjectPaperId(projectPaper_id);
@@ -121,7 +121,7 @@ async function update(google_id, projectPaper_id, newProjectPaperData) {
     errorCheck.isValidProjectPaper(projectPaper);
 
     //get user info
-    let user = await usersDao.getUserByGoogleId(google_id);
+    let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
     let project = await projectsDao.selectByIdAndUserId(projectPaper.project_id, user.id);
     //if the user isn't project's owner
@@ -139,13 +139,13 @@ async function update(google_id, projectPaper_id, newProjectPaperData) {
 
 /**
  *  * delete a projectPaper
- * @param {string} google_id of user
+ * @param {string} user_email of user
  * @param {string} projectPaper_id
  */
-async function deletes(google_id, projectPaper_id) {
+async function deletes(user_email, projectPaper_id) {
 
-    //error check for google_id
-    errorCheck.isValidGoogleId(google_id);
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
 
     //check validation of projectPaper_id and transform the value in integer
     projectPaper_id = errorCheck.setAndCheckValidProjectPaperId(projectPaper_id);
@@ -155,7 +155,7 @@ async function deletes(google_id, projectPaper_id) {
     errorCheck.isValidProjectPaper(projectPaper);
 
     //get user info
-    let user = await usersDao.getUserByGoogleId(google_id);
+    let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
     let project = await projectsDao.selectByIdAndUserId(projectPaper.project_id, user.id);
     //if the user isn't project's owner
@@ -196,7 +196,7 @@ async function deletes(google_id, projectPaper_id) {
 
 /**
  * select all projectPaper associated with a project
- * @param {string} google_id of user
+ * @param {string} user_email of user
  * @param {string} project_id
  * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
@@ -204,10 +204,10 @@ async function deletes(google_id, projectPaper_id) {
  * @param {string} count number of projects
  * @returns {Object} array of projectPapers and total number of result
  */
-async function selectByProject(google_id, project_id, orderBy, sort, start, count) {
+async function selectByProject(user_email, project_id, orderBy, sort, start, count) {
 
-    //error check for google_id
-    errorCheck.isValidGoogleId(google_id);
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
 
     //check the validation of parameters
     //check validation of project id and transform the value in integer
@@ -218,7 +218,7 @@ async function selectByProject(google_id, project_id, orderBy, sort, start, coun
     count = errorCheck.setAndCheckValidCount(count);
 
     //get user info
-    let user = await usersDao.getUserByGoogleId(google_id);
+    let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
     let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
     //if the user isn't project's owner
@@ -237,7 +237,7 @@ async function selectByProject(google_id, project_id, orderBy, sort, start, coun
 
 /**
  * search papers belonging to a project
- * @param {string} google_id of user
+ * @param {string} user_email of user
  * @param {string} keyword to search
  * @param {string} project_id
  * @param {string} searchBy [all, author, content] "content" means title+description
@@ -248,7 +248,7 @@ async function selectByProject(google_id, project_id, orderBy, sort, start, coun
  * @param {string} count number of papers
  * @returns {Object} array of projectPapers and total number of result
  *//*
- async function searchPaperByProject(google_id, keyword, project_id, searchBy, year, orderBy, sort, start, count) {
+ async function searchPaperByProject(user_email, keyword, project_id, searchBy, year, orderBy, sort, start, count) {
 
  //check the validation of parameters
  errorCheck.isValidKeyword(keyword);

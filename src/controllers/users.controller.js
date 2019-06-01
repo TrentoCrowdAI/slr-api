@@ -45,8 +45,8 @@ router.all('*', async function (req, res, next) {
         //get token id from header
         let tokenId = req.headers["authorization"];
 
-        //verify the validity of token and return google id
-        res.locals.google_id = await usersDelegate.verifyToken(tokenId);
+        //verify the validity of token and return google email
+        res.locals.user_email = await usersDelegate.verifyToken(tokenId);
         //if it is ok, proceeds
         next();
     }

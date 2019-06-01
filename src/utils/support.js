@@ -91,11 +91,32 @@ function removeElementFromArrayByEids(arrayA, arrayB) {
 }
 
 
+/**
+ * remove a specific element from array
+ * @param arraySource
+ * @param elementToRemove element to remove
+ * @return {array[]} new array
+ */
+function removeElementFromArray(arraySource, elementToRemove) {
+
+    //return true if not exist, false if exist
+    function checkExistenceOfElement(element) {
+        return !(element === elementToRemove);
+    }
+
+    //create a new array where includes only the element that isn't present in arrayB
+    let newArray = arraySource.filter(checkExistenceOfElement);
+    return newArray;
+
+}
+
+
 
 module.exports = {
     arrayToString,
     arrayOfObjectToString,
     differenceOperation,
+    removeElementFromArray,
     removeElementFromArrayByEids,
 
 };

@@ -10,7 +10,7 @@ const router = express.Router();
 //get a list of projects
 router.get('/projects', async (req, res, next) => {
     try {
-        let google_id = res.locals.google_id;
+        let user_email = res.locals.user_email;
 
         let projects = undefined;
         let orderBy = req.query.orderBy;
@@ -19,7 +19,7 @@ router.get('/projects', async (req, res, next) => {
         let count = req.query.count;
         let query = req.query.query;
         // if(query === undefined){
-        projects = await projectsDelegate.selectAllByUserId(google_id, orderBy, sort, start, count);
+        projects = await projectsDelegate.selectAllByUserId(user_email, orderBy, sort, start, count);
         //   }else{
         //      projects = await projectsDelegate.selectBySingleKeyword(query, orderBy, sort, start, count);
         //  }
@@ -35,11 +35,41 @@ router.get('/projects', async (req, res, next) => {
 //insert a new project
 router.post('/projects', async (req, res, next) => {
     try {
-        let google_id = res.locals.google_id;
+        let user_email = res.locals.user_email;
         //the data of new project to insert
         let newProjectData = req.body;
-        let project = await projectsDelegate.insert(google_id, newProjectData);
+        let project = await projectsDelegate.insert(user_email, newProjectData);
         res.status(201).json(project);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+//share the project with other user
+router.post('/projects/:id/share', async (req, res, next) => {
+    try {
+        let user_email = res.locals.user_email;
+        let project_id = req.params.id;
+        let shared_email = req.body.email;
+        await projectsDelegate.shareProject(user_email, project_id, shared_email);
+        res.sendStatus(204);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+//share the project with other user
+router.post('/projects/:id/deleteShare', async (req, res, next) => {
+    try {
+        let user_email = res.locals.user_email;
+        let project_id = req.params.id;
+        let shared_email = req.body.email;
+        await projectsDelegate.deleteShareProject(user_email, project_id, shared_email);
+        res.sendStatus(204);
     }
     catch (e) {
         // catch the error threw from delegate and we delegate to the error-handling middleware
@@ -51,9 +81,9 @@ router.post('/projects', async (req, res, next) => {
 //get a project by id
 router.get('/projects/:id', async (req, res, next) => {
     try {
-        let google_id = res.locals.google_id;
+        let user_email = res.locals.user_email;
         let project_id = req.params.id;
-        let project = await projectsDelegate.selectById(google_id, project_id);
+        let project = await projectsDelegate.selectById(user_email, project_id);
         res.status(200).json(project);
     }
     catch (e) {
@@ -66,12 +96,12 @@ router.get('/projects/:id', async (req, res, next) => {
 router.put('/projects/:id', async (req, res, next) => {
     try {
 
-        let google_id = res.locals.google_id;
+        let user_email = res.locals.user_email;
         let project_id = req.params.id;
         //the new data of project to update
         let newProjectData = req.body;
 
-        await projectsDelegate.update(google_id, project_id, newProjectData);
+        await projectsDelegate.update(user_email, project_id, newProjectData);
         res.sendStatus(204);
     }
     catch (e) {
@@ -83,9 +113,9 @@ router.put('/projects/:id', async (req, res, next) => {
 //delete a project by id
 router.delete('/projects/:id', async (req, res, next) => {
     try {
-        let google_id = res.locals.google_id;
+        let user_email = res.locals.user_email;
         let project_id = req.params.id;
-        await projectsDelegate.deletes(google_id, project_id);
+        await projectsDelegate.deletes(user_email, project_id);
         res.sendStatus(204);
     }
     catch (e) {

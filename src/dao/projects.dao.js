@@ -74,16 +74,17 @@ async function selectById(project_id) {
 }
 
 /**
- * select a project by id and userId
+ * select a project by id and userId, both must be integers!
  * @param {int} project_id
  * @param {int} user_id
  * @returns {object} project found
  */
 async function selectByIdAndUserId(project_id, user_id) {
     let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.projects + ' WHERE id = $1 AND data->>\'user_id\' = $2 ',
-        [project_id, user_id]
+        "SELECT * FROM public." + db.TABLES.projects + "  WHERE id = $1 AND data->'user_id' ? $2",
+        [project_id, user_id+""]
     );
+
 
     return res.rows[0];
 }
@@ -95,7 +96,7 @@ async function selectByIdAndUserId(project_id, user_id) {
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
  * @returns {Object} array of projects and total number of result
- */
+ *//*
 async function selectAll(orderBy, sort, start, count) {
 
     //query to get projects
@@ -124,13 +125,13 @@ async function selectAllByUserId(user_id, orderBy, sort, start, count) {
 
     //query to get projects
     let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.projects + ' WHERE data->>\'user_id\' = $1  ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $2 OFFSET $3',
-        [user_id, count, start]
+        'SELECT * FROM public.' + db.TABLES.projects + ' WHERE data->\'user_id\' ? $1  ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $2 OFFSET $3',
+        [user_id+"", count, start]
     );
 
     //query to get total number of result
     let resForTotalNumber = await db.query(
-        'SELECT COUNT(*) FROM public.' + db.TABLES.projects + ' WHERE data->>\'user_id\' = $1  ', [user_id]);
+        'SELECT COUNT(*) FROM public.' + db.TABLES.projects + ' WHERE data->\'user_id\' ? $1  ', [user_id+""]);
 
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 }
@@ -170,7 +171,7 @@ module.exports = {
     updateLastModifiedDate,
     deletes,
     selectById,
-    selectAll,
+    //selectAll,
     selectAllByUserId,
     selectByIdAndUserId,
     //selectBySingleKeyword

@@ -22,7 +22,10 @@ var notValidExampleForUpdate = {"names": "bb",
 };
 
 const validTokenId = "test";
-
+const validEmail = {"email":"123@gmail.com"};
+const validEmail2 = {"email":"test@gmail.com"};
+const notValidEmail = {"email":"notValid@com"};
+const notExistEmail = {"email":"678@gmail.com"};
 
 test('dummy test', () => {
     expect(true).toBe(true);
@@ -61,19 +64,31 @@ describe('good cases', () => {
     });
 
 
-    test('PUT /projects/22 should return 204 if project exists', async () => {
+    test('PUT /projects/3 should return 204 if project exists', async () => {
         jest.setTimeout(10000);
         let response = await request(app).put('/projects/3').send(validExample2).set('Accept', 'application/json').set('Authorization', validTokenId);
         expect(response.status).toBe(204);
     });
 
 
-    test('DELETE /projects/5 should return 204 if project exists', async () => {
+    test('DELETE /projects/4 should return 204 if project exists', async () => {
         jest.setTimeout(10000);
         response = await request(app).delete('/projects/4').set('Authorization', validTokenId);
         expect(response.status).toBe(204);
     });
 
+
+    test('POST /projects/1/share should return 204', async () => {
+        jest.setTimeout(10000);
+        response = await request(app).post('/projects/1/share').send(validEmail).set('Authorization', validTokenId);
+        expect(response.status).toBe(204);
+    });
+
+    test('POST /projects/3/deleteShare should return 204', async () => {
+        jest.setTimeout(10000);
+        response = await request(app).post('/projects/3/deleteShare').send(validEmail2).set('Authorization', validTokenId);
+        expect(response.status).toBe(204);
+    });
 });
 
 
@@ -172,6 +187,30 @@ describe('bad cases', () => {
     });
     */
 
+
+    test('POST /projects/1/share should return 400 if the email isn\'t valid', async () => {
+        jest.setTimeout(10000);
+        response = await request(app).post('/projects/1/share').send(notValidEmail).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+    });
+
+    test('POST /projects/1/share should return 400 if the shared user is already present in this project', async () => {
+        jest.setTimeout(10000);
+        response = await request(app).post('/projects/1/share').send(validEmail2).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+    });
+
+    test('POST /projects/1/deleteShare should return 400 if the shared user with this email isn\'t exist in DB', async () => {
+        jest.setTimeout(10000);
+        response = await request(app).post('/projects/1/deleteShare').send(notExistEmail).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+    });
+
+    test('POST /projects/1/deleteShare should return 400 if the shared user isn\'t present in this project', async () => {
+        jest.setTimeout(10000);
+        response = await request(app).post('/projects/2/deleteShare').send(validEmail).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+    });
 
 
 });

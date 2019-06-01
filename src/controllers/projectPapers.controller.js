@@ -15,7 +15,7 @@ router.get('/papers', async (req, res, next) => {
 
     try {
 
-        let google_id = res.locals.google_id;
+        let user_email = res.locals.user_email;
         let project_id = req.query.project_id;
         let orderBy = req.query.orderBy;
         let sort = req.query.sort;
@@ -25,10 +25,10 @@ router.get('/papers', async (req, res, next) => {
         let year = req.query.year;
         let query = req.query.query;
         // if (query === undefined) {
-        projectPapers = await projectPapersDelegate.selectByProject(google_id, project_id, orderBy, sort, start, count);
+        projectPapers = await projectPapersDelegate.selectByProject(user_email, project_id, orderBy, sort, start, count);
         //}
         // else {
-        //   projectPapers = await projectPapersDelegate.searchPaperByProject(google_id, query, project_id, searchBy, year, orderBy, sort, start, count);
+        //   projectPapers = await projectPapersDelegate.searchPaperByProject(user_email, query, project_id, searchBy, year, orderBy, sort, start, count);
         // }
         res.status(200).json(projectPapers);
     }
@@ -42,11 +42,11 @@ router.get('/papers', async (req, res, next) => {
 /*insert the new projectPapers by array of eids*/
 router.post('/papers', async (req, res, next) => {
     try {
-        let google_id = res.locals.google_id;
+        let user_email = res.locals.user_email;
 
         let arrayEid = req.body.arrayEid;
         let project_id = req.body.project_id;
-        let projectPaper = await projectPapersDelegate.insertFromPaper(google_id, arrayEid, project_id);
+        let projectPaper = await projectPapersDelegate.insertFromPaper(user_email, arrayEid, project_id);
         res.status(201).json(projectPaper);
     }
     catch (e) {
@@ -59,11 +59,11 @@ router.post('/papers', async (req, res, next) => {
 router.post('/customPapers', async (req, res, next) => {
     try {
 
-        let google_id = res.locals.google_id;
+        let user_email = res.locals.user_email;
 
         let project_id = req.body.project_id;
         let newPaper = req.body.paper;
-        let projectPaper = await projectPapersDelegate.insertCustomPaper(google_id, project_id, newPaper);
+        let projectPaper = await projectPapersDelegate.insertCustomPaper(user_email, project_id, newPaper);
 
         res.status(201).json(projectPaper);
     }
@@ -93,13 +93,13 @@ router.post('/customPapers', async (req, res, next) => {
 router.put('/papers/:projectPaper_id', async (req, res, next) => {
     try {
 
-        let google_id = res.locals.google_id;
+        let user_email = res.locals.user_email;
 
         let projectPaper_id = req.params.projectPaper_id;
         //the new data of projectPaper to update
         let newProjectPaperData = req.body;
 
-        await projectPapersDelegate.update(google_id, projectPaper_id, newProjectPaperData);
+        await projectPapersDelegate.update(user_email, projectPaper_id, newProjectPaperData);
         res.sendStatus(204);
     }
     catch (e) {
@@ -112,10 +112,10 @@ router.put('/papers/:projectPaper_id', async (req, res, next) => {
 router.delete('/papers/:projectPaper_id', async (req, res, next) => {
     try {
 
-        let google_id = res.locals.google_id;
+        let user_email = res.locals.user_email;
 
         let projectPaper_id = req.params.projectPaper_id;
-        await projectPapersDelegate.deletes(google_id, projectPaper_id);
+        await projectPapersDelegate.deletes(user_email, projectPaper_id);
         res.sendStatus(204);
     }
     catch (e) {

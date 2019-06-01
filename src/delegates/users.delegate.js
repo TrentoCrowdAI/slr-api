@@ -124,7 +124,7 @@ const config = require(__base + 'config');
  */
 
 /**
- * verify the validity of token and return google id
+ * verify the validity of token and return google email
  * @param {string} tokenId
  * @return {string} google's user id
  */
@@ -133,13 +133,13 @@ async function verifyToken(tokenId) {
     //error check for tokenId
     errorCheck.isValidTokenId(tokenId);
 
-    let google_id;
+    let user_email;
 
     //special case for testing
     if (tokenId === "test") {
-        google_id = tokenId;
+        user_email = "test@gmail.com";
         //check user's existence
-        let userFromDB = await usersDao.getUserByGoogleId(google_id);
+        let userFromDB = await usersDao.getUserByEmail(user_email);
         //if isn't exist the test user in DB
         if (!userFromDB) {
             throw errHandler.createBadRequestError("the token is valid only for testing");
@@ -164,13 +164,13 @@ async function verifyToken(tokenId) {
 
         //get response object from response of google
         let googleResponse = ticket.getPayload();
-        //create user object with propriety "google_id"
+        //create user object with propriety "user_email"
         let user = {
-            google_id: googleResponse.sub,
+            email: googleResponse.email,
         };
 
-        //check user's existence by google id
-        let userFromDB = await usersDao.getUserByGoogleId(user.google_id);
+        //check user's existence by google email
+        let userFromDB = await usersDao.getUserByEmail(user.email);
 
         //if it doesn't exist in DB yet
         if (!userFromDB) {
@@ -178,11 +178,11 @@ async function verifyToken(tokenId) {
             let res = await usersDao.insert(user);
         }
 
-        google_id = user.google_id;
+        user_email = user.user_email;
     }
 
 
-    return google_id;
+    return user_email;
 }
 
 
