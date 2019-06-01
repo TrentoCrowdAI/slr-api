@@ -45,6 +45,8 @@ paths:
         - $ref: '#/parameters/Sort'
         - $ref: '#/parameters/Start'
         - $ref: '#/parameters/Count'
+        - $ref: '#/parameters/Scopus'
+        - $ref: '#/parameters/ArXiv'
 
       responses:
         '200':
@@ -58,7 +60,30 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
+  '/search/similar':
+    post:
+      summary: search the similar paper
+      description: >-
+        search the similar paper
+      tags:
+        - Papers
+      security:
+        - basicAuth: []
 
+      parameters:
+        - $ref: '#/parameters/Similar_paper_post_body'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Result_of_paper_search'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
 
   '/projects':
 
@@ -72,7 +97,7 @@ paths:
         - basicAuth: []
         
       parameters:
-        - $ref: '#/parameters/Query_optional'
+
         - $ref: '#/parameters/OrderBy'
         - $ref: '#/parameters/Sort'
         - $ref: '#/parameters/Start'
@@ -183,7 +208,51 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
+  '/projects/{project_id}/share':
 
+    post:
+      summary: share the project
+      description: share a specific project with another user
+      tags:
+        - Projects
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/Email_post_body'
+      responses:
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+  '/projects/{project_id}/deleteShare':
+
+    post:
+      summary: delete the sharing of project
+      description: delete the sharing of a specific project with another user
+      tags:
+        - Projects
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/Email_post_body'
+      responses:
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
 
   '/papers':
     get:
@@ -196,9 +265,6 @@ paths:
         
       parameters:
         - $ref: '#/parameters/Project_id'
-        - $ref: '#/parameters/Query_optional'
-        - $ref: '#/parameters/SearchBy'
-        - $ref: '#/parameters/Year'
         - $ref: '#/parameters/OrderBy'
         - $ref: '#/parameters/Sort'
         - $ref: '#/parameters/Start'
@@ -366,77 +432,6 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
-
-
-  '/auth/login':
-
-    post:
-      summary: login
-      description: login
-      tags:
-        - Users
-      parameters:
-        - $ref: '#/parameters/User_post_body'
-   
-
-      responses:
-        '201':
-          description: OK
-          schema:
-            $ref: '#/definitions/User'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '404':
-          $ref: '#/responses/404_not_found'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
-
-  '/auth/logout':
-
-    get:
-      summary: logout
-      description: logout
-      tags:
-        - Users
-
-   
-      responses:
-        '200':
-          description: OK
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '404':
-          $ref: '#/responses/404_not_found'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
-
-  '/user-info':
-
-    get:
-      summary: get user's info
-      description: get user's info 
-      tags:
-        - Users
-
-   
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/User'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '404':
-          $ref: '#/responses/404_not_found'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
-
 
 
 #responses ===================================================
@@ -865,6 +860,18 @@ parameters:
     type: integer
     description: select the maximum amount of papers you want to receive
 
+  Scopus:
+    in: query
+    name: scopus
+    type: string
+    description: select the source of research
+
+  ArXiv:
+    in: query
+    name: arXiv
+    type: string
+    description: select the source of research
+
 
 
   Project_id:
@@ -873,6 +880,9 @@ parameters:
     description: the internal id of a project
     type: integer
     required: true
+
+
+
 
   Project_id_in_path:
     in: path
@@ -982,6 +992,45 @@ parameters:
         - tokenId
     required: true
 
+
+  Similar_paper_post_body:
+    in: body
+    name: body
+    description: the basic post data to search similar paper
+    required: true
+    schema:
+      type: object
+      properties:
+        paperData:
+          type: object
+          properties:
+            file:
+              type: object
+            title:
+              type: string
+        start:
+          type: integer
+        count:
+          type: integer
+      required:
+        - paperData
+        - start
+        - count
+
+  Email_post_body:
+    in: body
+    name: body
+    schema:
+      type: object
+      properties:
+        email:
+          description: the shared user's email
+          type: string
+      required:
+        - email
+    required: true
+
+
 # are not used yet =============================
 
   Type_for_paper:
@@ -1004,6 +1053,7 @@ parameters:
       - physics
     description: the subject of the papers to search
     
+#====================
 
 securityDefinitions:
   basicAuth:
