@@ -2,6 +2,7 @@
 const {OAuth2Client} = require('google-auth-library');
 
 const usersDao = require(__base + 'dao/users.dao');
+const projectsDao = require(__base + 'dao/projects.dao');
 
 //error handler
 const errHandler = require(__base + 'utils/errors');
@@ -186,10 +187,41 @@ async function verifyToken(tokenId) {
 }
 
 
+/**
+ * get a users list by project id
+ * @param {string} user_email of user
+ * @param {string} project_id
+ * @returns {array[Object]} array of user object
+ */
+
+
+ async function getUsersByProjectId(user_email, project_id) {
+
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
+    //check validation of project id and transform the value in integer
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
+
+    //get user info
+    let user = await usersDao.getUserByEmail(user_email);
+    //check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+
+    //call DAO layer
+    let res = await usersDao.getUserByArrayIds(project.data.user_id);
+    return res;
+
+
+}
+
+
 module.exports = {
     //userLogin,
     //userLogout,
     //checkUserByTokenId,
     //getUserByTokenId,
     verifyToken,
+    getUsersByProjectId,
 };

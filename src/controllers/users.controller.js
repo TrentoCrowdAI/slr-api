@@ -58,22 +58,22 @@ router.all('*', async function (req, res, next) {
 });
 
 
-/*
- //gets the logged in user info
- router.get('/user-info', async (req, res, next) => {
+
+ //get a user list by project
+ router.get('/users', async (req, res, next) => {
 
  try {
- let authorization = req.headers["authorization"];
-
- let userData = await usersDelegate.getUserByTokenId(authorization);
- res.status(200).json(userData);
+     let user_email = res.locals.user_email;
+     let project_id = req.query.project_id;
+     let userData = await usersDelegate.getUsersByProjectId(user_email, project_id);
+     res.status(200).json(userData);
  }
  catch (e) {
  // catch the error threw from delegate and we delegate to the error-handling middleware
  next(e);
  }
  });
- */
+
 
 
 module.exports = router;

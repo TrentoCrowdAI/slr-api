@@ -434,6 +434,32 @@ paths:
           $ref: '#/responses/500_internal_server_error'
 
 
+
+  '/users':
+
+    get:
+      summary: get users by project id
+      description: get a list of users
+      tags:
+        - Users
+      parameters:
+        - $ref: '#/parameters/Project_id'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Users'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
 #responses ===================================================
 
 responses:
@@ -475,7 +501,6 @@ responses:
     description: Internal Server Error
     schema:
       $ref: '#/definitions/Error'
-
 
 
 
@@ -769,20 +794,34 @@ definitions:
         type: string
         example: mario rosi, luigi mr, aa bbb
         
-  User:
+  User_data:
     type: object
     properties:
       email:
         type: string
-      name:
-        type: string
-      surname:
-        type: string
-      image:
-        type: string
-      token:
-        type: string
 
+  User:
+    type: object
+    properties:
+      ID:
+        type: integer
+        description: the ID on the internal database
+        example: 1
+      date_created:
+        type: string
+        format: date-time
+        example:  "2017-07-21T17:32:28Z"
+      date_last_modified:
+        type: string
+        format: date-time
+        example:  "2017-09-24T18:38:00Z"
+      data:
+        $ref: '#/definitions/User_data'
+
+  Users:
+    type: array
+    items:
+      $ref: '#/definitions/User'
 
 
 #parameters==============================================
@@ -979,18 +1018,7 @@ parameters:
     description: the pdf file to parse
     required: true
     
-  User_post_body:
-    in: body
-    name: body
-    description: the tokenId of user
-    schema:
-      type: object
-      properties:
-        tokenId:
-          type: string
-      required:
-        - tokenId
-    required: true
+
 
 
   Similar_paper_post_body:

@@ -73,6 +73,19 @@ async function getUserByEmail(email) {
     return res.rows[0];
 }
 
+/**
+ * get users list by array of ids
+ * @param {string} arrayIds
+ * @returns {array[Object]} list of users found
+ */
+async function getUserByArrayIds(arrayIds) {
+    let res = await db.query(
+        "SELECT * FROM public." + db.TABLES.users + "  WHERE id IN("+arrayIds.toString()+") "
+    );
+
+    return res.rows;
+}
+
 
 
 /**
@@ -107,6 +120,7 @@ module.exports = {
     insert,
     getUserByGoogleId,
     getUserByEmail,
+    getUserByArrayIds,
     //checkUserByTokenId,
     //updateByGoogleId,
     //getUserByTokenId,
