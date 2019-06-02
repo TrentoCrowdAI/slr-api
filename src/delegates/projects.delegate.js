@@ -14,6 +14,8 @@ const errorCheck = require(__base + 'utils/errorCheck');
 //the packaged for input validation
 const ajv = require(__base + 'utils/ajv');
 const validationSchemes = require(__base + 'utils/validation.schemes');
+//the function to send email to notify the sharing
+const shareProjectMail = require(__base + 'utils/email/shareProjectMail');
 
 
 /**
@@ -266,6 +268,8 @@ async function shareProject(user_email, project_id, shared_email) {
         project.data.user_id.push(sharedUser.id+"");
         //update the project
         await projectsDao.update(project.id, project.data);
+        //send email notification
+        await shareProjectMail(shared_email, user, project);
     }
     //if the shared user is already present in this project
     else{

@@ -1,6 +1,8 @@
 
 
 module.exports = {
+    "home_url_for_email" : "http://localhost:3000/",
+
     "db": {
         // were not used
         user: process.env.PGUSER,
@@ -32,9 +34,12 @@ module.exports = {
     //the similar paper service
     "search_similar_server" : undefined, //here you can put the url of the remote(or local) service that will search for similar papers
 
-    //the google authentication service
-    //"google_oauth": "https://oauth2.googleapis.com/tokeninfo",
-    "google_login_client_id": process.env.GOOGLE_LOGIN_CLIENT_ID,
+    "google":{
+        //the google authentication service
+        "google_login_client_id": process.env.GOOGLE_LOGIN_CLIENT_ID,
+        "google_gmail" : process.env.GOOGLE_GMAIL,
+        "google_gmail_pwd" : process.env.GOOGLE_GMAIL_PWD
+    },
 
     //valid keywords for searchBy
     validSearchBy: ["all","author","content","advanced"],
@@ -47,6 +52,10 @@ module.exports = {
         apiKey: process.env.SCOPUS_APIKEY ,
         url: "https://api.elsevier.com/content/search/scopus",
     },
+
+
+
+
 
 
 };

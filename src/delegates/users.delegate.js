@@ -27,12 +27,12 @@ const config = require(__base + 'config');
  }
 
  //call Google api
- const oAuth2Client = new OAuth2Client(config.google_login_client_id);
+ const oAuth2Client = new OAuth2Client(config.google.google_login_client_id);
  let ticket;
  try {
  ticket = await oAuth2Client.verifyIdToken({
  idToken: tokenId,
- audience: config.google_login_client_id,
+ audience: config.google.google_login_client_id,
  });
  }
  catch (e) {
@@ -151,12 +151,12 @@ async function verifyToken(tokenId) {
     else {
 
         //call Google api
-        const oAuth2Client = new OAuth2Client(config.google_login_client_id);
+        const oAuth2Client = new OAuth2Client(config.google.google_login_client_id);
         let ticket;
         try {
             ticket = await oAuth2Client.verifyIdToken({
                 idToken: tokenId,
-                audience: config.google_login_client_id,
+                audience: config.google.google_login_client_id,
             });
         }
         catch (error) {
@@ -168,7 +168,10 @@ async function verifyToken(tokenId) {
         //create user object with propriety "user_email"
         let user = {
             email: googleResponse.email,
+            name: googleResponse.name,
+            picture: googleResponse.picture,
         };
+        console.log(user);
 
         //check user's existence by google email
         let userFromDB = await usersDao.getUserByEmail(user.email);
