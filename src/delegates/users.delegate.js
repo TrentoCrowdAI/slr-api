@@ -171,7 +171,6 @@ async function verifyToken(tokenId) {
             name: googleResponse.name,
             picture: googleResponse.picture,
         };
-        console.log(user);
 
         //check user's existence by google email
         let userFromDB = await usersDao.getUserByEmail(user.email);
@@ -182,7 +181,7 @@ async function verifyToken(tokenId) {
             let res = await usersDao.insert(user);
         }
 
-        user_email = user.user_email;
+        user_email = user.email;
     }
 
 
@@ -214,7 +213,7 @@ async function verifyToken(tokenId) {
 
     //call DAO layer
     let res = await usersDao.getUserByArrayIds(project.data.user_id);
-    return res;
+    return res.filter(x => x.data.email !== user_email);
 
 
 }

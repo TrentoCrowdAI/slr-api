@@ -81,12 +81,12 @@ describe('good cases', () => {
     test('POST /projects/1/collaborators should return 204', async () => {
         jest.setTimeout(10000);
         response = await request(app).post('/projects/1/collaborators').send(validEmail).set('Authorization', validTokenId);
-        expect(response.status).toBe(204);
+        expect(response.status).toBe(201);
     });
 
-    test('DELETE /projects/3/collaborators should return 204', async () => {
+    test('DELETE /projects/3/collaborators/1 should return 204', async () => {
         jest.setTimeout(10000);
-        response = await request(app).delete('/projects/3/collaborators').send(validEmail2).set('Authorization', validTokenId);
+        response = await request(app).delete('/projects/3/collaborators/1').set('Authorization', validTokenId);
         expect(response.status).toBe(204);
     });
 
@@ -208,16 +208,16 @@ describe('bad cases', () => {
         expect(response.status).toBe(400);
     });
 
-    test('DELETE /projects/1/collaborators should return 400 if the shared user with this email isn\'t exist in DB', async () => {
+    test('DELETE /projects/1/collaborators/99 should return 400 if the shared user with this email isn\'t exist in DB', async () => {
         jest.setTimeout(10000);
-        response = await request(app).delete('/projects/1/collaborators').send(notExistEmail).set('Authorization', validTokenId);
+        response = await request(app).delete('/projects/1/collaborators/99').set('Authorization', validTokenId);
         expect(response.status).toBe(400);
     });
 
-    test('DELETE /projects/1/collaborators should return 400 if the shared user isn\'t present in this project', async () => {
+    test('DELETE /projects/3/collaborators/1 should return 401 if the shared user isn\'t present in this project', async () => {
         jest.setTimeout(10000);
-        response = await request(app).delete('/projects/2/collaborators').send(validEmail).set('Authorization', validTokenId);
-        expect(response.status).toBe(400);
+        response = await request(app).delete('/projects/3/collaborators/1').set('Authorization', validTokenId);
+        expect(response.status).toBe(401); //provisional
     });
 
 

@@ -320,7 +320,7 @@ function isValidGoogleEmail(email) {
     if (!email) {
         throw errHandler.createBadRequestError("the email is empty!");
     }
-    if(email.toLowerCase().indexOf("@gmail.com") === -1){
+    if(email.toLowerCase().indexOf("@gmail.com") === -1  && email.toLowerCase().indexOf("@studenti.unitn.it") === -1){
         throw errHandler.createBadRequestError("the email isn't a valid google email!");
     }
 

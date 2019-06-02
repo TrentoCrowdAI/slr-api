@@ -12,7 +12,8 @@ const errHandler = require(__base + 'utils/errors');
  * @param {string} htmlText email content
  */
 async function sendMail(recipient, subject, htmlText) {
-
+    
+    let send;
     try {
         //initialization the sender
         let send = gmailSender({
@@ -38,20 +39,20 @@ async function sendMail(recipient, subject, htmlText) {
             // HTML text
             html: htmlText,
         });
-
-    }
-    catch (err) {
-        throw errHandler.createBadImplementationError(err);
-    }
-
-
-    //send email
-    send({}, function (err, res) {
+        //send email
+        send({}, function (err, res) {
         //if there is the error
         if (err) {
             throw errHandler.createBadImplementationError(err);
         }
     });
+
+    }
+    catch (err) {
+        console.log(err);
+        throw errHandler.createBadImplementationError(err);
+    }
+
 
 
 }

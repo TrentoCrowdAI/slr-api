@@ -276,24 +276,23 @@ async function shareProject(user_email, project_id, shared_email) {
         throw errHandler.createBadRequestError("the shared user is alreay present in this project!");
     }
 
+    return sharedUser;
+
 }
 
 /**
  * delete a sharing of the project
  * @param {string} user_email of user
  * @param {string} project_id
- * @param {string} shared_email
+ * @param {string} collaborator_id
  * @returns {object} project found
  */
-async function deleteShareProject(user_email, project_id, shared_email) {
+async function deleteShareProject(user_email, project_id, collaborator_id) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
-
-    //error check for shared user's email
-    errorCheck.isValidGoogleEmail(shared_email);
 
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
@@ -303,17 +302,11 @@ async function deleteShareProject(user_email, project_id, shared_email) {
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
-    //get shared user by email
-    let sharedUser = await usersDao.getUserByEmail(shared_email);
-    if(!sharedUser){
-        throw errHandler.createBadRequestError("the shared user with this email isn't exist!");
-    }
-
     //if the shared user id is included
-    if(project.data.user_id.includes(sharedUser.id)){
+    if(project.data.user_id.includes(collaborator_id)){
 
         //remove the shared user id from array of user of this project
-        project.data.user_id = support.removeElementFromArray(project.data.user_id, sharedUser.id+"");
+        project.data.user_id = support.removeElementFromArray(project.data.user_id, collaborator_id+"");
         //update the project
         await projectsDao.update(project.id, project.data);
 

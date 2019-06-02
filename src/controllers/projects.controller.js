@@ -120,8 +120,8 @@ router.post('/projects/:id/collaborators', async (req, res, next) => {
         let user_email = res.locals.user_email;
         let project_id = req.params.id;
         let shared_email = req.body.email;
-        await projectsDelegate.shareProject(user_email, project_id, shared_email);
-        res.sendStatus(204);
+        let userData = await projectsDelegate.shareProject(user_email, project_id, shared_email);
+        res.status(201).json(userData);
     }
     catch (e) {
         // catch the error threw from delegate and we delegate to the error-handling middleware
@@ -130,12 +130,13 @@ router.post('/projects/:id/collaborators', async (req, res, next) => {
 });
 
 //share the project with other user
-router.delete('/projects/:id/collaborators', async (req, res, next) => {
+router.delete('/projects/:id/collaborators/:c_id', async (req, res, next) => {
     try {
         let user_email = res.locals.user_email;
         let project_id = req.params.id;
-        let shared_email = req.body.email;
-        await projectsDelegate.deleteShareProject(user_email, project_id, shared_email);
+        let collaborator_id = req.params.c_id;
+
+        await projectsDelegate.deleteShareProject(user_email, project_id, collaborator_id);
         res.sendStatus(204);
     }
     catch (e) {
