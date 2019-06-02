@@ -9,4 +9,5 @@ INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_del
 
 
 --users data
-INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"email": "test@gmail.com"}');
+INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"email": "test@gmail.com", "name": "miku club",
+  "picture": "https://lh4.googleusercontent.com/-r-lbLfOxy1Y/AAAAAAAAAAI/AAAAAAAAAEA/8Ow_GV8FitI/s96-c/photo.jpg"}');
