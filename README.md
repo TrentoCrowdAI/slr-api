@@ -20,7 +20,6 @@ Under development.
 - *checkout on the develop branch  ```git checkout develop```*
 - run ```npm install``` to install its modules
 - rename file ".env.example" to ".env" and modify its variables
-- modify the variable "home_url_for_email" in "config/index.js" as your current frontend host
 
 ### initial database
 - You need to connect an appropriate POSTGRES database by change the variable DATABASE_URL in .env file
