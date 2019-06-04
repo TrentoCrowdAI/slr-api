@@ -1,7 +1,7 @@
 
 
 module.exports = {
-    "home_url_for_email" : "http://localhost:3000/",
+    "home_url_for_email" : process.env.HOME_URL_FOR_EMAIL,
 
     "db": {
         // were not used

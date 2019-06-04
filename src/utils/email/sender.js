@@ -13,7 +13,6 @@ const errHandler = require(__base + 'utils/errors');
  */
 async function sendMail(recipient, subject, htmlText) {
     
-    let send;
     try {
         //initialization the sender
         let send = gmailSender({
