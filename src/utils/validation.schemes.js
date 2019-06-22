@@ -37,7 +37,7 @@ const paper = {
             "type": "string",
             "isNotEmpty": true
         },
-        "eid": { /* temporarly unused */
+        "eid": {
             "type": "string"
         },
         "abstract_structured": {
@@ -70,6 +70,9 @@ const paper = {
 //is the same with paper object
 const projectPaper = paper;
 
+//is the same with projectPaper
+const csvPaperFields = projectPaper;
+
 //scheme of project, has 2 attributes
 const project = {
     "type": "object",
@@ -90,5 +93,6 @@ const project = {
 module.exports = {
     paper,
     project,
-    projectPaper
+    projectPaper,
+    csvPaperFields,
 };

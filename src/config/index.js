@@ -53,6 +53,12 @@ module.exports = {
         url: "https://api.elsevier.com/content/search/scopus",
     },
 
+    "file":{
+        //the directory to save the uploaded file
+        "tmp_directory": "./tmp/",
+        //maximum number of files in tmp folder, in any case it must be >=1
+        "max_number": 20
+    }
 
 
 

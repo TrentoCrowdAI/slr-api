@@ -426,7 +426,7 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
-  '/pdf':
+  '/upload/pdf':
 
     post:
       summary: update the pdf file
@@ -456,7 +456,35 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
+  '/upload/csv':
 
+    post:
+      summary: update the csv file
+      description: update and parse csv file and return the list of paper saved
+      tags:
+        - Projects Papers
+      security:
+        - basicAuth: []
+      consumes:
+        - multipart/form-data
+
+      parameters:
+        - $ref: '#/parameters/Csv_post_body'
+
+
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/Project_papers'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
 
 
 #responses ===================================================
@@ -1016,8 +1044,27 @@ parameters:
     type: file
     description: the pdf file to parse
     required: true
-    
 
+
+  Csv_post_body:
+    in: body
+    name: body
+    description: the body data to parse csv file
+    required: true
+    schema:
+      type: object
+      properties:
+        file:
+          type: object
+        project_id:
+          type: integer
+        fields:
+          type: string
+          description: json string where it maps the different filedName of csv on property of object paper
+      required:
+        - file
+        - project_id
+        - fields
 
 
   Similar_paper_post_body:
