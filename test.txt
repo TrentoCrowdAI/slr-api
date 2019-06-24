@@ -1,0 +1,684 @@
+
+> slr-api@0.1.0 test E:\mikuc\Desktop\works\TESI\slr-api
+> jest --verbose --detectOpenHandles --forceExit
+
+database initiated-------------------------------------------
+  console.error src/app.js:63
+    [Error] { badRequest: empty token id in header, the user must first login!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as isValidTokenId] (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:268:26)
+        at Object.isValidTokenId [as verifyToken] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\users.delegate.js:135:16)
+        at verifyToken (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\users.controller.js:49:53)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at param (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:354:14)
+        at param (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:365:14)
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:410:3)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:127:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\src\app.js:47:9)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:131:14)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at param (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:354:14)
+        at param (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:365:14)
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:410:3)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at urlencodedParser (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\body-parser\lib\types\urlencoded.js:91:7)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at jsonParser (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\body-parser\lib\types\json.js:110:7)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at expressInit (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\middleware\init.js:40:5)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at query (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\middleware\query.js:45:5)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\application.js:174:10)
+        at Server.app (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\express.js:39:9)
+        at emitTwo (events.js:126:13)
+        at Server.emit (events.js:214:7)
+        at parserOnIncoming (_http_server.js:634:12)
+        at HTTPParser.parserOnHeadersComplete (_http_common.js:117:17) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the token is not valid: SubtleCrypto not found. Make sure it's an https:// website.
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as verifyToken] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\users.delegate.js:163:30)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { unauthorized: unauthorized operation
+        at Object.createUnauthorizedError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:55:13)
+        at Object.createUnauthorizedError [as isValidProjectOwner] (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:295:26)
+        at Object.isValidProjectOwner [as selectById] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:134:16)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7) name: 'unauthorized' }
+
+  console.error src/app.js:63
+    [Error] { notFound: the list is empty!
+        at Object.createNotFoundError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:31:13)
+        at Object.createNotFoundError [as selectAllByUserId] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:195:26)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7) name: 'notFound' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the count has a not valid value!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:171:26)
+        at Object.setAndCheckValidCount [as selectAllByUserId] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:185:24)
+        at selectAllByUserId (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\projects.controller.js:23:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:260:14)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: start has a not valid value!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:148:26)
+        at Object.setAndCheckValidStart [as selectAllByUserId] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:184:24)
+        at selectAllByUserId (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\projects.controller.js:23:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:260:14)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the new project data is not valid!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as insert] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:36:26)
+        at insert (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\projects.controller.js:42:46)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:260:14)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the new project data is not valid!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as insert] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:36:26)
+        at insert (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\projects.controller.js:42:46)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:260:14)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the new project data for update is not valid!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as update] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:69:26)
+        at update (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\projects.controller.js:77:32)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at param (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:354:14)
+        at param (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:365:14)
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:410:3)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:260:14)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { unauthorized: unauthorized operation
+        at Object.createUnauthorizedError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:55:13)
+        at Object.createUnauthorizedError [as isValidProjectOwner] (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:295:26)
+        at Object.isValidProjectOwner [as update] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:78:16)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7) name: 'unauthorized' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: Project id is not a integer!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as setAndCheckValidProjectId] (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:43:26)
+        at Object.setAndCheckValidProjectId [as deletes] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:99:29)
+        at deletes (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\projects.controller.js:91:32)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at param (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:354:14)
+        at param (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:365:14)
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:410:3)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:260:14)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { unauthorized: unauthorized operation
+        at Object.createUnauthorizedError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:55:13)
+        at Object.createUnauthorizedError [as isValidProjectOwner] (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:295:26)
+        at Object.isValidProjectOwner [as deletes] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:107:16)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7) name: 'unauthorized' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the email isn't a valid google email!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as isValidGoogleEmail] (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:324:26)
+        at Object.isValidGoogleEmail [as shareProject] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:247:16)
+        at shareProject (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\projects.controller.js:123:47)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at param (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:354:14)
+        at param (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:365:14)
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:410:3)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:260:14)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the shared user is alreay present in this project!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as shareProject] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:276:26)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { unauthorized: unauthorized operation
+        at Object.createUnauthorizedError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:55:13)
+        at Object.createUnauthorizedError [as isValidProjectOwner] (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:295:26)
+        at Object.isValidProjectOwner [as deleteShareProject] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:303:16)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7) name: 'unauthorized' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the user isn't present in this project!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as deleteShareProject] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\projects.delegate.js:316:26)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] TypeError: xmlData.replace is not a function
+        at Object.getTraversalObj (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\fast-xml-parser\src\xmlstr2xmlnode.js:72:21)
+        at Object.<anonymous>.exports.parse (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\fast-xml-parser\src\parser.js:10:48)
+        at parse (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:356:35)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7)
+
+  console.error src/app.js:63
+    [Error] { badRequest: the source of search is empty
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as search] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:138:26)
+        at search (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\papers.controller.js:23:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the keyword is not define!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as isValidKeyword] (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:234:26)
+        at isValidKeyword (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:160:16)
+        at Object.scopusSearch [as search] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:131:21)
+        at search (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\papers.controller.js:23:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: searchBy has a not valid value!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as setAndCheckValidSearchByForScopus] (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:205:26)
+        at setAndCheckValidSearchByForScopus (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:161:27)
+        at Object.scopusSearch [as search] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:131:21)
+        at search (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\papers.controller.js:23:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { notFound: the result is empty!
+        at Object.createNotFoundError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:31:13)
+        at createNotFoundError (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:228:26)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7) name: 'notFound' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: start has a not valid value!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:148:26)
+        at Object.setAndCheckValidStart [as similarSearch] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:460:24)
+        at similarSearch (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\papers.controller.js:44:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: start has a not valid value!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:148:26)
+        at Object.setAndCheckValidStart [as similarSearch] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:460:24)
+        at similarSearch (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\papers.controller.js:44:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the count has a not valid value!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:171:26)
+        at Object.setAndCheckValidCount [as similarSearch] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:461:24)
+        at similarSearch (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\papers.controller.js:44:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the count of elements should be greater than 0 and lower than 25
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:174:26)
+        at Object.setAndCheckValidCount [as similarSearch] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:461:24)
+        at similarSearch (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\papers.controller.js:44:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: the count of elements should be greater than 0 and lower than 25
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errorCheck.js:174:26)
+        at Object.setAndCheckValidCount [as similarSearch] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:461:24)
+        at similarSearch (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\papers.controller.js:44:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] TypeError: xmlData.replace is not a function
+        at Object.getTraversalObj (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\fast-xml-parser\src\xmlstr2xmlnode.js:72:21)
+        at Object.<anonymous>.exports.parse (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\fast-xml-parser\src\parser.js:10:48)
+        at parse (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:356:35)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7)
+
+  console.error src/app.js:63
+    [Error] { badRequest: there's no paper to search for!
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as similarSearch] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:466:26)
+        at similarSearch (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\papers.controller.js:44:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { badRequest: no paper title found
+        at Object.createBadRequestError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:20:13)
+        at Object.createBadRequestError [as similarSearch] (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:469:26)
+        at similarSearch (E:\mikuc\Desktop\works\TESI\slr-api\src\controllers\papers.controller.js:44:43)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:137:13)
+        at Route.dispatch (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\route.js:112:3)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:281:22
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Function.handle (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:174:3)
+        at router (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:47:12)
+        at Layer.handle [as handle_request] (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\layer.js:95:5)
+        at trim_prefix (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:317:13)
+        at E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:284:7
+        at Function.process_params (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:335:12)
+        at Immediate.next (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:275:10)
+        at Immediate._onImmediate (E:\mikuc\Desktop\works\TESI\slr-api\node_modules\express\lib\router\index.js:635:15)
+        at runCallback (timers.js:812:20)
+        at tryOnImmediate (timers.js:768:5)
+        at processImmediate [as _immediateCallback] (timers.js:745:5) name: 'badRequest' }
+
+  console.error src/app.js:63
+    [Error] { notFound: the result is empty!
+        at Object.createNotFoundError (E:\mikuc\Desktop\works\TESI\slr-api\src\utils\errors.js:31:13)
+        at createNotFoundError (E:\mikuc\Desktop\works\TESI\slr-api\src\delegates\papers.delegate.js:228:26)
+        at <anonymous>
+        at process._tickCallback (internal/process/next_tick.js:189:7) name: 'notFound' }
+
+database destroyed-------------------------------------------

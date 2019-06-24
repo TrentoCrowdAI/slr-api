@@ -214,10 +214,20 @@ function setAndCheckValidSearchByForScopus(searchBy) {
  */
 function setAndCheckValidYearForScopus(year) {
 
-    year = Number(year) || "";
-    if (year !== "" && !Number.isInteger(year)) {
-        throw errHandler.createBadRequestError('year has a not valid value!');
+    //if year is defined
+    if(year){
+        //convert to integer
+        year = Number(year);
+        //if it isn't a valid integer
+        if (!Number.isInteger(year)) {
+            throw errHandler.createBadRequestError('year has a not valid value!');
+        }
     }
+    else{
+        year = "";
+    }
+
+
 
     return year;
 }
@@ -305,7 +315,7 @@ function isValidProjectPaper(projectPaper) {
 
     //if it is empty
     if (!projectPaper) {
-        throw errHandler.createUnauthorizedError("ProjectPaper does not exist!");
+        throw errHandler.createNotFoundError("ProjectPaper does not exist!");
     }
 
 }
@@ -323,6 +333,25 @@ function isValidGoogleEmail(email) {
     if(email.toLowerCase().indexOf("@gmail.com") === -1  && email.toLowerCase().indexOf("@studenti.unitn.it") === -1){
         throw errHandler.createBadRequestError("the email isn't a valid google email!");
     }
+
+}
+/**
+ * check if the id is a valid integer
+ * @param {string} email
+ */
+function isValidCollaboratorId(id) {
+
+    //error check
+    if (id === undefined || id === null) {
+        throw errHandler.createBadRequestError("the collaborator's id is empty!");
+    }
+    //cast id to integer type
+    id = Number(id);
+    //error check
+    if (!Number.isInteger(id)) {
+        throw errHandler.createBadRequestError('the collaborator\'s id is not a integer!');
+    }
+
 
 }
 
@@ -346,5 +375,6 @@ module.exports = {
     isValidProjectOwner,
     isValidProjectPaper,
     isValidGoogleEmail,
+    isValidCollaboratorId,
 
 };

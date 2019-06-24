@@ -4,7 +4,7 @@
 //library to parse XML string to object
 const XMLParser = require('fast-xml-parser');
 const parserOptions = {
-    ignoreAttributes : false,
+    ignoreAttributes: false,
 };
 
 
@@ -126,15 +126,15 @@ async function search(keyword, searchBy, year, orderBy, sort, start, count, scop
 
     let res;
 
-    if(scopus==="true"){
+    if (scopus === "true") {
 
         res = await scopusSearch(keyword, searchBy, year, orderBy, sort, start, count);
     }
-    else if(arXiv==="true"){
+    else if (arXiv === "true") {
 
         res = await arxivSearch(keyword, searchBy, orderBy, sort, start, count);
     }
-    else{
+    else {
         throw errHandler.createBadRequestError("the source of search is empty");
     }
 
@@ -350,7 +350,7 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
     let responseXML = await conn.getRaw(config.arxiv.url, queryData);
     //console.log(responseXML);
     //if the error.data is defined
-    if(responseXML.data) {
+    if (responseXML.data) {
         throw errHandler.createBadImplementationError("error connecting to arXiv");
     }
     let respnseObject = XMLParser.parse(responseXML, parserOptions);
@@ -362,7 +362,6 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
     if (totalResults === 0) {
         throw errHandler.createNotFoundError('the result is empty!');
     }
-
 
 
     //get paper array
@@ -380,14 +379,14 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
 
         let authors = arrayResults[i]["author"];
         //if is an array of author
-        if(Array.isArray(authors)){
-            paper.authors = support.arrayOfObjectToString(authors, "name", "," , "");
+        if (Array.isArray(authors)) {
+            paper.authors = support.arrayOfObjectToString(authors, "name", ",", "");
         }
         //else if is a single author object
-        else if(authors.name){
+        else if (authors.name) {
             paper.authors = authors.name;
         }
-        else{
+        else {
             paper.authors = "";
         }
 
@@ -396,10 +395,10 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
         paper.date = arrayResults[i]["published"] || "";
         paper.source_title = arrayResults[i]["title"] || "";
         paper.link = arrayResults[i].link || "";
-        if(arrayResults[i]["arxiv:doi"]){
+        if (arrayResults[i]["arxiv:doi"]) {
             paper.doi = arrayResults[i]["arxiv:doi"]["#text"];
         }
-        else{
+        else {
             paper.doi = "";
         }
 
@@ -414,7 +413,7 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
         //get index of last "/"
         let index = arXivId.lastIndexOf("/");
         //split id string , ex: 1607.01400v1
-        paper.eid = arXivId.slice(index+1, arXivId.length) || "";
+        paper.eid = arXivId.slice(index + 1, arXivId.length) || "";
 
         paper.abstract_structured = "";
         paper.filter_oa_include = "";
@@ -426,7 +425,6 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
         arrayPapers.push(paper);
         arrayId.push(arrayResults[i].eid);
     }
-
 
 
     //return array of eids where in which the paper with same eid are already stored  in DB
@@ -467,12 +465,6 @@ async function similarSearch(paperData, start, count) {
     if (!paperData) {
         throw errHandler.createBadRequestError("there's no paper to search for!");
     }
-    if (paperData.file && paperData.title && paperData.title !== "") {
-        throw errHandler.createBadRequestError("you can't input both a file and paper data");
-    }
-    if (paperData.file && paperData.file.mimetype.indexOf("application/pdf") === -1) {
-        throw errHandler.createBadRequestError('the file is not a pdf!');
-    }
     if (!paperData.title) {
         throw errHandler.createBadRequestError('no paper title found');
     }
@@ -492,30 +484,21 @@ async function similarSearch(paperData, start, count) {
     //###########################################
 
 
-    //if we have a file and the service allows file upload we can sende the file
-    if (paperData.file) {
-        //temporary fake call for 'search similar service
-        response = await scopusSearch("Trento", undefined, undefined, undefined, "ASC", start, count);
-        //this can be the call when a good 'search similar' service will be found
-        //response = await conn.post(config.search_similar_server, {"file" : fs.createReadStream(file.path), ...queryData});
-    }
-    //else if we have a query we search for similar papers based on the query(the query could be ad url to a specific paper or a DOI in the future)
-    else {
-        queryData.query = paperData.title;
+    queryData.query = paperData.title;
 
-        //temporary fake call for 'search similar service
-        let splitted = paperData.title.split(" ");
-        let relevantQuery = splitted[0];
-        //In practice I pick the first word of the title and I search for it on scopus
-        for (let i = 0; i < splitted.length; i++) {
-            if (splitted[i].length !== 1) {
-                relevantQuery = splitted[i];
-                break;
-            }
+    //temporary fake call for 'search similar service
+    let splitted = paperData.title.split(" ");
+    let relevantQuery = splitted[0];
+    //In practice I pick the first word of the title and I search for it on scopus
+    for (let i = 0; i < splitted.length; i++) {
+        if (splitted[i].length !== 1) {
+            relevantQuery = splitted[i];
+            break;
         }
-        response = await scopusSearch(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
-        //response = await conn.get(config.search_similar_server, queryData);
     }
+    response = await scopusSearch(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
+    //response = await conn.get(config.search_similar_server, queryData);
+
 
     //###########################################
     //handle the response from the server(this may change based on the service used)

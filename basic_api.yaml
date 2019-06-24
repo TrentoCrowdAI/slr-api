@@ -1061,6 +1061,7 @@ parameters:
         fields:
           type: string
           description: json string where it maps the different filedName of csv on property of object paper
+          example: '{"authors":"Authors","title":"Title","year":"Year","date":"Source title","source_title":"title","link":"link","abstract":"abstract","document_type":"document_type","source":"source","eid":"EID","abstract_structured":"abstract_structured","filter_oa_include":"filter_oa_include","filter_study_include":"filter_study_include","notes":"notes","manual":"manual","doi":"doi"}'
       required:
         - file
         - project_id
@@ -1078,8 +1079,6 @@ parameters:
         paperData:
           type: object
           properties:
-            file:
-              type: object
             title:
               type: string
         start:

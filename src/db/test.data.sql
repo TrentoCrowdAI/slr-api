@@ -36,6 +36,8 @@ INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_del
 INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Data mining","description":"is the process of discovering patterns in large data sets involving methods at the intersection of machine learning, statistics, and database systems.","user_id":["1"]}');
 INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Database","description":"is an organized collection of data, generally stored and accessed electronically from a computer system.","user_id":["1"]}');
 INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["1"]}');
+INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["2"]}');
+
 
 
 --projectPaper data

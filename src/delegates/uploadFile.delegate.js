@@ -60,7 +60,7 @@ async function parsePdf(file) {
         year: response.year,
     };
     //format a string of author's name from array of authors
-    result.authors = support.arrayOfObjectToString(response.authors, "name", "," , "");
+    result.authors = support.arrayOfObjectToString(response.authors, "name", ",", "");
 
     return result;
 
@@ -92,7 +92,7 @@ async function parseCsv(user_email, project_id, fields, file) {
 
     //check fields
 
-    if(!fields){
+    if (!fields) {
         throw errHandler.createBadRequestError('the parameter "fields" does not exist!');
     }
 
@@ -116,10 +116,17 @@ async function parseCsv(user_email, project_id, fields, file) {
     //get the text content from file
     let csvText = fs.readFileSync(file.path, "utf8");
     //parses it
-    let csvBody = await csv.parse(csvText, {delimiter: ",", columns: true, skip_empty_lines: true});
+    let csvBody;
+    try {
+        csvBody = await csv.parse(csvText, {delimiter: ",", columns: true, skip_empty_lines: true});
+    }
+    catch (e) {
+        throw errHandler.createBadRequestError('Error from CSV parser: ' + e.message);
+    }
     //error check
     //if is null or isn't a array
-    if(!csvBody || !Array.isArray(csvBody)){
+    if (!csvBody || !Array.isArray(csvBody) || csvBody.length == 0) {
+
         throw errHandler.createBadRequestError('the file is not a valid csv with column headers!');
     }
 
@@ -128,7 +135,7 @@ async function parseCsv(user_email, project_id, fields, file) {
     let listPaper = [];
     let arrayEid = [];
 
-    for(let i =0; i< csvBody.length; i++){
+    for (let i = 0; i < csvBody.length; i++) {
 
         //get single paper object from csvObject
         let paper = {};
@@ -140,8 +147,8 @@ async function parseCsv(user_email, project_id, fields, file) {
         paper["link"] = csvBody[i][fields.link] || "";
         paper["abstract"] = csvBody[i][fields.abstract] || "";
         paper["document_type"] = csvBody[i][fields.document_type] || "";
-        paper["source"] = csvBody[i][fields.source]  || "";
-        paper["eid"] = csvBody[i][fields.eid]  || "";
+        paper["source"] = csvBody[i][fields.source] || "";
+        paper["eid"] = csvBody[i][fields.eid] || "";
         paper["abstract_structured"] = csvBody[i][fields.abstract_structured] || "";
         paper["filter_oa_include"] = csvBody[i][fields.filter_oa_include] || "";
         paper["filter_study_include"] = csvBody[i][fields.filter_study_include] || "";
