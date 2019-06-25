@@ -147,6 +147,32 @@ async function post(url, bodyData = "") {
     return await request(url, options, timeOutTime);
 }
 
+/**
+ * post for similar paper
+ * @param url
+ * @param bodyData
+ * @return {object } response data
+ */
+async function postSimilarPaper(url, bodyData = "") {
+
+    //create a header
+    let jsonHeaders = new Headers();
+    jsonHeaders.append('Accept', 'application/json');
+    jsonHeaders.append('Content-Type', 'application/json;charset=UTF-8');
+    jsonHeaders.append('Authorization', 'test');
+
+    let body = JSON.stringify(bodyData, null, 2);
+
+    let options = {
+        "method": 'POST',
+        "headers": jsonHeaders,
+        "encoding": null,
+        "body": body,
+    };
+
+    return await request(url, options, timeOutTime);
+}
+
 
 /**
  * post pdf method
@@ -239,7 +265,8 @@ const http = {
     get,
     getRaw,
     post,
-    postPdf
+    postSimilarPaper,
+    postPdf,
 };
 
 

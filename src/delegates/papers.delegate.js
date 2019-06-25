@@ -349,8 +349,8 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
     //send request get to scopus service
     let responseXML = await conn.getRaw(config.arxiv.url, queryData);
     //console.log(responseXML);
-    //if the error.data is defined
-    if (responseXML.data) {
+    //if the error.message is defined
+    if (responseXML.message) {
         throw errHandler.createBadImplementationError("error connecting to arXiv");
     }
     let respnseObject = XMLParser.parse(responseXML, parserOptions);
@@ -460,18 +460,14 @@ async function similarSearch(paperData, start, count) {
     start = errorCheck.setAndCheckValidStart(start);
     count = errorCheck.setAndCheckValidCount(count);
 
-
     //error check
     if (!paperData) {
         throw errHandler.createBadRequestError("there's no paper to search for!");
     }
-    if (!paperData.title) {
-        throw errHandler.createBadRequestError('no paper title found');
-    }
 
     //prepare the query object
     let queryData = {};
-
+    queryData.paperData = paperData;
     //number of papers and offset
     queryData.start = start;
     queryData.count = count;
@@ -479,43 +475,24 @@ async function similarSearch(paperData, start, count) {
     //fetchData from scopus
     let response = null;
 
-    //###########################################
-    //call for the service
-    //###########################################
+    /*###########################################
+    call the service
+    ###########################################*/
 
+    response = await conn.postSimilarPaper(config.search_similar_server, queryData);
 
-    queryData.query = paperData.title;
-
-    //temporary fake call for 'search similar service
-    let splitted = paperData.title.split(" ");
-    let relevantQuery = splitted[0];
-    //In practice I pick the first word of the title and I search for it on scopus
-    for (let i = 0; i < splitted.length; i++) {
-        if (splitted[i].length !== 1) {
-            relevantQuery = splitted[i];
-            break;
-        }
-    }
-    response = await scopusSearch(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
-    //response = await conn.get(config.search_similar_server, queryData);
-
-
-    //###########################################
-    //handle the response from the server(this may change based on the service used)
-    //###########################################
 
     //if there is the error from fetch
-    if (response.message) {
+    if (response.message == "Not Found") {
+        throw errHandler.createNotFoundError(response.message);
+    }
+    else if(response.message){
         throw errHandler.createBadImplementationError(response.message);
     }
 
-    //number of results
-    let totalResults = response.totalResults;
-
-    //if results if 0, return the 404 error
-    if (totalResults === "0") {
-        throw errHandler.createNotFoundError('the result is empty!');
-    }
+    //###########################################
+    //handle the response from the server
+    //###########################################
 
     //get paper array
     let arrayResults = response.results;
@@ -529,12 +506,10 @@ async function similarSearch(paperData, start, count) {
     for (let i = 0; i < arrayResults.length; i++) {
 
         let paper = arrayResults[i];
-
         //push element in array
         arrayPapers.push(paper);
         arrayEid.push(arrayResults[i].eid);
     }
-
 
     //###########################################
     //save the results in our local database before returning it
@@ -553,8 +528,8 @@ async function similarSearch(paperData, start, count) {
     }
 
 
-    //return the array of papers get from scopus and total number of results
-    return {"results": arrayPapers, "totalResults": totalResults};
+    //return the array of papers get from external service and total number of results
+    return {"results": arrayPapers, "totalResults": arrayPapers.length};
 
 }
 

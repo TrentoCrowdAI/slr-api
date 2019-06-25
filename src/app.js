@@ -19,6 +19,9 @@ const uploadFileController = require('./controllers/uploadFile.controller');
 //controller for users management
 const usersController = require('./controllers/users.controller');
 
+//controller for fake external service
+const similarSearchController = require('./controllers/external.similarSearch.controller');
+
 const app = express();
 
 
@@ -51,16 +54,20 @@ app.all('*', function (req, res, next) {
 // define routes here
 app.use(usersController);
 app.use(papersController);
+
 app.use(projectsController);
 app.use(projectPapersController);
 app.use(uploadFileController);
+
+//fake external services
+app.use(similarSearchController);
 
 
 //manages the object error threw by level delegate
 app.use((e, req, res, next) => {
 
     //print the error object in the console
-    //console.error('[Error]', e);
+    console.error('[Error]', e);
 
     let error = errorsHelper.createBoomErrorForService(e);
 
