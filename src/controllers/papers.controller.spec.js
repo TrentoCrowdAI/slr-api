@@ -20,13 +20,13 @@ describe('good cases on papers', () => {
         let response = await request(app).get('/search?query=2015&arXiv=true').set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
-/*
+
     test('POST /search/similar should return 200 if find any papers', async () => {
         jest.setTimeout(timeOut);
         let response = await request(app).post('/search/similar').send({"paperData" : {"title" : "Crowdsourcing developement"}}).set('Authorization', validTokenId).set('Content-Type', "application/json");
         expect(response.status).toBe(200);
     });
-*/
+
 
     /* deprecated ----------------------------------
      * 
@@ -154,10 +154,9 @@ describe('bad cases on papers', () => {
         expect(response.status).toBe(400);
 
 
-
     });
 
-    /*
+
     test('POST /search/similar should return 404 if it finds nothing', async () => {
 
         jest.setTimeout(timeOut);
@@ -166,6 +165,6 @@ describe('bad cases on papers', () => {
         expect(response.status).toBe(404);
 
     });
-*/
+
 
 });

@@ -84,6 +84,28 @@ function setAndCheckValidProjectPaperId(projectPaper_id) {
     return projectPaper_id;
 }
 
+
+/**
+ * check validation of filter id and transform the value in integer
+ * @param {number} filter_id
+ * @return {int} filter_id
+ */
+function setAndCheckValidFilterId(filter_id) {
+    //error check
+    if (filter_id === undefined || filter_id === null) {
+        throw errHandler.createBadRequestError('filter_id is not defined!');
+    }
+
+    //cast filter_id to integer type
+    filter_id = Number(filter_id);
+    //error check
+    if (!Number.isInteger(filter_id)) {
+        throw errHandler.createBadRequestError('filter_id is not a integer!');
+    }
+
+    return filter_id;
+}
+
 /**
  * set a default value if orderBy of projectPaper isn't defined and check its validation
  * @param {string} orderBy
@@ -321,6 +343,19 @@ function isValidProjectPaper(projectPaper) {
 }
 
 /**
+ * check if the filter is empty
+ * @param {Object} filter
+ */
+function isValidFilter(filter) {
+
+    //if it is empty
+    if (!filter) {
+        throw errHandler.createNotFoundError("Filter does not exist!");
+    }
+
+}
+
+/**
  * check if the email is a valid google email
  * @param {string} email
  */
@@ -361,6 +396,7 @@ module.exports = {
     setAndCheckValidProjectId,
     setAndCheckValidProjectOrderBy,
     setAndCheckValidProjectPaperId,
+    setAndCheckValidFilterId,
     setAndCheckValidProjectPaperOrderBy,
     setAndCheckValidSort,
     setAndCheckValidStart,
@@ -374,6 +410,7 @@ module.exports = {
     isValidGoogleId,
     isValidProjectOwner,
     isValidProjectPaper,
+    isValidFilter,
     isValidGoogleEmail,
     isValidCollaboratorId,
 

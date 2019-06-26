@@ -89,10 +89,35 @@ const project = {
     "required": ["name", "description"]
 };
 
+//scheme of filtes
+const filter={
+    "type": "object",
+    "properties": {
+        "project_id": {
+            "type": "string",
+            "isNotEmpty": true
+        },
+        "predicate": {
+            "type": "string",
+            "isNotEmpty": true
+        },
+        "inclusion_description": {
+            "type": "string",
+            "isNotEmpty": true
+        },
+        "exclusion_description": {
+            "type": "string",
+            "isNotEmpty": true
+        }
+    },
+    "required": ["project_id", "predicate",  "inclusion_description", "exclusion_description"]
+}
+
 
 module.exports = {
     paper,
     project,
     projectPaper,
     csvPaperFields,
+    filter,
 };

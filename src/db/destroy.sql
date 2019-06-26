@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS "public"."papers";
 DROP TABLE IF EXISTS "public"."project_papers";
 DROP TABLE IF EXISTS "public"."projects";
 DROP TABLE IF EXISTS "public"."users";
+DROP TABLE IF EXISTS "public"."filters";
 
 
 

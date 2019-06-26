@@ -14,6 +14,8 @@ const papersController = require('./controllers/papers.controller');
 const projectsController = require('./controllers/projects.controller');
 //controller for projectPapers
 const projectPapersController = require('./controllers/projectPapers.controller');
+//controller for filters
+const filtersController = require('./controllers/filters.controller');
 //controller for uploadFile
 const uploadFileController = require('./controllers/uploadFile.controller');
 //controller for users management
@@ -57,6 +59,7 @@ app.use(papersController);
 
 app.use(projectsController);
 app.use(projectPapersController);
+app.use(filtersController);
 app.use(uploadFileController);
 
 //fake external services

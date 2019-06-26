@@ -18,6 +18,7 @@ module.exports = {
         projects: 'projects',
         projectPapers: 'project_papers',
         users: 'users',
+        filters: 'filters',
     },
 
     //local port to start the service
