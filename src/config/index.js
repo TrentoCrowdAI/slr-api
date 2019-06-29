@@ -65,8 +65,8 @@ module.exports = {
     //here you can put the url of the remote(or local) service url that will search for similar papers
     "search_similar_server" : process.env.BACKEND_URL+"external/similar",
 
-
-
+    //automated search service
+    "automated_search_server": process.env.BACKEND_URL+"external/automated",
 
 
 };

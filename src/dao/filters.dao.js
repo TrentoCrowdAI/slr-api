@@ -72,6 +72,29 @@ async function selectById(filter_id) {
 }
 
 /**
+ * select a filter list
+ * @param {array[]} arrayFilterId
+ * @returns {array[]} filter list found
+ */
+
+async function selectByArrayId(arrayFilterId) {
+
+    //transform array in string where each element is surrounded by '
+    let joinString = support.arrayToString(arrayFilterId, ",", "");
+
+    //if joinString is empty
+    if (joinString === "") {
+        joinString = 0;
+    }
+
+    let res = await db.query(
+        "SELECT * FROM public." + db.TABLES.filters + " WHERE id IN ("+joinString+")"
+    );
+
+    return res.rows;
+}
+
+/**
  * select the filters associated with a project
  * @param {int} project_id
  * @param {string} orderBy each paper data.propriety
@@ -107,6 +130,7 @@ module.exports = {
     update,
     deletes,
     selectById,
+    selectByArrayId,
     selectByProject,
 
 };

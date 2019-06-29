@@ -152,13 +152,14 @@ async function post(url, bodyData = "") {
  * @param url
  * @param bodyData
  * @return {object } response data
- */
+ *//*
 async function postSimilarPaper(url, bodyData = "") {
 
     //create a header
     let jsonHeaders = new Headers();
     jsonHeaders.append('Accept', 'application/json');
     jsonHeaders.append('Content-Type', 'application/json;charset=UTF-8');
+    //set only for fake service
     jsonHeaders.append('Authorization', 'test');
 
     let body = JSON.stringify(bodyData, null, 2);
@@ -172,7 +173,7 @@ async function postSimilarPaper(url, bodyData = "") {
 
     return await request(url, options, timeOutTime);
 }
-
+*/
 
 /**
  * post pdf method
@@ -265,7 +266,7 @@ const http = {
     get,
     getRaw,
     post,
-    postSimilarPaper,
+    //postSimilarPaper,
     postPdf,
 };
 

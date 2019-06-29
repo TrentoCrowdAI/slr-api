@@ -107,8 +107,7 @@ describe('bad cases on papers', () => {
        expect(response.status).toBe(400);
        response = await request(app).get('/search?query=a&count=0&scopus=true').set('Authorization', validTokenId);
        expect(response.status).toBe(400);
-       response = await request(app).get('/search?query=a&count=26&scopus=true').set('Authorization', validTokenId);
-       expect(response.status).toBe(400);
+
 
        //cases on arXiv
        response = await request(app).get('/search?query=a&searchBy=abc&arXiv=true').set('Authorization', validTokenId);
@@ -125,8 +124,7 @@ describe('bad cases on papers', () => {
        expect(response.status).toBe(400);
        response = await request(app).get('/search?query=a&count=0&arXiv=true').set('Authorization', validTokenId);
        expect(response.status).toBe(400);
-       response = await request(app).get('/search?query=a&count=26&arXiv=true').set('Authorization', validTokenId);
-       expect(response.status).toBe(400);
+
     });
 
     test('GET /search should return 404 if it finds nothing', async () => {

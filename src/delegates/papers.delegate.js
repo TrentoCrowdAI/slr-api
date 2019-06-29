@@ -9,6 +9,7 @@ const parserOptions = {
 
 
 const papersDao = require(__base + 'dao/papers.dao');
+const filtersDao = require(__base + 'dao/filters.dao');
 
 //the config file
 const config = require(__base + 'config');
@@ -479,7 +480,7 @@ async function similarSearch(paperData, start, count) {
     call the service
     ###########################################*/
 
-    response = await conn.postSimilarPaper(config.search_similar_server, queryData);
+    response = await conn.post(config.search_similar_server, queryData);
 
 
     //if there is the error from fetch
@@ -532,6 +533,114 @@ async function similarSearch(paperData, start, count) {
     return {"results": arrayPapers, "totalResults": arrayPapers.length};
 
 }
+
+
+
+
+/**
+ *
+ * automated search on a specific topic
+ * @param {string} title
+ * @param {string} description
+ * @param {array[]} arrayFilterId
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of papers
+ * @returns {Object} array of papers and total number of result
+ */
+async function automatedSearch(title, description, arrayFilterId, start, count){
+
+    if(!title){
+        throw errHandler.createBadRequestError("the title is not defined");
+    }
+    if(!description){
+        throw errHandler.createBadRequestError("the description is not defined");
+    }
+
+    errorCheck.isValidArray(arrayFilterId);
+
+    start = errorCheck.setAndCheckValidStart(start);
+    count = errorCheck.setAndCheckValidCount(count);
+
+    //get the data of filters
+    let arrayFilter = await filtersDao.selectByArrayId(arrayFilterId);
+
+
+
+    //prepare the query object
+    let queryData = {};
+    queryData.title = title;
+    queryData.description = description;
+    queryData.arrayFilter =arrayFilter;
+    //number of papers and offset
+    queryData.start = start;
+    queryData.count = count;
+
+    //fetchData from scopus
+    let response = null;
+
+    /*###########################################
+     call the service
+     ###########################################*/
+
+    response = await conn.post(config.automated_search_server, queryData);
+
+
+    //if there is the error from fetch
+    if (response.message == "Not Found") {
+        throw errHandler.createNotFoundError(response.message);
+    }
+    else if(response.message){
+        throw errHandler.createBadImplementationError(response.message);
+    }
+
+    //###########################################
+    //handle the response from the server
+    //###########################################
+
+    //get paper array
+    let arrayResults = response.results;
+
+    //store a new paper array
+    let arrayPapers = [];
+    //a eids array for our new paper array
+    let arrayEid = [];
+
+    //create a new paper array with our format(this will change a lot based on the service used)
+    for (let i = 0; i < arrayResults.length; i++) {
+
+        let paper = arrayResults[i];
+        //push element in array
+        arrayPapers.push(paper);
+        arrayEid.push(arrayResults[i].eid);
+    }
+
+    //###########################################
+    //save the results in our local database before returning it
+    //###########################################
+
+    //return array of eids where in which the paper with same eid are already stored  in DB
+    let arrayEidExisting = await papersDao.checkExistenceByEids(arrayEid);
+    //remove the paper already present in DB
+    let arrayPapersToInsert = support.removeElementFromArrayByEids(arrayPapers, arrayEidExisting);
+
+    //if there are the new papers
+    if (arrayPapersToInsert.length > 0) {
+
+        //insert the papers in DB
+        let res = await papersDao.insertByList(arrayPapersToInsert);
+    }
+
+
+    //return the array of papers get from external service and total number of results
+    return {"results": arrayPapers, "totalResults": arrayPapers.length};
+
+}
+
+
+
+
+
+
 
 /**
  * deprecated function selectBySingleKeyword and selectAll
@@ -633,5 +742,6 @@ module.exports = {
     search,
     scopusSearch,
     arxivSearch,
-    similarSearch
+    similarSearch,
+    automatedSearch
 };

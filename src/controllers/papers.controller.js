@@ -51,6 +51,29 @@ router.post('/search/similar', async (req, res, next) => {
     }
 });
 
+
+/*search the similar paper*/
+router.post('/search/automated', async (req, res, next) => {
+    try {
+
+        //input
+        let title = req.body.title;
+        let description = req.body.description;
+        let arrayFilterId = req.body.arrayFilterId;
+        //pagination parameters
+        let start = req.body.start;
+        let count = req.body.count;
+
+        let papers = await papersDelegate.automatedSearch(title, description, arrayFilterId, start, count);
+
+        res.status(200).json(papers);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
 /*
  * 
  * router deprecated-------------------------------------------------------------------------------

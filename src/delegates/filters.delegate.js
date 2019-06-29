@@ -2,7 +2,7 @@
 // any of the supported platforms. Also to implement any other 
 // functionality related to HITs.
 
-const filtersDao = require(__base + 'dao/filter.dao');
+const filtersDao = require(__base + 'dao/filters.dao');
 const projectsDao = require(__base + 'dao/projects.dao');
 const usersDao = require(__base + 'dao/users.dao');
 

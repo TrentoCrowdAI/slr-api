@@ -22,7 +22,7 @@ const uploadFileController = require('./controllers/uploadFile.controller');
 const usersController = require('./controllers/users.controller');
 
 //controller for fake external service
-const similarSearchController = require('./controllers/external.similarSearch.controller');
+const externalServicesController = require('./controllers/external.services.controller');
 
 const app = express();
 
@@ -53,6 +53,11 @@ app.all('*', function (req, res, next) {
     }
 });
 
+
+
+//fake external services
+app.use(externalServicesController);
+
 // define routes here
 app.use(usersController);
 app.use(papersController);
@@ -62,8 +67,6 @@ app.use(projectPapersController);
 app.use(filtersController);
 app.use(uploadFileController);
 
-//fake external services
-app.use(similarSearchController);
 
 
 //manages the object error threw by level delegate

@@ -46,8 +46,8 @@ async function insertFromPaper(user_email, arrayEid, project_id) {
     //remove the eids already exist in DB
     arrayEid = support.differenceOperation(arrayEid, arrayEidExisting);
 
+    //initial res with a empty array
     let res=[];
-
 
     //if at least one post will be inserted
     if (arrayEid.length > 0) {

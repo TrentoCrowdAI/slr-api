@@ -199,8 +199,7 @@ describe('bad cases on projects', () => {
         expect(response.status).toBe(400);
         response = await request(app).get('/projects?&count=0').set('Authorization', validTokenId);
         expect(response.status).toBe(400);
-        response = await request(app).get('/projects?&count=26').set('Authorization', validTokenId);
-        expect(response.status).toBe(400);
+
     });
 
 

@@ -192,8 +192,8 @@ function setAndCheckValidCount(count) {
     if (!Number.isInteger(count)) {
         throw errHandler.createBadRequestError('the count has a not valid value!');
     }
-    if (count < 1 || count > 25) {
-        throw errHandler.createBadRequestError('the count of elements should be greater than 0 and lower than 25'); // 25 is max for no-subscriber scopus
+    if (count < 1) {
+        throw errHandler.createBadRequestError('the count of elements should be greater than 0'); // 25 is max for no-subscriber scopus
     }
 
     return count;
@@ -288,6 +288,7 @@ function isValidArray(array) {
     }
 
 }
+
 
 /**
  * check the validation of token_id

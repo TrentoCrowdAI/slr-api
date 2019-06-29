@@ -58,6 +58,8 @@ paths:
             $ref: '#/definitions/Result_of_paper_search'
         '400':
           $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
         '404':
           $ref: '#/responses/404_not_found'
         '500':
@@ -85,11 +87,41 @@ paths:
             $ref: '#/definitions/Result_of_paper_search'
         '400':
           $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
         '404':
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
 
+  # similar search ==============================================================
+
+  '/search/automated':
+    post:
+      summary: automated search
+      description: >-
+        automated search by a specific topic
+      tags:
+        - Papers
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Automated_search_post_body'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Result_of_paper_search_with_confidence'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
   # projects ==============================================================
 
   '/projects':
@@ -792,6 +824,86 @@ definitions:
         type: integer
 
 
+  Paper_data_with_confidence:
+    type: object
+    properties:
+      authors:
+        type: string
+        example: >-
+          Bygholm, Hansen
+      title:
+        type: string
+        example: x relations to y
+      year:
+        type: string
+        example: "2017"
+        format: date
+        pattern: "YYYY"
+      date:
+        type: string
+        example: "2017-10-01"
+        format: date
+        pattern: "YYYY-MM-DD"
+      source_title:
+        type: string
+        example: Educations in y
+      link:
+        type: string
+        example: "https://scopus.com/bla/inward?uri=2412414141"
+      abstract:
+        type: string
+        example: >-
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
+          magna, ultricies eu mauris at, vehicula elementum felis. Nunc
+          vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
+          lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
+          lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
+          eleifend[..]
+      document_type:
+        type: string
+        example: article
+      source:
+        type: string
+        example: scopus
+      eid:
+        type: string
+        example: >-
+          2-s2.0-45252342358235
+      abstract_structured:
+        type: string
+        example: "0"
+      filter_oa_include:
+        type: string
+        example: "1"
+      filter_study_include:
+        type: string
+        example: "0"
+      notes:
+        type: string
+        example: "note"
+      manual:
+        type: string
+        example: "0"
+      doi:
+        type: string
+        example: "10.1000/182"
+      confidence:
+        type: string
+        example: "0.82"
+
+
+  Result_of_paper_search_with_confidence:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Paper_data_with_confidence'
+      totalResults:
+        type: integer
+
+
+
   Project_paper:
     type: object
     properties:
@@ -1272,6 +1384,33 @@ parameters:
         - paperData
         - start
         - count
+
+  Automated_search_post_body:
+    in: body
+    name: body
+    description: the basic post data to automated search
+    required: true
+    schema:
+      type: object
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        arrayFilterId:
+          type: array
+          items:
+            type: integer
+        start:
+          type: integer
+        count:
+          type: integer
+      required:
+        - title
+        - description
+        - arrayFilterId
+
+
 
   Email_post_body:
     in: body
