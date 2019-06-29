@@ -530,7 +530,7 @@ async function similarSearch(paperData, start, count) {
 
 
     //return the array of papers get from external service and total number of results
-    return {"results": arrayPapers, "totalResults": arrayPapers.length};
+    return {"results": arrayPapers, "totalResults": response.totalResults};
 
 }
 
