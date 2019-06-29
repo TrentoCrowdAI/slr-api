@@ -237,7 +237,7 @@ function setAndCheckValidSearchByForScopus(searchBy) {
 function setAndCheckValidYearForScopus(year) {
 
     //if year is defined
-    if(year){
+    if(year && year !== "all"){
         //convert to integer
         year = Number(year);
         //if it isn't a valid integer
