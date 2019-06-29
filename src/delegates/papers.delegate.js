@@ -423,7 +423,7 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
 
         //push element in array
         arrayPapers.push(paper);
-        arrayId.push(arrayResults[i].eid);
+        arrayId.push( paper.eid);
     }
 
 

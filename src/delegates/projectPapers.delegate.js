@@ -42,17 +42,23 @@ async function insertFromPaper(user_email, arrayEid, project_id) {
 
     //get array of eids where they are already presented in DB
     let arrayEidExisting = await projectPapersDao.checkExistenceByEids(arrayEid, project_id);
+
     //remove the eids already exist in DB
     arrayEid = support.differenceOperation(arrayEid, arrayEidExisting);
 
-    //call DAO layer
-    let res = await projectPapersDao.insertFromPaper(arrayEid, project_id);
+    let res=[];
 
-    //if at least one post is inserted
+
+    //if at least one post will be inserted
     if (arrayEid.length > 0) {
+
+        //call DAO layer
+        res = await projectPapersDao.insertFromPaper(arrayEid, project_id);
+
         //update the last modified date of project
         let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
     }
+
 
     return res;
 }

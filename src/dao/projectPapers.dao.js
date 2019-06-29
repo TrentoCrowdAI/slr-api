@@ -55,6 +55,7 @@ async function insertFromPaper(arrayEid, project_id) {
 
     //transform array in string where each element is surrounded by '
     let joinString = support.arrayToString(arrayEid, ",", "'");
+
     //if joinString is empty
     if (joinString === "") {
         joinString = "''";
