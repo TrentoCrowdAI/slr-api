@@ -62,7 +62,10 @@ async function fakeSimilarSearchService(paperData, start, count) {
      * @returns {Object} array of papers and total number of result
      */
     async function fakeAutomatedSearchService(title, description, arrayFilter, start, count) {
-
+        
+        //clean from scopus syntax words to avoid errors
+        title = title.replace(/and|or|not/gi,"").replace(/\s+/g, " ");
+        description = description.replace(/and|or|not/gi,"").replace(/\s+/g, " ");
         //split string in array by space
         let titleArray = title.split(" ");
         let descriptionArray = description.split(" ");
@@ -92,9 +95,9 @@ async function fakeSimilarSearchService(paperData, start, count) {
         let tempArrayOfExclusion;
         for(let i =0 ; i<arrayFilter.length; i++){
             //get split array of inclusion of current filter
-            tempArrayOfInclusion = arrayFilter[i].data.inclusion_description.split(" ");
+            tempArrayOfInclusion = arrayFilter[i].data.inclusion_description.replace(/and|or|not/gi,"").replace(/\s+/g, " ").split(" ");
             //get split array of exclusion of current filter
-            tempArrayOfExclusion = arrayFilter[i].data.exclusion_description.split(" ");
+            tempArrayOfExclusion = arrayFilter[i].data.exclusion_description.replace(/and|or|not/gi,"").replace(/\s+/g, " ").split(" ");
             //concatenate the array to string of or
             inclusionString += support.arrayToString(tempArrayOfInclusion, " OR ", "");
             //concatenate the array to string of or
@@ -143,30 +146,13 @@ async function fakeSimilarSearchService(paperData, start, count) {
  * @param {string} count number of papers
  * @returns {Object} array of papers and total number of result
  */
-async function automatedScopusSearch(keyword, searchBy, sort, start, count) {
-
+async function automatedScopusSearch(keyword, searchBy, sort, start = 0, count = 10) {
 
     //prepare the query object
     let queryData = {};
     queryData.apiKey = config.scopus.apiKey;
 
-    //searchBy condition
-    switch (searchBy) {
-        case config.validSearchBy[0]:
-            queryData.query = "ALL(\"" + keyword + "\")";
-            break;
-        case config.validSearchBy[1]:
-            queryData.query = "AUTHOR-NAME(\"" + keyword + "\")";
-            break;
-        case config.validSearchBy[2]:
-            queryData.query = "TITLE-ABS-KEY(\"" + keyword + "\")";
-            break;
-        case config.validSearchBy[3]:
-            queryData.query = keyword;
-            break;
-    }
-
-
+    queryData.query = keyword;
 
     if (sort === "ASC") {
         sort = "+";

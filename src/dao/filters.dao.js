@@ -122,7 +122,22 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 }
 
+/**
+ * select all filters associated with a project
+ * @param {int} project_id
+ * @returns {Object} array of filters and total number of result
+ */
+async function selectAllByProject(project_id) {
 
+
+    //query to get filters
+    let res = await db.query(
+        'SELECT * FROM public.' + db.TABLES.filters + ' WHERE data->>\'project_id\' = $1',
+        [project_id]
+    );
+
+    return {"results": res.rows, "totalResults": (res.rows[0]) ? res.rows[0].count : 0};
+}
 
 
 module.exports = {
@@ -132,5 +147,6 @@ module.exports = {
     selectById,
     selectByArrayId,
     selectByProject,
+    selectAllByProject,
 
 };

@@ -10,6 +10,8 @@ const parserOptions = {
 
 const papersDao = require(__base + 'dao/papers.dao');
 const filtersDao = require(__base + 'dao/filters.dao');
+const usersDao = require(__base + 'dao/users.dao');
+const projectsDao = require(__base + 'dao/projects.dao');
 
 //the config file
 const config = require(__base + 'config');
@@ -540,37 +542,45 @@ async function similarSearch(paperData, start, count) {
 /**
  *
  * automated search on a specific topic
- * @param {string} title
- * @param {string} description
- * @param {array[]} arrayFilterId
+ * @param {string} user_email of user
+ * @param {string} query
+ * @param {string} project_id
  * @param {string} start offset position where we begin to get
  * @param {string} count number of papers
  * @returns {Object} array of papers and total number of result
  */
-async function automatedSearch(title, description, arrayFilterId, start, count){
+async function automatedSearch(user_email, project_id, query, start, count){
 
-    if(!title){
-        throw errHandler.createBadRequestError("the title is not defined");
-    }
-    if(!description){
-        throw errHandler.createBadRequestError("the description is not defined");
-    }
+    //console.log(user_email, project_id, query, start, count);
 
-    errorCheck.isValidArrayInteger(arrayFilterId);
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
+    //check validation of project id and transform the value in integer
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
-    start = errorCheck.setAndCheckValidStart(start);
-    count = errorCheck.setAndCheckValidCount(count);
+    //get user info
+    let user = await usersDao.getUserByEmail(user_email);
 
-    //get the data of filters
-    let arrayFilter = await filtersDao.selectByArrayId(arrayFilterId);
+    //get relative project and check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
 
+    //console.log("PROJECT"); //console.log(project);
+
+    //call DAO layer
+    let filters = await filtersDao.selectAllByProject(project_id);
+
+    //console.log("FILTERS");//console.log(filters);
+
+    //console.log("query : '" + query + "'");
 
 
     //prepare the query object
     let queryData = {};
-    queryData.title = title;
-    queryData.description = description;
-    queryData.arrayFilter =arrayFilter;
+    queryData.title = query || project.data.name;
+    queryData.description = project.data.description;
+    queryData.arrayFilter = filters.results;
     //number of papers and offset
     queryData.start = start;
     queryData.count = count;
@@ -581,9 +591,7 @@ async function automatedSearch(title, description, arrayFilterId, start, count){
     /*###########################################
      call the service
      ###########################################*/
-
     response = await conn.post(config.automated_search_server, queryData);
-
 
     //if there is the error from fetch
     if (response.message == "Not Found") {
@@ -592,7 +600,6 @@ async function automatedSearch(title, description, arrayFilterId, start, count){
     else if(response.message){
         throw errHandler.createBadImplementationError(response.message);
     }
-
     //###########################################
     //handle the response from the server
     //###########################################
@@ -632,10 +639,9 @@ async function automatedSearch(title, description, arrayFilterId, start, count){
 
 
     //return the array of papers get from external service and total number of results
-    return {"results": arrayPapers, "totalResults": arrayPapers.length};
+    return {"results": arrayPapers, "totalResults": response.totalResults};
 
 }
-
 
 
 
@@ -743,5 +749,6 @@ module.exports = {
     scopusSearch,
     arxivSearch,
     similarSearch,
-    automatedSearch
+    automatedSearch,
+
 };

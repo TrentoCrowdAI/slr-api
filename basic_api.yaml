@@ -1393,22 +1393,16 @@ parameters:
     schema:
       type: object
       properties:
-        title:
+        project_id:
+          type: number
+        query:
           type: string
-        description:
-          type: string
-        arrayFilterId:
-          type: array
-          items:
-            type: integer
         start:
           type: integer
         count:
           type: integer
       required:
-        - title
-        - description
-        - arrayFilterId
+        - project_id
 
 
 
