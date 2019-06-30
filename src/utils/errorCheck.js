@@ -287,6 +287,33 @@ function isValidArray(array) {
         throw errHandler.createBadRequestError('the array is empty!');
     }
 
+
+}
+
+/**
+ * check the validation of integer array
+ * @param {Array[]}array
+ */
+function isValidArrayInteger(array) {
+
+    //if it isn't a array
+    if (Array.isArray(array) === false) {
+        throw errHandler.createBadRequestError('the parameter isn\'t a array!');
+    }
+    //if it is empty
+    if (array.length === 0) {
+        throw errHandler.createBadRequestError('the array is empty!');
+    }
+
+    //check each element
+    for(let i =0; i<array.length; i++){
+        //if it isn't a integer
+       if( !Number.isInteger(Number(array[i]))){
+           throw errHandler.createBadRequestError('the array contains not integer element!');
+       }
+    }
+
+
 }
 
 
@@ -407,6 +434,7 @@ module.exports = {
     setAndCheckValidYearForScopus,
     isValidKeyword,
     isValidArray,
+    isValidArrayInteger,
     isValidTokenId,
     isValidGoogleId,
     isValidProjectOwner,

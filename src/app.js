@@ -73,7 +73,7 @@ app.use(uploadFileController);
 app.use((e, req, res, next) => {
 
     //print the error object in the console
-    console.error('[Error]', e);
+    //console.error('[Error]', e);
 
     let error = errorsHelper.createBoomErrorForService(e);
 

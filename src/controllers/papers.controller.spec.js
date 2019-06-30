@@ -21,49 +21,13 @@ describe('good cases on papers', () => {
         expect(response.status).toBe(200);
     });
 
+    /*
     test('POST /search/similar should return 200 if find any papers', async () => {
         jest.setTimeout(timeOut);
         let response = await request(app).post('/search/similar').send({"paperData" : {"title" : "Crowdsourcing developement"}}).set('Authorization', validTokenId).set('Content-Type', "application/json");
         expect(response.status).toBe(200);
-    });
+    });*/
 
-
-    /* deprecated ----------------------------------
-     * 
-
-    test('GET /papers should return 200 if it finds something', async () => {
-        jest.setTimeout(timeOut);
-        let response = await request(app).get('/papers');
-        expect(response.status).toBe(200);
-    });
-
-    test('GET /papers/20 should return 200 and paper if paper exists', async () => {
-        jest.setTimeout(timeOut);
-        let response = await request(app).get('/papers/20');
-        expect(response.status).toBe(200);
-    });
-
-    test('POST  /papers/ should return 201', async () => {
-        jest.setTimeout(timeOut);
-        let response = await request(app).post('/papers').send(validExample1).set('Accept', 'application/json');
-        expect(response.status).toBe(201);
-        //let result = await response.body;
-    });
-
-
-    test('PUT /papers/22 should return 204 if paper exists', async () => {
-        jest.setTimeout(timeOut);
-        let response = await request(app).put('/papers/22').send(validExample2).set('Accept', 'application/json');
-        expect(response.status).toBe(204);
-    });
-
-
-    test('DELETE /papers/25 should return 204 if paper exists', async () => {
-        jest.setTimeout(timeOut);
-        response = await request(app).delete('/papers/25');
-        expect(response.status).toBe(204);
-    });
-    */
 
 });
 
@@ -145,16 +109,39 @@ describe('bad cases on papers', () => {
         expect(response.status).toBe(400);
         response = await request(app).post('/search/similar').send({"count": "0","paperData" : {"title" : "."}}).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
-        response = await request(app).post('/search/similar').send({"count": "26","paperData" : {"title" : "."}}).set('Authorization', validTokenId);
-        expect(response.status).toBe(400);
 
         response = await request(app).post('/search/similar').send({}).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
 
+    });
+
+
+    test('POST /search/automated should return 400 if parameters have illegal value', async () => {
+        jest.setTimeout(timeOut);
+        let response = await request(app).post('/search/automated').send({"description": "abc","arrayFilterId" : ["1","2"]}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"title": "abc","arrayFilterId" : ["1","2"]}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"title": "abc","description": "abc", "arrayFilterId" : "abc"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"title": "abc","description": "abc", "arrayFilterId" : []}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"title": "abc","description": "abc", "arrayFilterId" : [1,"b"]}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"title": "abc","description": "abc", "arrayFilterId" : [1,2], "start": "abc"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"title": "abc","description": "abc", "arrayFilterId" : [1,2], "start":  -1}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"title": "abc","description": "abc", "arrayFilterId" : [1,2], "count":  "abcs"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"title": "abc","description": "abc", "arrayFilterId" : [1,2], "count":  0}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
 
     });
 
 
+
+/*
     test('POST /search/similar should return 404 if it finds nothing', async () => {
 
         jest.setTimeout(timeOut);
@@ -162,7 +149,8 @@ describe('bad cases on papers', () => {
         let response = await request(app).post('/search/similar').send({"paperData" : {"title" : "abcdefghthdtgdfgf"}}).set('Authorization', validTokenId).set('Content-Type', "application/json");
         expect(response.status).toBe(404);
 
-    });
+    });*/
+
 
 
 });

@@ -126,7 +126,7 @@ async function fakeSimilarSearchService(paperData, start, count) {
         //###########################################
 
 
-       let  response = await scopusSearch(query, "advanced", "ASC", start, count);
+       let  response = await automatedScopusSearch(query, "advanced", "ASC", start, count);
 
         return response;
 
@@ -143,7 +143,7 @@ async function fakeSimilarSearchService(paperData, start, count) {
  * @param {string} count number of papers
  * @returns {Object} array of papers and total number of result
  */
-async function scopusSearch(keyword, searchBy, sort, start, count) {
+async function automatedScopusSearch(keyword, searchBy, sort, start, count) {
 
 
     //prepare the query object

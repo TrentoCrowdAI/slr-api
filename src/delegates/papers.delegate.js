@@ -556,7 +556,7 @@ async function automatedSearch(title, description, arrayFilterId, start, count){
         throw errHandler.createBadRequestError("the description is not defined");
     }
 
-    errorCheck.isValidArray(arrayFilterId);
+    errorCheck.isValidArrayInteger(arrayFilterId);
 
     start = errorCheck.setAndCheckValidStart(start);
     count = errorCheck.setAndCheckValidCount(count);
