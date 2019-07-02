@@ -24,7 +24,7 @@ async function shareProjectMail(recipient_email ,sender , project) {
         "       <h2>@"+sender.data.name+" has shared the project: "+project.data.name+" with you</h2>" +
         "   </div>" +
         "   <div class=\"link\">" +
-        "       <a href=\""+config.home_url_for_email+"projects/"+project.id+"\">View the project</a>" +
+        "       <a href=\""+config.home_url+"projects/"+project.id+"\">View the project</a>" +
         "   </div>" +
         "</div>";
 

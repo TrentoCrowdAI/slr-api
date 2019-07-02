@@ -20,11 +20,14 @@ tags:
     description: Manage the papers of a project
   - name: Users
     description: Manage the users
-    
+  - name: Filters
+    description: Manage the filters
 
 
     
 paths:
+
+  # normal search ==============================================================
 
   '/search':
     get:
@@ -55,10 +58,14 @@ paths:
             $ref: '#/definitions/Result_of_paper_search'
         '400':
           $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
         '404':
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
+  # similar search ==============================================================
 
   '/search/similar':
     post:
@@ -80,10 +87,42 @@ paths:
             $ref: '#/definitions/Result_of_paper_search'
         '400':
           $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
         '404':
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
+  # similar search ==============================================================
+
+  '/search/automated':
+    post:
+      summary: automated search
+      description: >-
+        automated search by a specific topic
+      tags:
+        - Papers
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Automated_search_post_body'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Result_of_paper_search_with_confidence'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+  # projects ==============================================================
 
   '/projects':
 
@@ -208,6 +247,8 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
+  # collaborators  ==============================================================
+
   '/projects/{project_id}/collaborators':
 
     get:
@@ -276,6 +317,8 @@ paths:
           $ref: '#/responses/401_unauthorized'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
+  # projectPaper ==============================================================
 
   '/papers':
     get:
@@ -426,7 +469,138 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
-  '/pdf':
+
+
+  # filters ==============================================================
+
+  '/filters':
+    get:
+      summary: select the filters of a project
+      description: Get a list of filter associated with a project
+      tags:
+        - Filters
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id'
+        - $ref: '#/parameters/Start'
+        - $ref: '#/parameters/Count'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Filters'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+    post:
+      summary: insert a filter
+      description: add new filter to specific project
+      tags:
+        - Filters
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Filter_post_put_body'
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/Filter'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+  '/filter/{filter_id}':
+    get:
+      summary: select a filter
+      description: This works only with internals id
+      tags:
+        - Filters
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Filter_id_in_path'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Filter'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+    put:
+      summary: update a filter
+      description: Overwrites the existing filter, but you cannot modifty its project_id
+      tags:
+        - Filters
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Filter_id_in_path'
+        - $ref: '#/parameters/Filter_post_put_body'
+      responses:
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+    delete:
+      summary: delete a filter
+      tags:
+        - Filters
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Filter_id_in_path'
+      responses:
+        '204':
+          $ref: '#/responses/204_no_content'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+
+
+
+
+
+  '/upload/pdf':
 
     post:
       summary: update the pdf file
@@ -456,7 +630,35 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
+  '/upload/csv':
 
+    post:
+      summary: update the csv file
+      description: update and parse csv file and return the list of paper saved
+      tags:
+        - Projects Papers
+      security:
+        - basicAuth: []
+      consumes:
+        - multipart/form-data
+
+      parameters:
+        - $ref: '#/parameters/Csv_post_body'
+
+
+      responses:
+        '201':
+          description: Created
+          schema:
+            $ref: '#/definitions/Project_papers'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
 
 
 #responses ===================================================
@@ -620,6 +822,86 @@ definitions:
           $ref: '#/definitions/Paper_data'
       totalResults:
         type: integer
+
+
+  Paper_data_with_confidence:
+    type: object
+    properties:
+      authors:
+        type: string
+        example: >-
+          Bygholm, Hansen
+      title:
+        type: string
+        example: x relations to y
+      year:
+        type: string
+        example: "2017"
+        format: date
+        pattern: "YYYY"
+      date:
+        type: string
+        example: "2017-10-01"
+        format: date
+        pattern: "YYYY-MM-DD"
+      source_title:
+        type: string
+        example: Educations in y
+      link:
+        type: string
+        example: "https://scopus.com/bla/inward?uri=2412414141"
+      abstract:
+        type: string
+        example: >-
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
+          magna, ultricies eu mauris at, vehicula elementum felis. Nunc
+          vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
+          lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
+          lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
+          eleifend[..]
+      document_type:
+        type: string
+        example: article
+      source:
+        type: string
+        example: scopus
+      eid:
+        type: string
+        example: >-
+          2-s2.0-45252342358235
+      abstract_structured:
+        type: string
+        example: "0"
+      filter_oa_include:
+        type: string
+        example: "1"
+      filter_study_include:
+        type: string
+        example: "0"
+      notes:
+        type: string
+        example: "note"
+      manual:
+        type: string
+        example: "0"
+      doi:
+        type: string
+        example: "10.1000/182"
+      confidence:
+        type: string
+        example: "0.82"
+
+
+  Result_of_paper_search_with_confidence:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Paper_data_with_confidence'
+      totalResults:
+        type: integer
+
 
 
   Project_paper:
@@ -823,6 +1105,47 @@ definitions:
       $ref: '#/definitions/User'
 
 
+  Filter_data:
+    type: object
+    properties:
+      project_id:
+        type: integer
+        example: "1"
+      predicate:
+        type: string
+      inclusion_description:
+        type: string
+      exclusion_description:
+        type: string
+
+
+  Filter:
+    type: object
+    properties:
+      ID:
+        type: integer
+        description: the ID on the internal database
+        example: 1
+      date_created:
+        type: string
+        format: date-time
+        example:  "2017-07-21T17:32:28Z"
+      date_last_modified:
+        type: string
+        format: date-time
+        example:  "2017-09-24T18:38:00Z"
+      data:
+        $ref: '#/definitions/Filter_data'
+
+
+  Filters:
+    type: array
+    items:
+      $ref: '#/definitions/Filter'
+
+
+
+
 #parameters==============================================
 
 parameters:
@@ -1016,8 +1339,28 @@ parameters:
     type: file
     description: the pdf file to parse
     required: true
-    
 
+
+  Csv_post_body:
+    in: body
+    name: body
+    description: the body data to parse csv file
+    required: true
+    schema:
+      type: object
+      properties:
+        file:
+          type: object
+        project_id:
+          type: integer
+        fields:
+          type: string
+          description: json string where it maps the different filedName of csv on property of object paper
+          example: '{"authors":"Authors","title":"Title","year":"Year","date":"Source title","source_title":"title","link":"link","abstract":"abstract","document_type":"document_type","source":"source","eid":"EID","abstract_structured":"abstract_structured","filter_oa_include":"filter_oa_include","filter_study_include":"filter_study_include","notes":"notes","manual":"manual","doi":"doi"}'
+      required:
+        - file
+        - project_id
+        - fields
 
 
   Similar_paper_post_body:
@@ -1031,8 +1374,6 @@ parameters:
         paperData:
           type: object
           properties:
-            file:
-              type: object
             title:
               type: string
         start:
@@ -1043,6 +1384,27 @@ parameters:
         - paperData
         - start
         - count
+
+  Automated_search_post_body:
+    in: body
+    name: body
+    description: the basic post data to automated search
+    required: true
+    schema:
+      type: object
+      properties:
+        project_id:
+          type: number
+        query:
+          type: string
+        start:
+          type: integer
+        count:
+          type: integer
+      required:
+        - project_id
+
+
 
   Email_post_body:
     in: body
@@ -1056,6 +1418,31 @@ parameters:
       required:
         - email
     required: true
+
+
+
+  Filter_id_in_path:
+    in: path
+    name: filter_id
+    description: the internal id of a filter
+    type: integer
+    required: true
+
+  Filter_post_put_body:
+    in: body
+    name: body
+    description: filter data to be stored
+    required: true
+    schema:
+      $ref: "#/definitions/Filter_data"
+      required:
+        - project_id
+        - predicate
+        - inclusion_description
+        - exclusion_description
+
+
+
 
 
 # are not used yet =============================

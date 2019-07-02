@@ -84,6 +84,28 @@ function setAndCheckValidProjectPaperId(projectPaper_id) {
     return projectPaper_id;
 }
 
+
+/**
+ * check validation of filter id and transform the value in integer
+ * @param {number} filter_id
+ * @return {int} filter_id
+ */
+function setAndCheckValidFilterId(filter_id) {
+    //error check
+    if (filter_id === undefined || filter_id === null) {
+        throw errHandler.createBadRequestError('filter_id is not defined!');
+    }
+
+    //cast filter_id to integer type
+    filter_id = Number(filter_id);
+    //error check
+    if (!Number.isInteger(filter_id)) {
+        throw errHandler.createBadRequestError('filter_id is not a integer!');
+    }
+
+    return filter_id;
+}
+
 /**
  * set a default value if orderBy of projectPaper isn't defined and check its validation
  * @param {string} orderBy
@@ -170,8 +192,8 @@ function setAndCheckValidCount(count) {
     if (!Number.isInteger(count)) {
         throw errHandler.createBadRequestError('the count has a not valid value!');
     }
-    if (count < 1 || count > 25) {
-        throw errHandler.createBadRequestError('the count of elements should be greater than 0 and lower than 25'); // 25 is max for no-subscriber scopus
+    if (count < 1) {
+        throw errHandler.createBadRequestError('the count of elements should be greater than 0'); // 25 is max for no-subscriber scopus
     }
 
     return count;
@@ -214,10 +236,20 @@ function setAndCheckValidSearchByForScopus(searchBy) {
  */
 function setAndCheckValidYearForScopus(year) {
 
-    year = Number(year) || "";
-    if (year !== "" && !Number.isInteger(year)) {
-        throw errHandler.createBadRequestError('year has a not valid value!');
+    //if year is defined
+    if(year && year !== "all"){
+        //convert to integer
+        year = Number(year);
+        //if it isn't a valid integer
+        if (!Number.isInteger(year)) {
+            throw errHandler.createBadRequestError('year has a not valid value!');
+        }
     }
+    else{
+        year = "";
+    }
+
+
 
     return year;
 }
@@ -255,7 +287,35 @@ function isValidArray(array) {
         throw errHandler.createBadRequestError('the array is empty!');
     }
 
+
 }
+
+/**
+ * check the validation of integer array
+ * @param {Array[]}array
+ */
+function isValidArrayInteger(array) {
+
+    //if it isn't a array
+    if (Array.isArray(array) === false) {
+        throw errHandler.createBadRequestError('the parameter isn\'t a array!');
+    }
+    //if it is empty
+    if (array.length === 0) {
+        throw errHandler.createBadRequestError('the array is empty!');
+    }
+
+    //check each element
+    for(let i =0; i<array.length; i++){
+        //if it isn't a integer
+       if( !Number.isInteger(Number(array[i]))){
+           throw errHandler.createBadRequestError('the array contains not integer element!');
+       }
+    }
+
+
+}
+
 
 /**
  * check the validation of token_id
@@ -305,7 +365,20 @@ function isValidProjectPaper(projectPaper) {
 
     //if it is empty
     if (!projectPaper) {
-        throw errHandler.createUnauthorizedError("ProjectPaper does not exist!");
+        throw errHandler.createNotFoundError("ProjectPaper does not exist!");
+    }
+
+}
+
+/**
+ * check if the filter is empty
+ * @param {Object} filter
+ */
+function isValidFilter(filter) {
+
+    //if it is empty
+    if (!filter) {
+        throw errHandler.createNotFoundError("Filter does not exist!");
     }
 
 }
@@ -325,6 +398,25 @@ function isValidGoogleEmail(email) {
     }
 
 }
+/**
+ * check if the id is a valid integer
+ * @param {string} email
+ */
+function isValidCollaboratorId(id) {
+
+    //error check
+    if (id === undefined || id === null) {
+        throw errHandler.createBadRequestError("the collaborator's id is empty!");
+    }
+    //cast id to integer type
+    id = Number(id);
+    //error check
+    if (!Number.isInteger(id)) {
+        throw errHandler.createBadRequestError('the collaborator\'s id is not a integer!');
+    }
+
+
+}
 
 
 module.exports = {
@@ -332,6 +424,7 @@ module.exports = {
     setAndCheckValidProjectId,
     setAndCheckValidProjectOrderBy,
     setAndCheckValidProjectPaperId,
+    setAndCheckValidFilterId,
     setAndCheckValidProjectPaperOrderBy,
     setAndCheckValidSort,
     setAndCheckValidStart,
@@ -341,10 +434,13 @@ module.exports = {
     setAndCheckValidYearForScopus,
     isValidKeyword,
     isValidArray,
+    isValidArrayInteger,
     isValidTokenId,
     isValidGoogleId,
     isValidProjectOwner,
     isValidProjectPaper,
+    isValidFilter,
     isValidGoogleEmail,
+    isValidCollaboratorId,
 
 };

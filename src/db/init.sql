@@ -3,6 +3,7 @@ DROP TABLE IF EXISTS "public"."papers";
 DROP TABLE IF EXISTS "public"."project_papers";
 DROP TABLE IF EXISTS "public"."projects";
 DROP TABLE IF EXISTS "public"."users";
+DROP TABLE IF EXISTS "public"."filters";
 
 -- papers: {
 --  id: <serial8>, //paper id
@@ -88,4 +89,16 @@ PRIMARY KEY ("id")
 )
 WITH (OIDS=FALSE)
 ;
+
+CREATE TABLE "public"."filters" (
+"id" serial8 NOT NULL,
+"date_created" timestamptz NOT NULL,
+"date_last_modified" timestamptz NOT NULL,
+"date_deleted" timestamptz,
+"data" jsonb NOT NULL,
+PRIMARY KEY ("id")
+)
+WITH (OIDS=FALSE)
+;
+
 

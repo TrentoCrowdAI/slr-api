@@ -36,6 +36,8 @@ INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_del
 INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Data mining","description":"is the process of discovering patterns in large data sets involving methods at the intersection of machine learning, statistics, and database systems.","user_id":["1"]}');
 INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Database","description":"is an organized collection of data, generally stored and accessed electronically from a computer system.","user_id":["1"]}');
 INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["1"]}');
+INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["2"]}');
+
 
 
 --projectPaper data
@@ -49,6 +51,21 @@ INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "dat
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 1 FROM "public"."papers" WHERE id = 8 );
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 1 FROM "public"."papers" WHERE id = 9 );
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 1 FROM "public"."papers" WHERE id = 10 );
+
+--filters data
+INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1", "predicate": "aaa",
+  "inclusion_description": "abc or bca", "exclusion_description": "abc and bac not llll"}');
+  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1", "predicate": "aaa",
+  "inclusion_description": "abc", "exclusion_description": "abc"}');
+  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1", "predicate": "aaa",
+  "inclusion_description": "abc", "exclusion_description": "abc"}');
+  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1", "predicate": "aaa",
+  "inclusion_description": "abc", "exclusion_description": "abc"}');
+  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "9999", "predicate": "aaa",
+  "inclusion_description": "abc", "exclusion_description": "abc"}');
+    INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "6", "predicate": "aaa",
+  "inclusion_description": "abc", "exclusion_description": "abc"}');
+
 
 
 --users data

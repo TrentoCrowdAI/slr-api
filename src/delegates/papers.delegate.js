@@ -4,11 +4,14 @@
 //library to parse XML string to object
 const XMLParser = require('fast-xml-parser');
 const parserOptions = {
-    ignoreAttributes : false,
+    ignoreAttributes: false,
 };
 
 
 const papersDao = require(__base + 'dao/papers.dao');
+const filtersDao = require(__base + 'dao/filters.dao');
+const usersDao = require(__base + 'dao/users.dao');
+const projectsDao = require(__base + 'dao/projects.dao');
 
 //the config file
 const config = require(__base + 'config');
@@ -126,15 +129,15 @@ async function search(keyword, searchBy, year, orderBy, sort, start, count, scop
 
     let res;
 
-    if(scopus==="true"){
+    if (scopus === "true") {
 
         res = await scopusSearch(keyword, searchBy, year, orderBy, sort, start, count);
     }
-    else if(arXiv==="true"){
+    else if (arXiv === "true") {
 
         res = await arxivSearch(keyword, searchBy, orderBy, sort, start, count);
     }
-    else{
+    else {
         throw errHandler.createBadRequestError("the source of search is empty");
     }
 
@@ -349,8 +352,8 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
     //send request get to scopus service
     let responseXML = await conn.getRaw(config.arxiv.url, queryData);
     //console.log(responseXML);
-    //if the error.data is defined
-    if(responseXML.data) {
+    //if the error.message is defined
+    if (responseXML.message) {
         throw errHandler.createBadImplementationError("error connecting to arXiv");
     }
     let respnseObject = XMLParser.parse(responseXML, parserOptions);
@@ -362,7 +365,6 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
     if (totalResults === 0) {
         throw errHandler.createNotFoundError('the result is empty!');
     }
-
 
 
     //get paper array
@@ -380,14 +382,14 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
 
         let authors = arrayResults[i]["author"];
         //if is an array of author
-        if(Array.isArray(authors)){
-            paper.authors = support.arrayOfObjectToString(authors, "name", "," , "");
+        if (Array.isArray(authors)) {
+            paper.authors = support.arrayOfObjectToString(authors, "name", ",", "");
         }
         //else if is a single author object
-        else if(authors.name){
+        else if (authors.name) {
             paper.authors = authors.name;
         }
-        else{
+        else {
             paper.authors = "";
         }
 
@@ -396,10 +398,10 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
         paper.date = arrayResults[i]["published"] || "";
         paper.source_title = arrayResults[i]["title"] || "";
         paper.link = arrayResults[i].link || "";
-        if(arrayResults[i]["arxiv:doi"]){
+        if (arrayResults[i]["arxiv:doi"]) {
             paper.doi = arrayResults[i]["arxiv:doi"]["#text"];
         }
-        else{
+        else {
             paper.doi = "";
         }
 
@@ -414,7 +416,7 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
         //get index of last "/"
         let index = arXivId.lastIndexOf("/");
         //split id string , ex: 1607.01400v1
-        paper.eid = arXivId.slice(index+1, arXivId.length) || "";
+        paper.eid = arXivId.slice(index + 1, arXivId.length) || "";
 
         paper.abstract_structured = "";
         paper.filter_oa_include = "";
@@ -424,9 +426,8 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
 
         //push element in array
         arrayPapers.push(paper);
-        arrayId.push(arrayResults[i].eid);
+        arrayId.push( paper.eid);
     }
-
 
 
     //return array of eids where in which the paper with same eid are already stored  in DB
@@ -462,24 +463,14 @@ async function similarSearch(paperData, start, count) {
     start = errorCheck.setAndCheckValidStart(start);
     count = errorCheck.setAndCheckValidCount(count);
 
-
     //error check
     if (!paperData) {
         throw errHandler.createBadRequestError("there's no paper to search for!");
     }
-    if (paperData.file && paperData.title && paperData.title !== "") {
-        throw errHandler.createBadRequestError("you can't input both a file and paper data");
-    }
-    if (paperData.file && paperData.file.mimetype.indexOf("application/pdf") === -1) {
-        throw errHandler.createBadRequestError('the file is not a pdf!');
-    }
-    if (!paperData.title) {
-        throw errHandler.createBadRequestError('no paper title found');
-    }
 
     //prepare the query object
     let queryData = {};
-
+    queryData.paperData = paperData;
     //number of papers and offset
     queryData.start = start;
     queryData.count = count;
@@ -487,52 +478,24 @@ async function similarSearch(paperData, start, count) {
     //fetchData from scopus
     let response = null;
 
-    //###########################################
-    //call for the service
-    //###########################################
+    /*###########################################
+    call the service
+    ###########################################*/
 
+    response = await conn.post(config.search_similar_server, queryData);
 
-    //if we have a file and the service allows file upload we can sende the file
-    if (paperData.file) {
-        //temporary fake call for 'search similar service
-        response = await scopusSearch("Trento", undefined, undefined, undefined, "ASC", start, count);
-        //this can be the call when a good 'search similar' service will be found
-        //response = await conn.post(config.search_similar_server, {"file" : fs.createReadStream(file.path), ...queryData});
-    }
-    //else if we have a query we search for similar papers based on the query(the query could be ad url to a specific paper or a DOI in the future)
-    else {
-        queryData.query = paperData.title;
-
-        //temporary fake call for 'search similar service
-        let splitted = paperData.title.split(" ");
-        let relevantQuery = splitted[0];
-        //In practice I pick the first word of the title and I search for it on scopus
-        for (let i = 0; i < splitted.length; i++) {
-            if (splitted[i].length !== 1) {
-                relevantQuery = splitted[i];
-                break;
-            }
-        }
-        response = await scopusSearch(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
-        //response = await conn.get(config.search_similar_server, queryData);
-    }
-
-    //###########################################
-    //handle the response from the server(this may change based on the service used)
-    //###########################################
 
     //if there is the error from fetch
-    if (response.message) {
+    if (response.message == "Not Found") {
+        throw errHandler.createNotFoundError(response.message);
+    }
+    else if(response.message){
         throw errHandler.createBadImplementationError(response.message);
     }
 
-    //number of results
-    let totalResults = response.totalResults;
-
-    //if results if 0, return the 404 error
-    if (totalResults === "0") {
-        throw errHandler.createNotFoundError('the result is empty!');
-    }
+    //###########################################
+    //handle the response from the server
+    //###########################################
 
     //get paper array
     let arrayResults = response.results;
@@ -546,12 +509,10 @@ async function similarSearch(paperData, start, count) {
     for (let i = 0; i < arrayResults.length; i++) {
 
         let paper = arrayResults[i];
-
         //push element in array
         arrayPapers.push(paper);
         arrayEid.push(arrayResults[i].eid);
     }
-
 
     //###########################################
     //save the results in our local database before returning it
@@ -570,10 +531,122 @@ async function similarSearch(paperData, start, count) {
     }
 
 
-    //return the array of papers get from scopus and total number of results
-    return {"results": arrayPapers, "totalResults": totalResults};
+    //return the array of papers get from external service and total number of results
+    return {"results": arrayPapers, "totalResults": response.totalResults};
 
 }
+
+
+
+
+/**
+ *
+ * automated search on a specific topic
+ * @param {string} user_email of user
+ * @param {string} query
+ * @param {string} project_id
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of papers
+ * @returns {Object} array of papers and total number of result
+ */
+async function automatedSearch(user_email, project_id, query, start, count){
+
+    //console.log(user_email, project_id, query, start, count);
+
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
+    //check validation of project id and transform the value in integer
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
+
+    //get user info
+    let user = await usersDao.getUserByEmail(user_email);
+
+    //get relative project and check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+
+    //console.log("PROJECT"); //console.log(project);
+
+    //call DAO layer
+    let filters = await filtersDao.selectAllByProject(project_id);
+
+    //console.log("FILTERS");//console.log(filters);
+
+    //console.log("query : '" + query + "'");
+
+
+    //prepare the query object
+    let queryData = {};
+    queryData.title = query || project.data.name;
+    queryData.description = project.data.description;
+    queryData.arrayFilter = filters.results;
+    //number of papers and offset
+    queryData.start = start;
+    queryData.count = count;
+
+    //fetchData from scopus
+    let response = null;
+
+    /*###########################################
+     call the service
+     ###########################################*/
+    response = await conn.post(config.automated_search_server, queryData);
+
+    //if there is the error from fetch
+    if (response.message == "Not Found") {
+        throw errHandler.createNotFoundError(response.message);
+    }
+    else if(response.message){
+        throw errHandler.createBadImplementationError(response.message);
+    }
+    //###########################################
+    //handle the response from the server
+    //###########################################
+
+    //get paper array
+    let arrayResults = response.results;
+
+    //store a new paper array
+    let arrayPapers = [];
+    //a eids array for our new paper array
+    let arrayEid = [];
+
+    //create a new paper array with our format(this will change a lot based on the service used)
+    for (let i = 0; i < arrayResults.length; i++) {
+
+        let paper = arrayResults[i];
+        //push element in array
+        arrayPapers.push(paper);
+        arrayEid.push(arrayResults[i].eid);
+    }
+
+    //###########################################
+    //save the results in our local database before returning it
+    //###########################################
+
+    //return array of eids where in which the paper with same eid are already stored  in DB
+    let arrayEidExisting = await papersDao.checkExistenceByEids(arrayEid);
+    //remove the paper already present in DB
+    let arrayPapersToInsert = support.removeElementFromArrayByEids(arrayPapers, arrayEidExisting);
+
+    //if there are the new papers
+    if (arrayPapersToInsert.length > 0) {
+
+        //insert the papers in DB
+        let res = await papersDao.insertByList(arrayPapersToInsert);
+    }
+
+
+    //return the array of papers get from external service and total number of results
+    return {"results": arrayPapers, "totalResults": response.totalResults};
+
+}
+
+
+
+
+
 
 /**
  * deprecated function selectBySingleKeyword and selectAll
@@ -675,5 +748,7 @@ module.exports = {
     search,
     scopusSearch,
     arxivSearch,
-    similarSearch
+    similarSearch,
+    automatedSearch,
+
 };

@@ -293,6 +293,8 @@ async function deleteShareProject(user_email, project_id, collaborator_id) {
     errorCheck.isValidGoogleEmail(user_email);
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
+    //check validation of collaborator_id
+    errorCheck.isValidCollaboratorId(collaborator_id);
 
     //get user info
     let user = await usersDao.getUserByEmail(user_email);

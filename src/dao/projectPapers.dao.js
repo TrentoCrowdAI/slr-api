@@ -5,8 +5,8 @@ const support = require(__base + 'utils/support');
 
 /**
  * insert a projectPaper
- * @param {int} project_id
  * @param {object} newProjectPaperData
+ * @param {int} project_id
  * @returns {object} projectPaper created
  */
 
@@ -17,6 +17,31 @@ async function insert(newProjectPaperData, project_id) {
     );
 
     return res.rows[0];
+}
+
+/**
+ * insert a list of projectPaper
+ * @param {array[]} arrayProjectPaperData
+ * @param {int} project_id
+ * @returns {array[object]} projectPaper created
+ */
+async function insertByList(arrayProjectPaperData, project_id) {
+
+    let values = "";
+    //create sql values by array of papers
+    for (let i = 0; i < arrayProjectPaperData.length; i++) {
+        values += " ( now() , now() , " + null + " , $" + (i + 1) + " , " +project_id+" ) ";
+        //if isn't last cycle, add a comma ad end of string
+        if (i < arrayProjectPaperData.length - 1) {
+            values += ",";
+        }
+    }
+
+    let res = await db.query(
+        'INSERT INTO public.' + db.TABLES.projectPapers + '("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES ' + values + ' RETURNING *'
+        , [...arrayProjectPaperData]
+    );
+    return res.rows;
 }
 
 
@@ -30,6 +55,7 @@ async function insertFromPaper(arrayEid, project_id) {
 
     //transform array in string where each element is surrounded by '
     let joinString = support.arrayToString(arrayEid, ",", "'");
+
     //if joinString is empty
     if (joinString === "") {
         joinString = "''";
@@ -245,6 +271,7 @@ async function checkExistenceByEids(arrayEid, project_id) {
 module.exports = {
     insert,
     insertFromPaper,
+    insertByList,
     update,
     deletes,
     selectById,

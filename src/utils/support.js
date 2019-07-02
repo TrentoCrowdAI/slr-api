@@ -70,6 +70,27 @@ function differenceOperation(arrayA, arrayB) {
     return newArray;
 }
 
+/**
+ * difference operation, where exclude the element with A[i].field included in subArray B
+ * @param {array[object]}arrayA
+ * @param {array[stirng]}arrayB
+ * @param fieldName
+ * @return {*}
+ */
+function differenceOperationByField(arrayA, arrayB, fieldName) {
+
+    //return true if not exist, false if exist
+    function checkExistenceOfElement(element) {
+        return !arrayB.includes(element[fieldName]);
+    }
+
+    //create a new array where includes only the element that isn't present in arrayB
+    let newArray = arrayA.filter(checkExistenceOfElement);
+    return newArray;
+}
+
+
+
 
 /**
  * remove paper object from array by a array of eids
@@ -116,6 +137,7 @@ module.exports = {
     arrayToString,
     arrayOfObjectToString,
     differenceOperation,
+    differenceOperationByField,
     removeElementFromArray,
     removeElementFromArrayByEids,
 

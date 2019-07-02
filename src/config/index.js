@@ -1,7 +1,7 @@
 
 
 module.exports = {
-    "home_url_for_email" : process.env.HOME_URL_FOR_EMAIL,
+    "home_url" : process.env.HOME_URL,
 
     "db": {
         // were not used
@@ -10,7 +10,6 @@ module.exports = {
         host: process.env.PGHOST,
         port: process.env.PGPORT,
         database: process.env.PGDATABASE,
-
         // heroku postgres adds automatically DATABASE_URL.
         url: process.env.DATABASE_URL
     },
@@ -19,6 +18,7 @@ module.exports = {
         projects: 'projects',
         projectPapers: 'project_papers',
         users: 'users',
+        filters: 'filters',
     },
 
     //local port to start the service
@@ -29,10 +29,6 @@ module.exports = {
     },
 
 
-    //the pdf parse service
-    "pdf_parse_server": "http://scienceparse.allenai.org/v1",
-    //the similar paper service
-    "search_similar_server" : undefined, //here you can put the url of the remote(or local) service that will search for similar papers
 
     "google":{
         //the google authentication service
@@ -53,9 +49,24 @@ module.exports = {
         url: "https://api.elsevier.com/content/search/scopus",
     },
 
+    "file":{
+        //the directory to save the uploaded file
+        "tmp_directory": "./tmp/",
+        //maximum number of files in tmp folder, in any case it must be >=1
+        "max_number": 20
+    },
 
 
 
+    /*external service================================*/
+    //the pdf parse service
+    "pdf_parse_server": "http://scienceparse.allenai.org/v1",
+    //the similar paper service
+    //here you can put the url of the remote(or local) service url that will search for similar papers
+    "search_similar_server" : process.env.BACKEND_URL+"external/similar",
+
+    //automated search service
+    "automated_search_server": process.env.BACKEND_URL+"external/automated",
 
 
 };
