@@ -37,11 +37,16 @@ router.post('/external/automated', async (req, res, next) => {
         let title = req.body.title;
         let description = req.body.description;
         let arrayFilter = req.body.arrayFilter;
+
+        //confidence range
+        let min_confidence =req.body.min_confidence;
+        let max_confidence =req.body.max_confidence;
+
         //pagination parameters
         let start = req.body.start;
         let count = req.body.count;
 
-        let papers = await externalServicesDelegate.fakeAutomatedSearchService(title, description, arrayFilter, start, count);
+        let papers = await externalServicesDelegate.fakeAutomatedSearchService(title, description, arrayFilter, min_confidence, max_confidence,start, count);
 
         res.status(200).json(papers);
     }

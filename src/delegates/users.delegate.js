@@ -143,7 +143,7 @@ async function verifyToken(tokenId) {
         let userFromDB = await usersDao.getUserByEmail(user_email);
         //if isn't exist the test user in DB
         if (!userFromDB) {
-            throw errHandler.createBadRequestError("the token is valid only for testing");
+            throw errHandler.createUnauthorizedError("the token is valid only for testing");
         }
     }
 
@@ -160,7 +160,7 @@ async function verifyToken(tokenId) {
             });
         }
         catch (error) {
-            throw errHandler.createBadRequestError("the token is not valid: " + error.message);
+            throw errHandler.createUnauthorizedError("the token is not valid: " + error.message);
         }
 
         //get response object from response of google

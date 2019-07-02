@@ -128,9 +128,6 @@ function setAndCheckValidProjectPaperOrderBy(orderBy) {
 }
 
 
-
-
-
 /**
  *  set a default value if sort isn't defined and check its validation
  * @param {string} sort
@@ -208,7 +205,7 @@ function setAndCheckValidCount(count) {
 function setAndCheckValidOrderByForScopus(orderBy) {
 
     orderBy = orderBy || "title";
-    if (orderBy !== "date" && orderBy !== "title" ) {
+    if (orderBy !== "date" && orderBy !== "title") {
         throw errHandler.createBadRequestError('orderBy has a not valid value!');
     }
     return orderBy;
@@ -237,7 +234,7 @@ function setAndCheckValidSearchByForScopus(searchBy) {
 function setAndCheckValidYearForScopus(year) {
 
     //if year is defined
-    if(year && year !== "all"){
+    if (year && year !== "all") {
         //convert to integer
         year = Number(year);
         //if it isn't a valid integer
@@ -245,13 +242,80 @@ function setAndCheckValidYearForScopus(year) {
             throw errHandler.createBadRequestError('year has a not valid value!');
         }
     }
-    else{
+    else {
         year = "";
     }
 
 
-
     return year;
+}
+
+/**
+ * check the validation of max confidence value (it should be a float number between 0 and 1)
+ * convert the value from string type to number type
+ */
+function setAndCheckValidMaxConfidenceValue(value) {
+
+
+    //if it is not empty
+    if (value) {
+
+        //convert it to number type
+        value = Number(value);
+
+        //if isn't a number
+        if (isNaN(value)) {
+            throw errHandler.createBadRequestError('the max confidence value is not a valid number!');
+        }
+
+        //if isn't between 0 and 1
+        if (value > 1 || value < 0) {
+            throw errHandler.createBadRequestError('the max confidence value should be between 0 and 1!');
+        }
+
+    }
+    else{
+        value = 1;
+    }
+
+
+    return value;
+
+
+}
+
+/**
+ * check the validation of min confidence value (it should be a float number between 0 and 1)
+ * convert the value from string type to number type
+ */
+function setAndCheckValidMinConfidenceValue(value) {
+
+
+    //if it is not empty
+    if (value) {
+
+        //convert it to number type
+        value = Number(value);
+
+        //if isn't a number
+        if (isNaN(value)) {
+            throw errHandler.createBadRequestError('the min confidence value is not a valid number!');
+        }
+
+
+        //if isn't between 0 and 1
+        if (value > 1 || value < 0) {
+            throw errHandler.createBadRequestError('the min confidence value should be between 0 and 1!');
+        }
+
+    }
+    else{
+        value = 0;
+    }
+
+
+    return value;
+
 }
 
 
@@ -306,11 +370,11 @@ function isValidArrayInteger(array) {
     }
 
     //check each element
-    for(let i =0; i<array.length; i++){
+    for (let i = 0; i < array.length; i++) {
         //if it isn't a integer
-       if( !Number.isInteger(Number(array[i]))){
-           throw errHandler.createBadRequestError('the array contains not integer element!');
-       }
+        if (!Number.isInteger(Number(array[i]))) {
+            throw errHandler.createBadRequestError('the array contains not integer element!');
+        }
     }
 
 
@@ -393,11 +457,12 @@ function isValidGoogleEmail(email) {
     if (!email) {
         throw errHandler.createBadRequestError("the email is empty!");
     }
-    if(email.toLowerCase().indexOf("@gmail.com") === -1  && email.toLowerCase().indexOf("@studenti.unitn.it") === -1){
+    if (email.toLowerCase().indexOf("@gmail.com") === -1 && email.toLowerCase().indexOf("@studenti.unitn.it") === -1) {
         throw errHandler.createBadRequestError("the email isn't a valid google email!");
     }
 
 }
+
 /**
  * check if the id is a valid integer
  * @param {string} email
@@ -432,6 +497,8 @@ module.exports = {
     setAndCheckValidOrderByForScopus,
     setAndCheckValidSearchByForScopus,
     setAndCheckValidYearForScopus,
+    setAndCheckValidMaxConfidenceValue,
+    setAndCheckValidMinConfidenceValue,
     isValidKeyword,
     isValidArray,
     isValidArrayInteger,
@@ -442,5 +509,6 @@ module.exports = {
     isValidFilter,
     isValidGoogleEmail,
     isValidCollaboratorId,
+
 
 };

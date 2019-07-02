@@ -58,12 +58,16 @@ router.post('/search/automated', async (req, res, next) => {
 
        let user_email = res.locals.user_email;
        let project_id = req.body.project_id;
-       let query = req.body.query;
+
+       //confidence range
+        let min_confidence =req.body.min_confidence;
+        let max_confidence =req.body.max_confidence;
+
        //pagination parameters
        let start = req.body.start;
        let count = req.body.count;
 
-       let papers = await papersDelegate.automatedSearch(user_email, project_id, query, start, count);
+       let papers = await papersDelegate.automatedSearch(user_email, project_id, min_confidence, max_confidence,start, count);
 
         res.status(200).json(papers);
     }

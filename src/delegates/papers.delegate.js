@@ -543,20 +543,34 @@ async function similarSearch(paperData, start, count) {
  *
  * automated search on a specific topic
  * @param {string} user_email of user
- * @param {string} query
  * @param {string} project_id
+ * @param {string} min_confidence minimum confidence value of post
+ * @param {string} max_confidence maximum confidence value of post
  * @param {string} start offset position where we begin to get
  * @param {string} count number of papers
  * @returns {Object} array of papers and total number of result
  */
-async function automatedSearch(user_email, project_id, query, start, count){
+async function automatedSearch(user_email, project_id, min_confidence, max_confidence, start, count){
 
-    //console.log(user_email, project_id, query, start, count);
+
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
+
+    //check and set the confidence value
+    min_confidence = errorCheck.setAndCheckValidMinConfidenceValue(min_confidence);
+    max_confidence = errorCheck.setAndCheckValidMaxConfidenceValue(max_confidence);
+
+    if (max_confidence < min_confidence ) {
+        throw errHandler.createBadRequestError('the max_confidence cannot be less than min_confidence!');
+    }
+
+    //check pagination parameters
+    start = errorCheck.setAndCheckValidStart(start);
+    count = errorCheck.setAndCheckValidCount(count);
+
 
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
@@ -566,21 +580,21 @@ async function automatedSearch(user_email, project_id, query, start, count){
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
-    //console.log("PROJECT"); //console.log(project);
 
     //call DAO layer
     let filters = await filtersDao.selectAllByProject(project_id);
 
-    //console.log("FILTERS");//console.log(filters);
-
-    //console.log("query : '" + query + "'");
 
 
     //prepare the query object
     let queryData = {};
-    queryData.title = query || project.data.name;
+    queryData.title = project.data.name;
     queryData.description = project.data.description;
     queryData.arrayFilter = filters.results;
+    //confidence value
+    queryData.min_confidence = min_confidence;
+    queryData.max_confidence = max_confidence;
+
     //number of papers and offset
     queryData.start = start;
     queryData.count = count;

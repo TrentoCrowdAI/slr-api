@@ -123,10 +123,34 @@ describe('bad cases on papers', () => {
 
     test('POST /search/automated should return 400 if parameters have illegal value', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).post('/search/automated').send({"description": "abc","arrayFilterId" : ["1","2"]}).set('Authorization', validTokenId);
-        expect(response.status).toBe(400);
+
         response = await request(app).post('/search/automated').send({"project_id": "abc"}).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "5.4"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "1", "min_confidence": "a"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "1", "min_confidence": "-1"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "1", "min_confidence": "1.1"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "1", "max_confidence": "a"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "1", "max_confidence": "-1"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "1", "max_confidence": "1.1"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "1", "min_confidence": "0.9", "max_confidence": "0.8"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "1", "start": "abc"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "1", "start": "-1"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "1", "count": "abc"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+        response = await request(app).post('/search/automated').send({"project_id": "1", "count": "0"}).set('Authorization', validTokenId);
+        expect(response.status).toBe(400);
+
 
     });
     test('POST /search/automated should return 401 if user is not authorized or access inexisten/unauthorized project', async () => {

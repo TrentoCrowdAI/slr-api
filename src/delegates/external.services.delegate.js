@@ -26,6 +26,10 @@ const conn = require(__base + 'utils/conn');
 async function fakeSimilarSearchService(paperData, start, count) {
 
 
+    //check pagination parameters
+    start = errorCheck.setAndCheckValidStart(start);
+    count = errorCheck.setAndCheckValidCount(count);
+
     if (!paperData.title) {
         throw errHandler.createBadRequestError('no paper title found');
     }
@@ -48,92 +52,125 @@ async function fakeSimilarSearchService(paperData, start, count) {
     }
     let response = await papersDelegate.scopusSearch(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
 
+
+
+
     return response;
 }
 
-    /**
-     *
-     * fake external  automated  search
-     * @param {string} title
-     * @param {string} description
-     * @param {array[]} arrayFilter
-     * @param {string} start offset position where we begin to get
-     * @param {string} count number of papers
-     * @returns {Object} array of papers and total number of result
-     */
-    async function fakeAutomatedSearchService(title, description, arrayFilter, start, count) {
-        
-        //clean from scopus syntax words to avoid errors
-        title = title.replace(/and|or|not/gi,"").replace(/\s+/g, " ");
-        description = description.replace(/and|or|not/gi,"").replace(/\s+/g, " ");
-        //split string in array by space
-        let titleArray = title.split(" ");
-        let descriptionArray = description.split(" ");
+/**
+ *
+ * fake external  automated  search
+ * @param {string} title
+ * @param {string} description
+ * @param {array[]} arrayFilter
+ * @param {string} min_confidence minimum confidence value of post
+ * @param {string} max_confidence maximum confidence value of post
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of papers
+ * @returns {Object} array of papers and total number of result
+ */
+async function fakeAutomatedSearchService(title, description, arrayFilter, min_confidence, max_confidence, start, count) {
 
-        //initial the query string
-        let query = "ALL(";
-
-        //concatenate the array to string of or
-        let titleQuery =support.arrayToString(titleArray, " OR ", "");
-        let descriptionQuery = support.arrayToString(descriptionArray, " OR ", "");
-
-        //if there aren't both empty , surround the string with parentheses
-        if(titleQuery!== "" && descriptionQuery!== "" ){
-            query += "("+titleQuery+" OR "+descriptionQuery+")"
-        }
-        else if(titleQuery!== ""){
-            query += "("+titleQuery+")";
-        }
-        else if(descriptionQuery!== "" ){
-            query += "("+descriptionQuery+")";
-        }
-
-        //get inclusion and exlusion keywords from list of fiters
-        let inclusionString ="";
-        let exclusionString ="";
-        let tempArrayOfInclusion;
-        let tempArrayOfExclusion;
-        for(let i =0 ; i<arrayFilter.length; i++){
-            //get split array of inclusion of current filter
-            tempArrayOfInclusion = arrayFilter[i].data.inclusion_description.replace(/and|or|not/gi,"").replace(/\s+/g, " ").split(" ");
-            //get split array of exclusion of current filter
-            tempArrayOfExclusion = arrayFilter[i].data.exclusion_description.replace(/and|or|not/gi,"").replace(/\s+/g, " ").split(" ");
-            //concatenate the array to string of or
-            inclusionString += support.arrayToString(tempArrayOfInclusion, " OR ", "");
-            //concatenate the array to string of or
-            exclusionString +=support.arrayToString(tempArrayOfExclusion, " OR ", "");
-
-            //if it isn't last cycle and array of inclusion is not empty
-            if(i < arrayFilter.length-1 && tempArrayOfInclusion.length > 0){
-                inclusionString += " OR ";
-            }
-            //if it isn't last cycle and array of exclusion is not empty
-            if(i < arrayFilter.length-1 && tempArrayOfExclusion.length > 0){
-                exclusionString +=" OR ";
-            }
-        }
-
-        if(inclusionString !== ""){
-            query += " AND ("+inclusionString+")"
-        }
-        if(exclusionString !== ""){
-            query += " AND NOT ("+exclusionString+")"
-        }
-
-        query += ")";
-
-       // console.log(query);
-
-        //###########################################
-        //call for the service
-        //###########################################
-
-
-       let  response = await automatedScopusSearch(query, "advanced", "ASC", start, count);
-
-        return response;
-
+    if (!title) {
+        throw errHandler.createBadRequestError('the title is not defined!');
     }
+    if (!description) {
+        throw errHandler.createBadRequestError('the title is not defined!');
+    }
+    //check  validation of array
+    errorCheck.isValidArray(arrayFilter);
+
+    //check and set the confidence value
+    min_confidence = errorCheck.setAndCheckValidMinConfidenceValue(min_confidence);
+    max_confidence = errorCheck.setAndCheckValidMaxConfidenceValue(max_confidence);
+
+    //if min confidence is large than max confidence
+    if (max_confidence < min_confidence ) {
+        throw errHandler.createBadRequestError('the max_confidence cannot be less than min_confidence!');
+    }
+
+
+    //clean from scopus syntax words to avoid errors
+    title = title.replace(/and|or|not/gi, "").replace(/\s+/g, " ");
+    description = description.replace(/and|or|not/gi, "").replace(/\s+/g, " ");
+    //split string in array by space
+    let titleArray = title.split(" ");
+    let descriptionArray = description.split(" ");
+
+    //initial the query string
+    let query = "ALL(";
+
+    //concatenate the array to string of or
+    let titleQuery = support.arrayToString(titleArray, " OR ", "");
+    let descriptionQuery = support.arrayToString(descriptionArray, " OR ", "");
+
+    //if there aren't both empty , surround the string with parentheses
+    if (titleQuery !== "" && descriptionQuery !== "") {
+        query += "(" + titleQuery + " OR " + descriptionQuery + ")"
+    }
+    else if (titleQuery !== "") {
+        query += "(" + titleQuery + ")";
+    }
+    else if (descriptionQuery !== "") {
+        query += "(" + descriptionQuery + ")";
+    }
+
+    //get inclusion and exlusion keywords from list of fiters
+    let inclusionString = "";
+    let exclusionString = "";
+    let tempArrayOfInclusion;
+    let tempArrayOfExclusion;
+    for (let i = 0; i < arrayFilter.length; i++) {
+        console.log(i +"<"+arrayFilter.length);
+        //get split array of inclusion of current filter
+        tempArrayOfInclusion = arrayFilter[i].data.inclusion_description.replace(/and|or|not/gi, "").replace(/\s+/g, " ").split(" ");
+        //get split array of exclusion of current filter
+        tempArrayOfExclusion = arrayFilter[i].data.exclusion_description.replace(/and|or|not/gi, "").replace(/\s+/g, " ").split(" ");
+        //concatenate the array to string of or
+        inclusionString += support.arrayToString(tempArrayOfInclusion, " OR ", "");
+        //concatenate the array to string of or
+        exclusionString += support.arrayToString(tempArrayOfExclusion, " OR ", "");
+
+        //if it isn't last cycle and array of inclusion is not empty
+        if (i < arrayFilter.length - 1 && tempArrayOfInclusion.length > 0) {
+            inclusionString += " OR ";
+        }
+        //if it isn't last cycle and array of exclusion is not empty
+        if (i < arrayFilter.length - 1 && tempArrayOfExclusion.length > 0) {
+            exclusionString += " OR ";
+        }
+    }
+
+    if (inclusionString !== "") {
+        query += " AND (" + inclusionString + ")"
+    }
+    if (exclusionString !== "") {
+        query += " AND NOT (" + exclusionString + ")"
+    }
+
+    query += ")";
+
+    // console.log(query);
+
+    //###########################################
+    //call for the service
+    //###########################################
+
+
+    let response = await automatedScopusSearch(query, "advanced", "ASC", start, count);
+
+    let range = max_confidence - min_confidence + 0.01;
+    for(let i = 0; i < response.results.length; i++){
+
+        //random confidence
+        response.results[i].confidence = Math.floor(Math.random() * range *100 + min_confidence*100 ) / 100 + "";
+    }
+
+
+    return response;
+
+}
 
 /**
  *
@@ -212,8 +249,6 @@ async function automatedScopusSearch(keyword, searchBy, sort, start = 0, count =
         paper.notes = "";
         paper.manual = "0";
 
-        //random confidence
-        paper.confidence = Math.floor(Math.random()*100) /100 + "";
 
         //push element in array
         arrayPapers.push(paper);
@@ -227,8 +262,7 @@ async function automatedScopusSearch(keyword, searchBy, sort, start = 0, count =
 }
 
 
-
 module.exports = {
-        fakeSimilarSearchService,
-        fakeAutomatedSearchService,
-    };
+    fakeSimilarSearchService,
+    fakeAutomatedSearchService,
+};
