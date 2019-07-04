@@ -6,6 +6,7 @@ const timeOut = 20 * 1000;
 // valid examples
 let validExample = {
     "project_id": "1",
+    "name   ": "abc",
     "predicate": "aaa",
     "inclusion_description": "bbb",
     "exclusion_description": "ccc",
@@ -63,36 +64,42 @@ describe('good cases on filters ', () => {
 
 //not valid examples
 let notValidExample = {
+    "name   ": "abc",
     "predicate": "aaa",
     "inclusion_description": "bbb",
     "exclusion_description": "ccc",
 };
 let notValidExample2 = {
     "project_id": "abc",
+    "name   ": "abc",
     "predicate": "aaa",
     "inclusion_description": "bbb",
     "exclusion_description": "ccc",
 };
 let notValidExample3 = {
     "project_id": "1.5",
+    "name   ": "abc",
     "predicate": "aaa",
     "inclusion_description": "bbb",
     "exclusion_description": "ccc",
 };
 let notValidExample4 = {
     "project_id": "1",
+    "name   ": "abc",
     "predicate": "aaa",
     "inclusion_description": "bbb",
 };
 
 let notValidExample5 = {
     "project_id": "9999",
+    "name   ": "abc",
     "predicate": "aaa",
     "inclusion_description": "bbb",
     "exclusion_description": "ccc",
 };
 let notValidExample6 = {
     "project_id": "6",
+    "name   ": "abc",
     "predicate": "aaa",
     "inclusion_description": "bbb",
     "exclusion_description": "ccc",

@@ -53,17 +53,17 @@ INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "dat
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 1 FROM "public"."papers" WHERE id = 10 );
 
 --filters data
-INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1", "predicate": "aaa",
+INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1",  "name   ": "abc", "predicate": "aaa",
   "inclusion_description": "abc or bca", "exclusion_description": "abc and bac not llll"}');
-  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1", "predicate": "aaa",
+  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1",  "name   ": "abc", "predicate": "aaa",
   "inclusion_description": "abc", "exclusion_description": "abc"}');
-  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1", "predicate": "aaa",
+  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1",  "name   ": "abc", "predicate": "aaa",
   "inclusion_description": "abc", "exclusion_description": "abc"}');
-  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1", "predicate": "aaa",
+  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "1",  "name   ": "abc", "predicate": "aaa",
   "inclusion_description": "abc", "exclusion_description": "abc"}');
-  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "9999", "predicate": "aaa",
+  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "9999",  "name   ": "abc", "predicate": "aaa",
   "inclusion_description": "abc", "exclusion_description": "abc"}');
-    INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "6", "predicate": "aaa",
+    INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"project_id": "6",  "name   ": "abc", "predicate": "aaa",
   "inclusion_description": "abc", "exclusion_description": "abc"}');
 
 

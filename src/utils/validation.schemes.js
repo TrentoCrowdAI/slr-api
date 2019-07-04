@@ -153,6 +153,10 @@ const filter={
             "type": "string",
             "isNotEmpty": true
         },
+        "name": {
+            "type": "string",
+            "isNotEmpty": true
+        },
         "predicate": {
             "type": "string",
             "isNotEmpty": true
@@ -166,7 +170,7 @@ const filter={
             "isNotEmpty": true
         }
     },
-    "required": ["project_id", "predicate",  "inclusion_description", "exclusion_description"]
+    "required": ["project_id", "name", "predicate",  "inclusion_description", "exclusion_description"]
 }
 
 
