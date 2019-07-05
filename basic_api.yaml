@@ -252,8 +252,8 @@ paths:
   '/projects/{project_id}/collaborators':
 
     get:
-      summary: get users list by project id
-      description: get a list of users
+      summary: get collaborators by project id
+      description: get a list of collaborator
       tags:
         - Projects
       security:
@@ -277,7 +277,7 @@ paths:
 
 
     post:
-      summary: share the project
+      summary: add the collaborator
       description: share a specific project with another user
       tags:
         - Projects
@@ -288,6 +288,10 @@ paths:
         - $ref: '#/parameters/Project_id_in_path'
         - $ref: '#/parameters/Email_post_body'
       responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
         '204':
           $ref: '#/responses/204_no_content'
         '400':
@@ -297,8 +301,11 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
+
+  '/projects/{project_id}/collaborators/{user_id}':
+
     delete:
-      summary: delete the sharing of project
+      summary: delete the collaborator
       description: delete the sharing of a specific project with another user
       tags:
         - Projects
@@ -307,7 +314,7 @@ paths:
 
       parameters:
         - $ref: '#/parameters/Project_id_in_path'
-        - $ref: '#/parameters/Email_post_body'
+        - $ref: '#/parameters/User_id_in_path'
       responses:
         '204':
           $ref: '#/responses/204_no_content'
@@ -317,6 +324,87 @@ paths:
           $ref: '#/responses/401_unauthorized'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
+
+  # screeners  ============================================================
+
+  '/projects/{project_id}/screeners':
+
+    get:
+      summary: get screeners by project id
+      description: get a list of screeners
+      tags:
+        - Projects
+      security:
+        - basicAuth: []
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Users'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+    post:
+      summary: add the screeners
+      description: add the screeners into a specific project
+      tags:
+        - Projects
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/User_id_post_body'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/User'
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+  '/projects/{project_id}/screeners/{user_id}':
+
+    delete:
+      summary: delete the screeners
+      description: delete the screeners from a specific project
+      tags:
+        - Projects
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/User_id_in_path'
+      responses:
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+
 
   # projectPaper ==============================================================
 
@@ -1444,6 +1532,26 @@ parameters:
         - exclusion_description
 
 
+  User_id_post_body:
+    in: body
+    name: body
+    schema:
+      type: object
+      properties:
+        user_id:
+          description: the selected user's id
+          type: integer
+      required:
+        - user_id
+    required: true
+
+
+  User_id_in_path:
+    in: path
+    name: user_id
+    description: the internal id of a user
+    type: integer
+    required: true
 
 
 

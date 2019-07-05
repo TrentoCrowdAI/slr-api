@@ -137,8 +137,8 @@ async function verifyToken(tokenId) {
     let user_email;
 
     //special case for testing
-    if (tokenId === "test") {
-        user_email = "test@gmail.com";
+    if (tokenId.indexOf("test") !== -1) {
+        user_email = tokenId+"@gmail.com";
         //check user's existence
         let userFromDB = await usersDao.getUserByEmail(user_email);
         //if isn't exist the test user in DB
@@ -190,14 +190,14 @@ async function verifyToken(tokenId) {
 
 
 /**
- * get a users list by project id
+ * get a collaborator list by project id
  * @param {string} user_email of user
  * @param {string} project_id
  * @returns {array[Object]} array of user object
  */
 
 
- async function getUsersByProjectId(user_email, project_id) {
+ async function getCollaboratorByProjectId(user_email, project_id) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
@@ -219,11 +219,42 @@ async function verifyToken(tokenId) {
 }
 
 
+/**
+ * get a screeners list by project id
+ * @param {string} user_email of user
+ * @param {string} project_id
+ * @returns {array[Object]} array of user object
+ */
+
+
+async function getScreenersByProjectId(user_email, project_id) {
+
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
+    //check validation of project id and transform the value in integer
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
+
+    //get user info
+    let user = await usersDao.getUserByEmail(user_email);
+    //check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+
+    //call DAO layer
+    let res = await usersDao.getUserByArrayIds(project.data.screeners_id);
+    return res.filter(x => x.data.email !== user_email);
+
+
+}
+
+
 module.exports = {
     //userLogin,
     //userLogout,
     //checkUserByTokenId,
     //getUserByTokenId,
     verifyToken,
-    getUsersByProjectId,
+    getCollaboratorByProjectId,
+    getScreenersByProjectId,
 };

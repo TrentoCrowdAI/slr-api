@@ -36,20 +36,32 @@ function returnData(data) {
  */
 async function createDB() {
 
+    let path = "src/db/";
     //get init sql
-    var initSql = await read('src/db/init.sql').then(returnData);
+    let initSql = await read(path+'init.sql').then(returnData);
+
     //get data sql
-    var dataSql = await read('src/db/test.data.sql').then(returnData);
+    let dataSql = [];
+    dataSql.push(await read(path+'test.data.fake.papers.sql').then(returnData));
+    dataSql.push(await read(path+'test.data.projects.sql').then(returnData));
+    dataSql.push(await read(path+'test.data.projects.papers.sql').then(returnData));
+    dataSql.push(await read(path+'test.data.filters.sql').then(returnData));
+    dataSql.push(await read(path+'test.data.users.sql').then(returnData));
+
     //excute init sql
     await db.queryNotParameter(initSql).catch(function (error) {
         console.error(error);
     });
+    console.log("=====database initiated=====");
     //exceute data sql
-    await db.queryNotParameter(dataSql).catch(function (error) {
-        console.error(error);
-    });
+    for(let i=0; i<dataSql.length; i++){
+        await db.queryNotParameter(dataSql[i]).catch(function (error) {
+            console.error(error);
+        });
+    }
 
-    console.log("database initiated-------------------------------------------");
+
+    console.log("=====database loaded with test data=====");
 
 }
 

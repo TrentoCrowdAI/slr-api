@@ -33,8 +33,10 @@ async function insert(user_email, newFilterData) {
     let valid = ajv.validate(validationSchemes.filter, newFilterData);
     //if is not a valid input
     if (!valid) {
-        throw errHandler.createBadRequestError('the new paper data is not valid! (' + ajv.errorsText() + ')');
+        throw errHandler.createBadRequestError('the new filter data is not valid! (' + ajv.errorsText() + ')');
     }
+
+
 
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
@@ -53,7 +55,7 @@ async function insert(user_email, newFilterData) {
 }
 
 /**
- *  * update a filter
+ *  * update a filter, the project_id will not be change
  * @param {string} user_email of user
  * @param {string} filter_id
  * @param {object} newFilterData

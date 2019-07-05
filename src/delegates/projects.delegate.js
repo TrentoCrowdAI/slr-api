@@ -50,12 +50,12 @@ async function insert(user_email, newProjectData) {
 
 
 /**
- *  * update a project
+ *  * update project name and description
  * @param {string} user_email of user
  * @param {string}  project_id
- * @param {object} newProjectData
+ * @param {object} newProjectData where cotains the new name and description
  */
-async function update(user_email, project_id, newProjectData) {
+async function updateNameAndDescription(user_email, project_id, newProjectData) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
@@ -77,11 +77,12 @@ async function update(user_email, project_id, newProjectData) {
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
-    //add the user_id in project data
-    newProjectData.user_id = project.data.user_id;
+    //update name and description of project
+    project.data.name = newProjectData.name;
+    project.data.description = newProjectData.description;
 
     //call DAO layer
-    let numberRow = await projectsDao.update(project_id, newProjectData);
+    let numberRow = await projectsDao.update(project_id, project.data);
 
 }
 
@@ -233,10 +234,10 @@ async function selectAllByUserId(user_email, orderBy, sort, start, count) {
  * share the project with other user
  * @param {string} user_email of user
  * @param {string} project_id
- * @param {string} shared_email
+ * @param {string} collaborator_email
  * @returns {object} project found
  */
-async function shareProject(user_email, project_id, shared_email) {
+async function shareProject(user_email, project_id, collaborator_email) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
@@ -244,7 +245,7 @@ async function shareProject(user_email, project_id, shared_email) {
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
     //error check for shared user's email
-    errorCheck.isValidGoogleEmail(shared_email);
+    errorCheck.isValidGoogleEmail(collaborator_email);
 
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
@@ -255,26 +256,25 @@ async function shareProject(user_email, project_id, shared_email) {
     errorCheck.isValidProjectOwner(project);
 
     //check existence of  shared user
-    let sharedUser = await usersDao.getUserByEmail(shared_email);
-    if(!sharedUser){
+    let sharedUser = await usersDao.getUserByEmail(collaborator_email);
+    if (!sharedUser) {
         //create a new user object and insert it in DB
-        sharedUser = await usersDao.insert({email: shared_email});
+        sharedUser = await usersDao.insert({email: collaborator_email});
     }
 
 
-    //if the shared user id isn't include yet
-    if(!project.data.user_id.includes(sharedUser.id)){
-        //convert id to string and push it into the array
-        project.data.user_id.push(sharedUser.id+"");
-        //update the project
-        await projectsDao.update(project.id, project.data);
-        //send email notification
-        await shareProjectMail(shared_email, user, project);
-    }
     //if the shared user is already present in this project
-    else{
-        throw errHandler.createBadRequestError("the shared user is alreay present in this project!");
+    if (project.data.user_id.includes(sharedUser.id)) {
+        throw errHandler.createBadRequestError("the shared user is already present in this project!");
     }
+
+    //convert id to string and push it into the array
+    project.data.user_id.push(sharedUser.id + "");
+    //update the project
+    await projectsDao.update(project.id, project.data);
+    //send email notification
+    await shareProjectMail(collaborator_email, user, project);
+
 
     return sharedUser;
 
@@ -304,26 +304,116 @@ async function deleteShareProject(user_email, project_id, collaborator_id) {
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
-    //if the shared user id is included
-    if(project.data.user_id.includes(collaborator_id)){
-
-        //remove the shared user id from array of user of this project
-        project.data.user_id = support.removeElementFromArray(project.data.user_id, collaborator_id+"");
-        //update the project
-        await projectsDao.update(project.id, project.data);
-
-    }
     //if the shared user isn't present in this project
-    else{
+    if (!project.data.user_id.includes(collaborator_id)) {
         throw errHandler.createBadRequestError("the user isn't present in this project!");
     }
+
+    //remove the shared user id from array of user of this project
+    project.data.user_id = support.removeElementFromArray(project.data.user_id, collaborator_id + "");
+    //update the project
+    await projectsDao.update(project.id, project.data);
+
+
+}
+
+
+/**
+ * share the project with other user
+ * @param {string} user_email of user
+ * @param {string} project_id
+ * @param {string} screeners_id
+ * @returns {object} project found
+ */
+async function addScreeners(user_email, project_id, screeners_id) {
+
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
+    //check validation of project id and transform the value in integer
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
+
+    //error check for selected user's id
+    errorCheck.isValidScreenersId(screeners_id);
+
+    //get user info
+    let user = await usersDao.getUserByEmail(user_email);
+
+    //get relative project and check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+
+    //check existence of selected user
+    let screenersUser = await usersDao.getUserById(screeners_id);
+    if (!screenersUser) {
+        throw errHandler.createBadRequestError("the selected user for screening isn't existe!");
+    }
+    if (!project.data.user_id.includes(screenersUser.id)) {
+        throw errHandler.createBadRequestError("the selected user for screening must be a collaborator of this project!");
+    }
+
+    //if the array screeners_id is not defined
+    if (!project.data.screeners_id) {
+        project.data.screeners_id = [];
+    }
+
+    //if the selected user is already present in this project
+    if (project.data.screeners_id.includes(screenersUser.id)) {
+        throw errHandler.createBadRequestError("the selected user for screening is already present in this project!");
+    }
+
+    //convert id to string and push it into the array
+    project.data.screeners_id.push(screenersUser.id + "");
+    //update the project
+    await projectsDao.update(project.id, project.data);
+
+
+    return screenersUser;
+
+}
+
+
+/**
+ * delete a screeners of the project
+ * @param {string} user_email of user
+ * @param {string} project_id
+ * @param {string} screeners_id
+ * @returns {object} project found
+ */
+async function deleteScreeners(user_email, project_id, screeners_id) {
+
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
+    //check validation of project id and transform the value in integer
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
+    //check validation of screeners_id
+    errorCheck.isValidScreenersId(screeners_id);
+
+    //get user info
+    let user = await usersDao.getUserByEmail(user_email);
+
+    //get relative project and check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+
+    //if the selected user isn't present in this project
+    if (!project.data.screeners_id.includes(screeners_id)) {
+        throw errHandler.createBadRequestError("the selected user for screening isn't present in this project!");
+    }
+
+    //remove the shared user id from array of user of this project
+    project.data.screeners_id = support.removeElementFromArray(project.data.screeners_id, screeners_id + "");
+    //update the project
+    await projectsDao.update(project.id, project.data);
+
 
 }
 
 
 module.exports = {
     insert,
-    update,
+    updateNameAndDescription,
     deletes,
     selectById,
     //selectAll,
@@ -331,5 +421,7 @@ module.exports = {
     shareProject,
     deleteShareProject,
     //selectBySingleKeyword,
+    addScreeners,
+    deleteScreeners,
 
 };

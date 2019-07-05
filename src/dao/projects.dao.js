@@ -144,7 +144,7 @@ async function selectAllByUserId(user_id, orderBy, sort, start, count) {
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
  * @returns {Object} array of projects and total number of result
- *//*
+
 async function selectBySingleKeyword(keyword, orderBy, sort, start, count) {
 
 

@@ -163,11 +163,11 @@ const filter={
         },
         "inclusion_description": {
             "type": "string",
-            "isNotEmpty": true
+
         },
         "exclusion_description": {
             "type": "string",
-            "isNotEmpty": true
+
         }
     },
     "required": ["project_id", "name", "predicate",  "inclusion_description", "exclusion_description"]

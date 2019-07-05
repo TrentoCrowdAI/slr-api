@@ -1,11 +1,16 @@
 const request = require('supertest');
 const app = require(__base + 'app');
-
 const timeOut = 20 * 1000;
 
-const validTokenId = "test";
-const notValidTokenId = "654321";
 
+/* range of usable data n° 13 ~ 15 */
+const index = 13;
+const index2 = index + 1;
+const index3 = index + 2;
+const validTokenId = "test" + index;
+const validTokenId3 = "test" + index3;
+
+/* good cases=====================================================================================================*/
 
 const validExampleForCsv = {
     "authors": "Authors",
@@ -32,7 +37,7 @@ describe('good cases on uploadFile', () => {
 
     test('POST /upload/csv should return 201 if OK', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).post('/upload/csv').field("project_id", 1).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
+        let response = await request(app).post('/upload/csv').field("project_id", index).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
         expect(response.status).toBe(201);
 
     });
@@ -40,7 +45,8 @@ describe('good cases on uploadFile', () => {
 });
 
 
-/*bad cases*/
+/* bad cases==============================================================================================================*/
+
 describe('bad cases on uploadFile', () => {
 
     test('POST /upload/pdf should return 400 if the file does not exist', async () => {
@@ -59,15 +65,25 @@ describe('bad cases on uploadFile', () => {
 
     test('POST /upload/csv should return 400 if parameters have invalid value', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).post('/upload/csv').field("paper_id", 1).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
+
+        //the project_id is missing
+        let response = await request(app).post('/upload/csv').field("paper_id", index).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
         expect(response.status).toBe(400);
+
+        //the project id is not a number
         response = await request(app).post('/upload/csv').field("project_id", "abc").field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
         expect(response.status).toBe(400);
-        response = await request(app).post('/upload/csv').field("project_id", "1.6").field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
+
+        //the project id is not integer
+        response = await request(app).post('/upload/csv').field("project_id", index + ".6").field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
         expect(response.status).toBe(400);
-        response = await request(app).post('/upload/csv').field("project_id", 1).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
+
+        //the parameter fileds is missing
+        response = await request(app).post('/upload/csv').field("project_id", index).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
         expect(response.status).toBe(400);
-        response = await request(app).post('/upload/csv').field("project_id", 1).field("fields", JSON.stringify({"a": "b"})).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
+
+        //the parameter fileds is not valid
+        response = await request(app).post('/upload/csv').field("project_id", index).field("fields", JSON.stringify({"a": "b"})).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
         expect(response.status).toBe(400);
 
     });
@@ -81,27 +97,27 @@ describe('bad cases on uploadFile', () => {
 
     test('POST /upload/csv should return 401 if user hasn\'t permission', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).post('/upload/csv').field("project_id", 6).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
+        let response = await request(app).post('/upload/csv').field("project_id", index2).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
         expect(response.status).toBe(401);
     });
 
     test('POST /upload/csv should return 400 if the file does not exist', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).post('/upload/csv').field("project_id", 1).field("fields", JSON.stringify(validExampleForCsv)).set('Authorization', validTokenId);
+        let response = await request(app).post('/upload/csv').field("project_id", index).field("fields", JSON.stringify(validExampleForCsv)).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
 
     });
 
     test('POST /upload/csv should return 400 if the file is not a csv', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).post('/upload/csv').field("project_id", 1).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validPdf.pdf").set('Authorization', validTokenId).set('Authorization', validTokenId);
+        let response = await request(app).post('/upload/csv').field("project_id", index).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validPdf.pdf").set('Authorization', validTokenId).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
 
     });
 
     test('POST /upload/csv should return 400 if the file is not a valid csv', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).post('/upload/csv').field("project_id", 1).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/notValidCsv.csv").set('Authorization', validTokenId).set('Authorization', validTokenId);
+        let response = await request(app).post('/upload/csv').field("project_id", index).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/notValidCsv.csv").set('Authorization', validTokenId).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
 
     });

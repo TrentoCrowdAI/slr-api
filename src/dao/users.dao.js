@@ -86,6 +86,20 @@ async function getUserByArrayIds(arrayIds) {
     return res.rows;
 }
 
+/**
+ * get user by id
+ * @param {int} id
+ * @returns {Object} users found
+ */
+async function getUserById(id) {
+    let res = await db.query(
+        "SELECT * FROM public." + db.TABLES.users + "  WHERE id = $1",
+        [id]
+    );
+
+    return res.rows[0];
+}
+
 
 
 /**
@@ -121,6 +135,7 @@ module.exports = {
     getUserByGoogleId,
     getUserByEmail,
     getUserByArrayIds,
+    getUserById,
     //checkUserByTokenId,
     //updateByGoogleId,
     //getUserByTokenId,

@@ -483,6 +483,26 @@ function isValidCollaboratorId(id) {
 
 }
 
+/**
+ * check if the id is a valid integer
+ * @param {string} email
+ */
+function isValidScreenersId(id) {
+
+    //error check
+    if (id === undefined || id === null) {
+        throw errHandler.createBadRequestError("the screeners's id is empty!");
+    }
+    //cast id to integer type
+    id = Number(id);
+    //error check
+    if (!Number.isInteger(id)) {
+        throw errHandler.createBadRequestError("the screeners's id is not a integer!");
+    }
+
+
+}
+
 
 module.exports = {
     setAndCheckValidPaperId,
@@ -509,6 +529,7 @@ module.exports = {
     isValidFilter,
     isValidGoogleEmail,
     isValidCollaboratorId,
+    isValidScreenersId,
 
 
 };

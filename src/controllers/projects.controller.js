@@ -74,7 +74,7 @@ router.put('/projects/:id', async (req, res, next) => {
         //the new data of project to update
         let newProjectData = req.body;
 
-        await projectsDelegate.update(user_email, project_id, newProjectData);
+        await projectsDelegate.updateNameAndDescription(user_email, project_id, newProjectData);
         res.sendStatus(204);
     }
     catch (e) {
@@ -99,13 +99,13 @@ router.delete('/projects/:id', async (req, res, next) => {
 
 
 
-//get a user list by project
+//get a collaborator list by project
 router.get('/projects/:id/collaborators', async (req, res, next) => {
 
     try {
         let user_email = res.locals.user_email;
         let project_id = req.params.id;
-        let userData = await usersDelegate.getUsersByProjectId(user_email, project_id);
+        let userData = await usersDelegate.getCollaboratorByProjectId(user_email, project_id);
         res.status(200).json(userData);
     }
     catch (e) {
@@ -119,8 +119,8 @@ router.post('/projects/:id/collaborators', async (req, res, next) => {
     try {
         let user_email = res.locals.user_email;
         let project_id = req.params.id;
-        let shared_email = req.body.email;
-        let userData = await projectsDelegate.shareProject(user_email, project_id, shared_email);
+        let collaborator_email = req.body.email;
+        let userData = await projectsDelegate.shareProject(user_email, project_id, collaborator_email);
         res.status(201).json(userData);
     }
     catch (e) {
@@ -129,12 +129,12 @@ router.post('/projects/:id/collaborators', async (req, res, next) => {
     }
 });
 
-//share the project with other user
-router.delete('/projects/:id/collaborators/:c_id', async (req, res, next) => {
+//delete a collaborator from a project
+router.delete('/projects/:id/collaborators/:user_id', async (req, res, next) => {
     try {
         let user_email = res.locals.user_email;
         let project_id = req.params.id;
-        let collaborator_id = req.params.c_id;
+        let collaborator_id = req.params.user_id;
 
         await projectsDelegate.deleteShareProject(user_email, project_id, collaborator_id);
         res.sendStatus(204);
@@ -144,6 +144,57 @@ router.delete('/projects/:id/collaborators/:c_id', async (req, res, next) => {
         next(e);
     }
 });
+
+
+
+
+//get a screeners list by project
+router.get('/projects/:id/screeners', async (req, res, next) => {
+
+    try {
+        let user_email = res.locals.user_email;
+        let project_id = req.params.id;
+        let userData = await usersDelegate.getScreenersByProjectId(user_email, project_id);
+        res.status(200).json(userData);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+//add a screnners into a project
+router.post('/projects/:id/screeners', async (req, res, next) => {
+    try {
+        let user_email = res.locals.user_email;
+        let project_id = req.params.id;
+        let screeners_id = req.body.user_id;
+        let userData = await projectsDelegate.addScreeners(user_email, project_id, screeners_id);
+        res.status(201).json(userData);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+
+//delete a screnners from a project
+router.delete('/projects/:id/screeners/:user_id', async (req, res, next) => {
+    try {
+        let user_email = res.locals.user_email;
+        let project_id = req.params.id;
+        let screeners_id = req.params.user_id;
+
+        await projectsDelegate.deleteScreeners(user_email, project_id, screeners_id);
+        res.sendStatus(204);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
 
 
 

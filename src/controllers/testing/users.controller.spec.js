@@ -1,14 +1,24 @@
 const request = require('supertest');
 const app = require(__base + 'app');
-
 const timeOut = 20 * 1000;
 
-const validTokenId = "test";
+
+
+
+
+/* range of usable data n° 16 ~ 18 */
+const index = 16;
+const index2 = index + 1;
+const index3 = index + 2;
+const validTokenId = "test" + index;
+const validTokenId3 = "test" + index3;
+
+
+/* bad cases==============================================================================================================*/
+
 const notValidTokenId = "654321";
 
 
-
-/*bad cases*/
 describe('bad cases on users', () => {
 
     /*
@@ -24,6 +34,7 @@ describe('bad cases on users', () => {
      expect(response.status).toBe(400);
      });
      */
+
     test('GET /projects should return 400 if user \'s token is miss', async () => {
         jest.setTimeout(timeOut);
         let response = await request(app).get('/projects');
