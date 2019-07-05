@@ -53,8 +53,6 @@ async function fakeSimilarSearchService(paperData, start, count) {
     let response = await papersDelegate.scopusSearch(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
 
 
-
-
     return response;
 }
 
@@ -86,7 +84,7 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
     max_confidence = errorCheck.setAndCheckValidMaxConfidenceValue(max_confidence);
 
     //if min confidence is large than max confidence
-    if (max_confidence < min_confidence ) {
+    if (max_confidence < min_confidence) {
         throw errHandler.createBadRequestError('the max_confidence cannot be less than min_confidence!');
     }
 
@@ -116,13 +114,16 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
         query += "(" + descriptionQuery + ")";
     }
 
+    //array of filter id
+    let arrayFiterId = [];
+
     //get inclusion and exlusion keywords from list of fiters
     let inclusionString = "";
     let exclusionString = "";
     let tempArrayOfInclusion;
     let tempArrayOfExclusion;
     for (let i = 0; i < arrayFilter.length; i++) {
-        console.log(i +"<"+arrayFilter.length);
+        //console.log(i +"<"+arrayFilter.length);
         //get split array of inclusion of current filter
         tempArrayOfInclusion = arrayFilter[i].data.inclusion_description.replace(/and|or|not/gi, "").replace(/\s+/g, " ").split(" ");
         //get split array of exclusion of current filter
@@ -140,6 +141,8 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
         if (i < arrayFilter.length - 1 && tempArrayOfExclusion.length > 0) {
             exclusionString += " OR ";
         }
+
+        arrayFiterId.push(arrayFilter[i].id + "");
     }
 
     if (inclusionString !== "") {
@@ -160,11 +163,42 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
 
     let response = await automatedScopusSearch(query, "advanced", "ASC", start, count);
 
+    //range of confidence value
     let range = max_confidence - min_confidence + 0.01;
-    for(let i = 0; i < response.results.length; i++){
+    let randomValue;
 
-        //random confidence
-        response.results[i].confidence = Math.floor(Math.random() * range *100 + min_confidence*100 ) / 100 + "";
+    for (let i = 0; i < response.results.length; i++) {
+
+        //create the field "metadata"
+        response.results[i].metadata = {};
+        //create the sub-field "automatedSearch"
+        response.results[i].metadata.automatedSearch = {};
+        //copy array of filters id
+        response.results[i].metadata.automatedSearch.filtersse_id = arrayFiterId;
+        //create array of filters_value
+        response.results[i].metadata.automatedSearch.filters_value = [];
+
+        let sum = 0;
+        for (let j = 0; j < arrayFiterId.length; j++) {
+            //calculate the random value for each filter
+            randomValue = Math.floor(Math.random() * range * 100 + min_confidence * 100) / 100;
+            sum += randomValue;
+            response.results[i].metadata.automatedSearch.filters_value.push(randomValue);
+        }
+
+        //the average value
+        let averageValue = 0;
+        //if there is at least one
+        if (arrayFiterId.length > 0) {
+            averageValue = sum / arrayFilter.length;
+        }
+        //else calculate directly the average value by random
+        else {
+            averageValue = Math.floor(Math.random() * range * 100 + min_confidence * 100) / 100;
+        }
+
+        //save the final value
+        response.results[i].metadata.automatedSearch.value = averageValue + "";
     }
 
 

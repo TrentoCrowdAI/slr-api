@@ -975,9 +975,33 @@ definitions:
       doi:
         type: string
         example: "10.1000/182"
-      confidence:
-        type: string
-        example: "0.82"
+      metadata:
+        type: object
+        properties:
+          automatedSearch:
+            type: object
+            properties:
+              value:
+                type: string
+                example: "0.78"
+              filters_id:
+                type: array
+                items:
+                  type: string
+                example:
+                  - "1"
+                  - "2"
+                  - "3"
+              filters_value:
+                type: array
+                items:
+                  type: string
+                example:
+                  - "0.9"
+                  - "0.8"
+                  - "0.6"
+
+
 
 
   Result_of_paper_search_with_confidence:
