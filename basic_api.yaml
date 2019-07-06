@@ -1192,6 +1192,10 @@ definitions:
     properties:
       email:
         type: string
+      name:
+        type: string
+      picture:
+        type: string
 
   User:
     type: object

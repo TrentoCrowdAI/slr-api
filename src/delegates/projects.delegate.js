@@ -259,7 +259,7 @@ async function shareProject(user_email, project_id, collaborator_email) {
     let sharedUser = await usersDao.getUserByEmail(collaborator_email);
     if (!sharedUser) {
         //create a new user object and insert it in DB
-        sharedUser = await usersDao.insert({email: collaborator_email});
+        sharedUser = await usersDao.insert({email: collaborator_email, name: "", picture: ""});
     }
 
 
