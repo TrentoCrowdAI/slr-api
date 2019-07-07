@@ -4,8 +4,8 @@
 //library to parse XML string to object
 
 
-const papersDelegate = require(__base + 'delegates/papers.delegate');
-const papersDao = require(__base + 'dao/papers.dao');
+const searchesDelegate = require(__base + 'delegates/searches.delegate');
+const searchesDao = require(__base + 'dao/searches.dao');
 
 //the config file
 const config = require(__base + 'config');
@@ -30,6 +30,7 @@ async function fakeSimilarSearchService(paperData, start, count) {
     start = errorCheck.setAndCheckValidStart(start);
     count = errorCheck.setAndCheckValidCount(count);
 
+    //if title is not defined
     if (!paperData.title) {
         throw errHandler.createBadRequestError('no paper title found');
     }
@@ -50,7 +51,9 @@ async function fakeSimilarSearchService(paperData, start, count) {
             break;
         }
     }
-    let response = await papersDelegate.scopusSearch(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
+
+    //fake service
+    let response = await searchesDelegate.scopusSearch(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
 
 
     return response;
@@ -70,12 +73,16 @@ async function fakeSimilarSearchService(paperData, start, count) {
  */
 async function fakeAutomatedSearchService(title, description, arrayFilter, min_confidence, max_confidence, start, count) {
 
+    //if the title is not defined
     if (!title) {
         throw errHandler.createBadRequestError('the title is not defined!');
     }
+
+    //if the description is not defined
     if (!description) {
         throw errHandler.createBadRequestError('the title is not defined!');
     }
+
     //check  validation of array
     errorCheck.isValidArray(arrayFilter);
 
@@ -114,8 +121,7 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
         query += "(" + descriptionQuery + ")";
     }
 
-    //array of filter id
-    let arrayFiterId = [];
+
 
     //get inclusion and exlusion keywords from list of fiters
     let inclusionString = "";
@@ -142,7 +148,6 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
             exclusionString += " OR ";
         }
 
-        arrayFiterId.push(arrayFilter[i].id + "");
     }
 
     if (inclusionString !== "") {
@@ -163,9 +168,12 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
 
     let response = await automatedScopusSearch(query, "advanced", "ASC", start, count);
 
+    //declare the variable for following cycle
+    let randomValue;
+    let sum;
+    let filter;
     //range of confidence value
     let range = max_confidence - min_confidence + 0.01;
-    let randomValue;
 
     for (let i = 0; i < response.results.length; i++) {
 
@@ -173,23 +181,26 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
         response.results[i].metadata = {};
         //create the sub-field "automatedSearch"
         response.results[i].metadata.automatedSearch = {};
-        //copy array of filters id
-        response.results[i].metadata.automatedSearch.filtersse_id = arrayFiterId;
-        //create array of filters_value
-        response.results[i].metadata.automatedSearch.filters_value = [];
+        //copy array of filters where storage tuple of filter_id - filter_value
+        response.results[i].metadata.automatedSearch.filters = [];
 
-        let sum = 0;
-        for (let j = 0; j < arrayFiterId.length; j++) {
+        sum = 0;
+        for (let j = 0; j < arrayFilter.length; j++) {
             //calculate the random value for each filter
             randomValue = Math.floor(Math.random() * range * 100 + min_confidence * 100) / 100;
             sum += randomValue;
-            response.results[i].metadata.automatedSearch.filters_value.push(randomValue);
+            //create the tuple
+            filter = {};
+            //set the tuple data
+            filter[arrayFilter[j].id] = randomValue;
+            //push the tuple into the array
+            response.results[i].metadata.automatedSearch.filters.push(filter);
         }
 
         //the average value
         let averageValue = 0;
         //if there is at least one
-        if (arrayFiterId.length > 0) {
+        if (arrayFilter.length > 0) {
             averageValue = sum / arrayFilter.length;
         }
         //else calculate directly the average value by random
@@ -295,8 +306,74 @@ async function automatedScopusSearch(keyword, searchBy, sort, start = 0, count =
 
 }
 
+/**
+ * fake service for automated evaluation of confidence
+* @param {array[]}arrayPaper array of post object
+ * @param {array[]} arrayFilter array of filter object
+ */
+
+function fakeAutomatedEvaluationService(arrayPaper, arrayFilter){
+
+    //create response object
+    let response = {};
+    //declare the variable for following cycle
+    let randomValue;
+    let sum;
+    let averageValue;
+
+    let max_confidence = 1.00;
+    let min_confidence = 0.00;
+    //range of confidence value
+    let range = max_confidence - min_confidence + 0.01;
+
+
+    //for each post
+    for(let i=0; i<arrayPaper.length; i++){
+        //create object for each paper
+        response[arrayPaper[i].id] = {};
+        //create array of filters in the response object
+        response[arrayPaper[i].id].filters=[];
+        //initial the sum to 0
+        sum = 0;
+
+        //fro each filter
+        for (let j = 0; j < arrayFilter.length; j++) {
+
+            //calculate the random value for each filter
+            randomValue = Math.floor(Math.random() * range * 100 + min_confidence * 100) / 100;
+            //add up the value
+            sum += randomValue;
+            //create filter object where will storage the tuple of filter id - value
+            filter = {};
+            //create the tuple
+            filter[arrayFilter[j].id] = randomValue;
+            //push the tuple in the
+            response[arrayPaper[i].id].filters.push(filter);
+        }
+
+        //the average value
+        averageValue = 0;
+        //if there is at least one
+        if (arrayFilter.length > 0) {
+            averageValue = sum / arrayFilter.length;
+        }
+        //else calculate directly the average value by random
+        else {
+            averageValue = Math.floor(Math.random() * range * 100 + min_confidence * 100) / 100;
+        }
+
+        //insert the tuble id-value into the response.
+        response[arrayPaper[i].id].value = averageValue;
+
+    }
+
+    return response;
+
+}
+
 
 module.exports = {
     fakeSimilarSearchService,
     fakeAutomatedSearchService,
+    fakeAutomatedEvaluationService,
 };

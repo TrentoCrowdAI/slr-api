@@ -113,7 +113,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Result_of_paper_search_with_confidence'
+            $ref: '#/definitions/Result_of_paper_search_with_automated_search_confidence'
         '400':
           $ref: '#/responses/400_bad_request'
         '401':
@@ -559,6 +559,97 @@ paths:
 
 
 
+  # screening ==============================================================
+  '/screening/automated':
+
+    post:
+      summary: automated screening
+      description: evaluate all projected paper and assign as screened for paper with confidence value greater than threshold
+      tags:
+        - Projects Papers
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/AutomatedScreening_post_body'
+      responses:
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+  '/screening/backlog':
+
+    get:
+      summary: get backlog list
+      description: get the projectPapers hanven't screening result and vote
+      tags:
+        - Projects Papers
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id'
+        - $ref: '#/parameters/Sort'
+        - $ref: '#/parameters/Start'
+        - $ref: '#/parameters/Count'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Project_papers'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+
+  '/screening/screened':
+
+    get:
+      summary: get screened list
+      description: get the projectPapers already screened
+      tags:
+        - Projects Papers
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id'
+        - $ref: '#/parameters/Sort'
+        - $ref: '#/parameters/Start'
+        - $ref: '#/parameters/Count'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Result_of_paper_search_with_screened_result'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+
+
+
   # filters ==============================================================
 
   '/filters':
@@ -912,7 +1003,7 @@ definitions:
         type: integer
 
 
-  Paper_data_with_confidence:
+  Paper_data_with_automated_search_confidence:
     type: object
     properties:
       authors:
@@ -984,33 +1075,119 @@ definitions:
               value:
                 type: string
                 example: "0.78"
-              filters_id:
+              filters:
                 type: array
                 items:
-                  type: string
+                  type: object
                 example:
-                  - "1"
-                  - "2"
-                  - "3"
-              filters_value:
-                type: array
-                items:
-                  type: string
-                example:
-                  - "0.9"
-                  - "0.8"
-                  - "0.6"
+                  - 1: "0.58"
+                  - 2: "0.68"
+                  - 3: "0.46"
 
 
 
 
-  Result_of_paper_search_with_confidence:
+
+  Result_of_paper_search_with_automated_search_confidence:
     type: object
     properties:
       results:
         type: array
         items:
-          $ref: '#/definitions/Paper_data_with_confidence'
+          $ref: '#/definitions/Paper_data_with_automated_search_confidence'
+      totalResults:
+        type: integer
+
+
+
+
+  Paper_data_with_screened_result:
+    type: object
+    properties:
+      authors:
+        type: string
+        example: >-
+          Bygholm, Hansen
+      title:
+        type: string
+        example: x relations to y
+      year:
+        type: string
+        example: "2017"
+        format: date
+        pattern: "YYYY"
+      date:
+        type: string
+        example: "2017-10-01"
+        format: date
+        pattern: "YYYY-MM-DD"
+      source_title:
+        type: string
+        example: Educations in y
+      link:
+        type: string
+        example: "https://scopus.com/bla/inward?uri=2412414141"
+      abstract:
+        type: string
+        example: >-
+          Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nunc dolor
+          magna, ultricies eu mauris at, vehicula elementum felis. Nunc
+          vulputate egestas turpis in venenatis. Donec felis ligula, iaculis at
+          lacus at, venenatis placerat ligula. Integer orci libero, tincidunt id
+          lobortis in, varius a ipsum. Vivamus placerat eros in magna laoreet
+          eleifend[..]
+      document_type:
+        type: string
+        example: article
+      source:
+        type: string
+        example: scopus
+      eid:
+        type: string
+        example: >-
+          2-s2.0-45252342358235
+      abstract_structured:
+        type: string
+        example: "0"
+      filter_oa_include:
+        type: string
+        example: "1"
+      filter_study_include:
+        type: string
+        example: "0"
+      notes:
+        type: string
+        example: "note"
+      manual:
+        type: string
+        example: "0"
+      doi:
+        type: string
+        example: "10.1000/182"
+      metadata:
+        type: object
+        properties:
+          screening:
+            type: object
+            properties:
+              result:
+                type: string
+                example: "1 or 0"
+              source:
+                type: string
+                example: "automated screening"
+
+
+
+
+
+  Result_of_paper_search_with_screened_result:
+    type: object
+    properties:
+      results:
+        type: array
+        items:
+          $ref: '#/definitions/Paper_data_with_screened_result'
       totalResults:
         type: integer
 
@@ -1579,6 +1756,25 @@ parameters:
     name: user_id
     description: the internal id of a user
     type: integer
+    required: true
+
+
+  AutomatedScreening_post_body:
+    in: body
+    name: body
+    schema:
+      type: object
+      properties:
+        project_id:
+          description: the internal id of a project
+          type: integer
+        threshold:
+          description: the threshold value on confidence score
+          type: number
+          example: 0.50
+      required:
+        - project_id
+        - threshold
     required: true
 
 

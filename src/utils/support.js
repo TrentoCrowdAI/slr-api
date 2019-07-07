@@ -92,6 +92,7 @@ function differenceOperationByField(arrayA, arrayB, fieldName) {
 
 
 
+
 /**
  * remove paper object from array by a array of eids
  * @param arrayA array papers
@@ -132,6 +133,24 @@ function removeElementFromArray(arraySource, elementToRemove) {
 }
 
 
+/**
+ * extract a specific field value from array of object and create a new array by this value.
+ * @param arraySource
+ * @param fieldName
+ * @return {Array}
+ */
+function arrayElementFieldToArray(arraySource, fieldName){
+
+    let outputArray = [];
+    for(let i=0; i<arraySource.length; i++){
+        outputArray.push(arraySource[i][fieldName]);
+    }
+
+    return outputArray;
+
+}
+
+
 
 module.exports = {
     arrayToString,
@@ -140,5 +159,5 @@ module.exports = {
     differenceOperationByField,
     removeElementFromArray,
     removeElementFromArrayByEids,
-
+    arrayElementFieldToArray,
 };

@@ -274,7 +274,7 @@ function setAndCheckValidMaxConfidenceValue(value) {
         }
 
     }
-    else{
+    else {
         value = 1;
     }
 
@@ -309,8 +309,39 @@ function setAndCheckValidMinConfidenceValue(value) {
         }
 
     }
-    else{
+    else {
         value = 0;
+    }
+
+
+    return value;
+
+}
+
+/**
+ * check the validation of threshold value (it should be a float number between 0 and 1)
+ * convert the value from string type to float number
+ */
+function setAndCheckValidThresholdValue(value) {
+
+
+    //if it is not empty
+    if (!value) {
+        throw errHandler.createBadRequestError('the threshold value is not defined!');
+    }
+
+    //convert it to number type
+    value = Number(value);
+
+    //if isn't a number
+    if (isNaN(value)) {
+        throw errHandler.createBadRequestError('the threshold value is not a valid number!');
+    }
+
+
+    //if isn't between 0 and 1
+    if (value > 1 || value < 0) {
+        throw errHandler.createBadRequestError('the threshold value should be between 0 and 1!');
     }
 
 
@@ -519,6 +550,7 @@ module.exports = {
     setAndCheckValidYearForScopus,
     setAndCheckValidMaxConfidenceValue,
     setAndCheckValidMinConfidenceValue,
+    setAndCheckValidThresholdValue,
     isValidKeyword,
     isValidArray,
     isValidArrayInteger,

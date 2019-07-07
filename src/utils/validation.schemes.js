@@ -174,10 +174,27 @@ const filter={
 }
 
 
+//scheme of manual screening
+const vote={
+    "type": "object",
+    "properties": {
+        "project_paper_id": {
+            "type": "string",
+            "isNotEmpty": true
+        },
+        "answer": {
+            "type": "string",
+            "isNotEmpty": true
+        }
+    },
+    "required": ["project_paper_id", "answer"]
+}
+
 module.exports = {
     paper,
     project,
     projectPaper,
     csvPaperFields,
     filter,
+    vote,
 };

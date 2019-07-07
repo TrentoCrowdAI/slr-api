@@ -8,7 +8,7 @@ const parserOptions = {
 };
 
 
-const papersDao = require(__base + 'dao/papers.dao');
+const searchesDao = require(__base + 'dao/searches.dao');
 const filtersDao = require(__base + 'dao/filters.dao');
 const usersDao = require(__base + 'dao/users.dao');
 const projectsDao = require(__base + 'dao/projects.dao');
@@ -38,7 +38,7 @@ async function insert(newPaperData) {
         throw errHandler.createBadRequestError('the new paper data is not valid!');
     }
     //call DAO layer
-    let res = await papersDao.insert(newPaperData);
+    let res = await searchesDao.insert(newPaperData);
 
     return res;
 }
@@ -62,7 +62,7 @@ async function update(paper_id, newPaperData) {
     }
 
     //call DAO layer
-    let numberRow = await papersDao.update(paper_id, newPaperData);
+    let numberRow = await searchesDao.update(paper_id, newPaperData);
     //error check
     if (numberRow === 0) {
         throw errHandler.createNotFoundError('Paper does not exist!');
@@ -82,7 +82,7 @@ async function deletes(paper_id) {
     paper_id = errorCheck.setAndCheckValidPaperId(paper_id);
 
     //call DAO layer
-    let numberRow = await papersDao.deletes(paper_id);
+    let numberRow = await searchesDao.deletes(paper_id);
 
     //error check
     if (numberRow === 0) {
@@ -102,7 +102,7 @@ async function selectById(paper_id) {
     paper_id = errorCheck.setAndCheckValidPaperId(paper_id);
 
     //call DAO layer
-    let res = await papersDao.selectById(paper_id);
+    let res = await searchesDao.selectById(paper_id);
     //error check
 
     if (!res) {
@@ -270,7 +270,7 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
 
 
     //return array of eids where in which the paper with same eid are already stored  in DB
-    let arrayEidExisting = await papersDao.checkExistenceByEids(arrayEid);
+    let arrayEidExisting = await searchesDao.checkExistenceByEids(arrayEid);
     //remove the eids already presented in DB
     let arrayPapersToInsert = support.removeElementFromArrayByEids(arrayPapers, arrayEidExisting);
 
@@ -278,7 +278,7 @@ async function scopusSearch(keyword, searchBy, year, orderBy, sort, start, count
     if (arrayPapersToInsert.length > 0) {
 
         //insert the papers in DB
-        let res = await papersDao.insertByList(arrayPapersToInsert);
+        let res = await searchesDao.insertByList(arrayPapersToInsert);
     }
 
 
@@ -431,7 +431,7 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
 
 
     //return array of eids where in which the paper with same eid are already stored  in DB
-    let arrayIdExisting = await papersDao.checkExistenceByEids(arrayId);
+    let arrayIdExisting = await searchesDao.checkExistenceByEids(arrayId);
     //remove the eids already presented in DB
     let arrayPapersToInsert = support.removeElementFromArrayByEids(arrayPapers, arrayIdExisting);
 
@@ -439,7 +439,7 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
     if (arrayPapersToInsert.length > 0) {
 
         //insert the papers in DB
-        let res = await papersDao.insertByList(arrayPapersToInsert);
+        let res = await searchesDao.insertByList(arrayPapersToInsert);
     }
 
 
@@ -519,7 +519,7 @@ async function similarSearch(paperData, start, count) {
     //###########################################
 
     //return array of eids where in which the paper with same eid are already stored  in DB
-    let arrayEidExisting = await papersDao.checkExistenceByEids(arrayEid);
+    let arrayEidExisting = await searchesDao.checkExistenceByEids(arrayEid);
     //remove the paper already present in DB
     let arrayPapersToInsert = support.removeElementFromArrayByEids(arrayPapers, arrayEidExisting);
 
@@ -527,7 +527,7 @@ async function similarSearch(paperData, start, count) {
     if (arrayPapersToInsert.length > 0) {
 
         //insert the papers in DB
-        let res = await papersDao.insertByList(arrayPapersToInsert);
+        let res = await searchesDao.insertByList(arrayPapersToInsert);
     }
 
 
@@ -640,7 +640,7 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
     //###########################################
 
     //return array of eids where in which the paper with same eid are already stored  in DB
-    let arrayEidExisting = await papersDao.checkExistenceByEids(arrayEid);
+    let arrayEidExisting = await searchesDao.checkExistenceByEids(arrayEid);
     //remove the paper already present in DB
     let arrayPapersToInsert = support.removeElementFromArrayByEids(arrayPapers, arrayEidExisting);
 
@@ -648,7 +648,7 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
     if (arrayPapersToInsert.length > 0) {
 
         //insert the papers in DB
-        let res = await papersDao.insertByList(arrayPapersToInsert);
+        let res = await searchesDao.insertByList(arrayPapersToInsert);
     }
 
 
@@ -688,7 +688,7 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
  }
 
  //call DAO layer
- let res = await papersDao.selectAll(number, offset, orderBy, sort);
+ let res = await searchesDao.selectAll(number, offset, orderBy, sort);
  //error check
  if (res.length === 0)
  {
@@ -740,7 +740,7 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
  throw errHandler.createBadRequestError(errorMessage);
  }
  //call DAO layer
- let res = await papersDao.selectBySingleKeyword(keyword, number, after, before, orderBy, sort);
+ let res = await searchesDao.selectBySingleKeyword(keyword, number, after, before, orderBy, sort);
  //error check
  if (res.results.length === 0)
  {

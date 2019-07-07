@@ -9,7 +9,7 @@ const support = require(__base + 'utils/support');
  */
 async function insert(newPaperData) {
     let res = await db.query(
-        'INSERT INTO public.' + db.TABLES.papers + '("date_created", "date_last_modified", "date_deleted", "data") VALUES($1,$2,$3,$4) RETURNING *',
+        'INSERT INTO public.' + db.TABLES.searches + '("date_created", "date_last_modified", "date_deleted", "data") VALUES($1,$2,$3,$4) RETURNING *',
         [new Date(), new Date(), null, newPaperData]
     );
     return res.rows[0];
@@ -33,7 +33,7 @@ async function insertByList(arrayPaperData) {
     }
 
     let res = await db.query(
-        'INSERT INTO public.' + db.TABLES.papers + '("date_created", "date_last_modified", "date_deleted", "data") VALUES ' + values + ' RETURNING *'
+        'INSERT INTO public.' + db.TABLES.searches + '("date_created", "date_last_modified", "date_deleted", "data") VALUES ' + values + ' RETURNING *'
         , [...arrayPaperData]
     );
     return res.rows;
@@ -47,7 +47,7 @@ async function insertByList(arrayPaperData) {
  */
 async function selectById(paper_id) {
     let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.papers + ' WHERE id = $1',
+        'SELECT * FROM public.' + db.TABLES.searches + ' WHERE id = $1',
         [paper_id]
     );
     return res.rows[0];
@@ -62,7 +62,7 @@ async function selectById(paper_id) {
  */
 async function update(paper_id, newPaperData) {
     let res = await db.query(
-        'UPDATE public.' + db.TABLES.papers + ' SET "date_last_modified" = $1,  "data" = $2 WHERE "id" = $3',
+        'UPDATE public.' + db.TABLES.searches + ' SET "date_last_modified" = $1,  "data" = $2 WHERE "id" = $3',
         [new Date(), newPaperData, paper_id]
     );
     return res.rowCount;
@@ -76,7 +76,7 @@ async function update(paper_id, newPaperData) {
  */
 async function deletes(paper_id) {
     let res = await db.query(
-        'DELETE FROM public.' + db.TABLES.papers + ' WHERE id = $1',
+        'DELETE FROM public.' + db.TABLES.searches + ' WHERE id = $1',
         [paper_id]
     );
     return res.rowCount;
@@ -99,7 +99,7 @@ async function checkExistenceByEids(arrayEid) {
     }
 
     let res = await db.query(
-        'SELECT data->>\'eid\' AS eid FROM public.' + db.TABLES.papers + ' WHERE data->>\'eid\' IN (' + joinString + ');'
+        'SELECT data->>\'eid\' AS eid FROM public.' + db.TABLES.searches + ' WHERE data->>\'eid\' IN (' + joinString + ');'
     );
 
     let array = [];
@@ -150,12 +150,12 @@ async function checkExistenceByEids(arrayEid) {
 
     //query to get papers
     let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.papers + 'WHERE ' + condition + ' ' + conditionOnYear + '  ORDER BY data->>$1 ' + sort + ' LIMIT $2 OFFSET $3',
+        'SELECT * FROM public.' + db.TABLES.searches + 'WHERE ' + condition + ' ' + conditionOnYear + '  ORDER BY data->>$1 ' + sort + ' LIMIT $2 OFFSET $3',
         [orderBy, count, start]
     );
     //query to get total number of result
     let resForTotalNumber = await db.query(
-        'SELECT COUNT(*) FROM public.' + db.TABLES.papers + 'WHERE ' + condition + ' ' + conditionOnYear + ' ');
+        'SELECT COUNT(*) FROM public.' + db.TABLES.searches + 'WHERE ' + condition + ' ' + conditionOnYear + ' ');
 
 
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
@@ -174,7 +174,7 @@ async function checkExistenceByEids(arrayEid) {
  *//*
  async function selectAll(number, offset, orderBy, sort) {
  let res = await db.query(
- 'SELECT * FROM public.' + db.TABLES.papers + ' ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $1 OFFSET $2',
+ 'SELECT * FROM public.' + db.TABLES.searches + ' ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $1 OFFSET $2',
  [number, offset]
  );
 

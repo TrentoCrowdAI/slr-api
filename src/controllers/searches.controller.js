@@ -1,8 +1,8 @@
-// this file exposes the logic implemented in papers.delegate.js
+// this file exposes the logic implemented in searches.delegate.js
 // as services using express
 
 const express = require('express');
-const papersDelegate = require(__base + 'delegates/papers.delegate');
+const searchesDelegate = require(__base + 'delegates/searches.delegate');
 
 const router = express.Router();
 
@@ -20,7 +20,7 @@ router.get('/search', async (req, res, next) => {
         let count = req.query.count;
         let scopus = req.query.scopus;
         let arXiv = req.query.arXiv;
-        let papers = await papersDelegate.search(query, searchBy, year, orderBy, sort, start, count, scopus, arXiv);
+        let papers = await searchesDelegate.search(query, searchBy, year, orderBy, sort, start, count, scopus, arXiv);
 
         res.status(200).json(papers);
     }
@@ -41,7 +41,7 @@ router.post('/search/similar', async (req, res, next) => {
         let start = req.body.start;
         let count = req.body.count;
 
-        let papers = await papersDelegate.similarSearch(similarPaper, start, count);
+        let papers = await searchesDelegate.similarSearch(similarPaper, start, count);
 
         res.status(200).json(papers);
     }
@@ -67,7 +67,7 @@ router.post('/search/automated', async (req, res, next) => {
        let start = req.body.start;
        let count = req.body.count;
 
-       let papers = await papersDelegate.automatedSearch(user_email, project_id, min_confidence, max_confidence,start, count);
+       let papers = await searchesDelegate.automatedSearch(user_email, project_id, min_confidence, max_confidence,start, count);
 
         res.status(200).json(papers);
     }
@@ -86,7 +86,7 @@ router.post('/search/automated', async (req, res, next) => {
  try
  {
  //for now it returns a list of 10 papers(sorted by id asc)
- let papers = await papersDelegate.selectAll(10, 0, "id", "ASC");
+ let papers = await searchesDelegate.selectAll(10, 0, "id", "ASC");
  res.status(200).json(papers);
  }
  catch (e)
@@ -103,7 +103,7 @@ router.post('/search/automated', async (req, res, next) => {
  {
  //the data of new paper to insert
  let newPaperData = req.body;
- let paper = await papersDelegate.insert(newPaperData);
+ let paper = await searchesDelegate.insert(newPaperData);
  res.status(201).json(paper);
  }
  catch (e)
@@ -120,7 +120,7 @@ router.post('/search/automated', async (req, res, next) => {
  try
  {
  let paper_id = req.params.id;
- let paper = await papersDelegate.selectById(paper_id);
+ let paper = await searchesDelegate.selectById(paper_id);
  res.status(200).json(paper);
  }
  catch (e)
@@ -139,7 +139,7 @@ router.post('/search/automated', async (req, res, next) => {
  //the new data of paper to update
  let newPaperData = req.body;
 
- await papersDelegate.update(paper_id,newPaperData);
+ await searchesDelegate.update(paper_id,newPaperData);
  res.sendStatus(204);
  }
  catch (e)
@@ -154,7 +154,7 @@ router.post('/search/automated', async (req, res, next) => {
  try
  {
  let paper_id = req.params.id;
- await papersDelegate.deletes(paper_id);
+ await searchesDelegate.deletes(paper_id);
  res.sendStatus(204);
  }
  catch (e)

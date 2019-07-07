@@ -9,7 +9,7 @@ const Boom = require('boom');
 //management error
 const errorsHelper = require('./utils/errors');
 //controller for papers
-const papersController = require('./controllers/papers.controller');
+const papersController = require('./controllers/searches.controller');
 //controller for projects
 const projectsController = require('./controllers/projects.controller');
 //controller for projectPapers
@@ -20,6 +20,8 @@ const filtersController = require('./controllers/filters.controller');
 const uploadFileController = require('./controllers/uploadFile.controller');
 //controller for users management
 const usersController = require('./controllers/users.controller');
+//controller for screening management
+const screeningController = require('./controllers/screening.controller');
 
 //controller for fake external service
 const externalServicesController = require('./controllers/external.services.controller');
@@ -66,6 +68,8 @@ app.use(projectsController);
 app.use(projectPapersController);
 app.use(filtersController);
 app.use(uploadFileController);
+app.use(screeningController);
+
 
 
 

@@ -14,11 +14,12 @@ module.exports = {
         url: process.env.DATABASE_URL
     },
     "db_tables":{
-        papers: 'papers',
+        searches: 'searches',
         projects: 'projects',
         projectPapers: 'project_papers',
         users: 'users',
         filters: 'filters',
+        votes: 'votes',
     },
 
     //local port to start the service
@@ -56,6 +57,11 @@ module.exports = {
         "max_number": 20
     },
 
+    "screening_source":{
+        "manual_screening": "manual screening",
+        "automated_screening":"automated screening"
+    },
+
 
 
     /*external service================================*/
@@ -63,10 +69,11 @@ module.exports = {
     "pdf_parse_server": "http://scienceparse.allenai.org/v1",
     //the similar paper service
     //here you can put the url of the remote(or local) service url that will search for similar papers
-    "search_similar_server" : process.env.BACKEND_URL+"external/similar",
+    "search_similar_server" : process.env.BACKEND_URL+"external/similarSearch",
 
     //automated search service
-    "automated_search_server": process.env.BACKEND_URL+"external/automated",
+    "automated_search_server": process.env.BACKEND_URL+"external/automatedSearch",
 
-
+    //automated evaluation service for auto screening
+    "automated_evaluation_server": process.env.BACKEND_URL+"external/automatedEvaluation",
 };

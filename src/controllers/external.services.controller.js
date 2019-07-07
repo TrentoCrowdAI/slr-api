@@ -1,4 +1,4 @@
-// this file exposes the logic implemented in papers.delegate.js
+// this file exposes the logic implemented in searches.delegate.js
 // as services using express
 
 const express = require('express');
@@ -9,7 +9,7 @@ const router = express.Router();
 
 
 /*fake service for searching of similar paper*/
-router.post('/external/similar', async (req, res, next) => {
+router.post('/external/similarSearch', async (req, res, next) => {
     try {
 
         //input
@@ -30,7 +30,7 @@ router.post('/external/similar', async (req, res, next) => {
 });
 
 /*fake service for automated searching*/
-router.post('/external/automated', async (req, res, next) => {
+router.post('/external/automatedSearch', async (req, res, next) => {
     try {
 
         //input
@@ -56,6 +56,23 @@ router.post('/external/automated', async (req, res, next) => {
     }
 });
 
+/*fake service for automated evaluation of confidence*/
+router.post('/external/automatedEvaluation', async (req, res, next) => {
+    try {
+
+        //input
+        let arrayPaper = req.body.arrayPaper;
+        let arrayFilter = req.body.arrayFilter;
+
+        let papers = await externalServicesDelegate.fakeAutomatedEvaluationService(arrayPaper, arrayFilter);
+
+        res.status(200).json(papers);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
 
 
 module.exports = router;

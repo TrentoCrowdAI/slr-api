@@ -6,7 +6,6 @@ const support = require(__base + 'utils/support');
 /**
  * insert a filter
  * @param {object} newFilterData
- * @param {int} project_id
  * @returns {object} filter created
  */
 
