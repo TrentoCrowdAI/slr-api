@@ -33,20 +33,18 @@ router.get('/screening/backlog', async (req, res, next) => {
     }
 });
 
-/*get projectPaper in the backlog*/
+/*get projectPaper with voting information object in the backlog*/
 router.get('/screening/manual', async (req, res, next) => {
 
     try {
 
         let user_email = res.locals.user_email;
         let project_id = req.query.project_id;
-
         let sort = req.query.sort;
         let start = req.query.start;
         let count = req.query.count;
-
         let orderBy ="date_created";
-
+        
         let projectPapers = await screeningDelegate.selectFromManualByProjectId(user_email, project_id, orderBy, sort, start, count);
 
         res.status(200).json(projectPapers);
@@ -57,6 +55,27 @@ router.get('/screening/manual', async (req, res, next) => {
         next(e);
     }
 });
+
+/*insert the vote*/
+router.post('/screening/manual', async (req, res, next) => {
+
+    try {
+
+        let user_email = res.locals.user_email;
+        let projectPaper_id = req.body.projectPaper_id;
+        let answer = req.body.answer
+        
+        let vote = await screeningDelegate.selectFromManualByProjectId(user_email, projectPaper_id, answer);
+
+        res.status(200).json(projectPapers);
+
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
 
 /*get projectPaper in the backlog*/
 router.get('/screening/screened', async (req, res, next) => {

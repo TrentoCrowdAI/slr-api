@@ -70,6 +70,39 @@ async function selectById(vote_id) {
     return res.rows[0];
 }
 
+
+/**
+ * select the votes by project_paper id
+ * @param {int} projectPaper_id
+ * @returns {array[]} the list of vote found
+ */
+
+async function selectByProjectPaperId(projectPaper_id) {
+    let res = await db.query(
+        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE data->>'project_paper_id' = $1",
+        [projectPaper_id]
+    );
+
+    return res.rows;
+}
+
+/**
+ * select the votes by project_paper id and user id
+  * @param {int} projectPaper_id
+ * @param {int} user_id
+ * @returns {object} vote found
+ */
+
+async function seletctByProjectPaperIdAndUserId(projectPaper_id, user_id) {
+    let res = await db.query(
+        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE data->>'project_paper_id' = $1 AND data->>'user_id' = $2 ",
+        [projectPaper_id, user_id]
+    );
+
+    return res.rows[0];
+}
+
+
 /**
  * select a vote list
  * @param {array[]} arrayFilterId
@@ -143,6 +176,8 @@ module.exports = {
     update,
     deletes,
     selectById,
+    selectByProjectPaperId£¬
+    seletctByProjectPaperIdAndUserId
     //selectByArrayId,
    // selectByProject,
    // selectAllByProject,
