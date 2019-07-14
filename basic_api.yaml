@@ -1079,10 +1079,15 @@ definitions:
                 type: array
                 items:
                   type: object
-                example:
-                  - 1: "0.58"
-                  - 2: "0.68"
-                  - 3: "0.46"
+                  properties: 
+                    id:
+                      type: integer
+                      example: 4
+                      description: the id of the filter
+                    filterValue:
+                      type: number
+                      example: 0.78
+                      description: the confidence for the filter
 
 
 
