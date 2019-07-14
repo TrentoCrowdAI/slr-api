@@ -83,8 +83,8 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
         throw errHandler.createBadRequestError('the title is not defined!');
     }
 
-    //check  validation of array
-    errorCheck.isValidArray(arrayFilter);
+    //check  validation of array, the second parameter is a flag for allowing empty arrays
+    errorCheck.isValidArray(arrayFilter, true);
 
     //check and set the confidence value
     min_confidence = errorCheck.setAndCheckValidMinConfidenceValue(min_confidence);
@@ -189,12 +189,10 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
             //calculate the random value for each filter
             randomValue = Math.floor(Math.random() * range * 100 + min_confidence * 100) / 100;
             sum += randomValue;
-            //create the tuple
-            filter = {};
-            //set the tuple data
-            filter[arrayFilter[j].id] = randomValue;
-            //push the tuple into the array
-            response.results[i].metadata.automatedSearch.filters.push(filter);
+            //push filter id & value into array of filter
+            response.results[i].metadata.automatedSearch.filters.push(
+                {"id" : arrayFilter[j].id, "filterValue" : randomValue}
+            );
         }
 
         //the average value

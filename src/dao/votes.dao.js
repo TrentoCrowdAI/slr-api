@@ -176,7 +176,7 @@ module.exports = {
     update,
     deletes,
     selectById,
-    selectByProjectPaperId£¬
+    selectByProjectPaperId,
     seletctByProjectPaperIdAndUserId
     //selectByArrayId,
    // selectByProject,

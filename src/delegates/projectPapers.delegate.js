@@ -29,7 +29,7 @@ async function insertFromPaper(user_email, arrayEid, project_id) {
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
     //check the validation of array
-    errorCheck.isValidArray(arrayEid);
+    errorCheck.isValidArray(arrayEid, false);
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
