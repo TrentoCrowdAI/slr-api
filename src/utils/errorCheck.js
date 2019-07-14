@@ -370,15 +370,16 @@ function isValidKeyword(keyword) {
 /**
  * check the validation of array
  * @param {Array[]}array
+ * @param {boolean} isEmptyValid flag for allowing empty arrays
  */
-function isValidArray(array) {
+function isValidArray(array, isEmptyValid = false) {
 
     //if it isn't a array
     if (Array.isArray(array) === false) {
         throw errHandler.createBadRequestError('the parameter isn\'t a array!');
     }
     //if it is empty
-    if (array.length === 0) {
+    if (array.length === 0 && !isEmptyValid) {
         throw errHandler.createBadRequestError('the array is empty!');
     }
 
