@@ -149,10 +149,7 @@ const project = {
 const filter={
     "type": "object",
     "properties": {
-        "project_id": {
-            "type": "string",
-            "isNotEmpty": true
-        },
+
         "name": {
             "type": "string",
             "isNotEmpty": true
@@ -170,7 +167,7 @@ const filter={
 
         }
     },
-    "required": ["project_id", "name", "predicate",  "inclusion_description", "exclusion_description"]
+    "required": [ "name", "predicate",  "inclusion_description", "exclusion_description"]
 }
 
 

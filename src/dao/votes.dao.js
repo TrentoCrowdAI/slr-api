@@ -5,8 +5,8 @@ const support = require(__base + 'utils/support');
 
 /**
  * insert a vote
- * @param {object} newVoteData
- * @returns {object} vote created
+ * @param {Object} newVoteData
+ * @returns {Object} vote created
  */
 
 async function insert(newVoteData) {
@@ -24,7 +24,7 @@ async function insert(newVoteData) {
 /**
  *  * update a vote
  * @param {int} vote_id
- * @param {object} newVoteData
+ * @param {Object} newVoteData
  * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function update(vote_id, newVoteData) {
@@ -58,7 +58,7 @@ async function deletes(vote_id) {
 /**
  * select a vote
  * @param {int} vote_id
- * @returns {object} vote found
+ * @returns {Object} vote found
  */
 
 async function selectById(vote_id) {
@@ -90,7 +90,7 @@ async function selectByProjectPaperId(projectPaper_id) {
  * select the votes by project_paper id and user id
   * @param {int} projectPaper_id
  * @param {int} user_id
- * @returns {object} vote found
+ * @returns {Object} vote found
  */
 
 async function seletctByProjectPaperIdAndUserId(projectPaper_id, user_id) {

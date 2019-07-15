@@ -101,7 +101,7 @@ const config = require(__base + 'config');
 /**
  * get user data by token Id
  * @param {string} tokenId
- * @returns {object} user found
+ * @returns {Object} user found
  */
 
 /*

@@ -4,8 +4,8 @@ const support = require(__base + 'utils/support');
 
 /**
  * insert a paper
- * @param {object} newPaperData
- * @returns {object} paper created
+ * @param {Object} newPaperData
+ * @returns {Object} paper created
  */
 async function insert(newPaperData) {
     let res = await db.query(
@@ -18,7 +18,7 @@ async function insert(newPaperData) {
 /**
  * insert a list of paper
  * @param {array[]} arrayPaperData a new list of newPaperData
- * @returns {object} paper created
+ * @returns {Object} paper created
  */
 async function insertByList(arrayPaperData) {
 
@@ -43,7 +43,7 @@ async function insertByList(arrayPaperData) {
 /**
  * select a paper
  * @param {int} paper_id
- * @returns {object} paper found
+ * @returns {Object} paper found
  */
 async function selectById(paper_id) {
     let res = await db.query(
@@ -57,7 +57,7 @@ async function selectById(paper_id) {
 /**
  *  * update a paper
  * @param {int}  paper_id
- * @param {object} newPaperData
+ * @param {Object} newPaperData
  * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function update(paper_id, newPaperData) {

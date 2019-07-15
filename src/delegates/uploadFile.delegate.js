@@ -31,7 +31,7 @@ const usersDao = require(__base + 'dao/users.dao');
 /**
  * send the pdf file to remote service and return the result of parse
  * @param {file}file
- * @return {object} result of parse
+ * @return {Object} result of parse
  */
 async function parsePdf(file) {
 
@@ -70,7 +70,7 @@ async function parsePdf(file) {
 
 /**
  * parse the csv file
- * @param {object} fields
+ * @param {Object} fields
  * @param {file}file
  * @return {array[]} list of projectPaper created
  */

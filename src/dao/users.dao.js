@@ -3,8 +3,8 @@ const db = require(__base + "db/index");
 
 /**
  * insert a user
- * @param {object} newUserData
- * @returns {object} user created
+ * @param {Object} newUserData
+ * @returns {Object} user created
  */
 async function insert(newUserData) {
     let res = await db.query(
@@ -18,7 +18,7 @@ async function insert(newUserData) {
 /**
  *  * update a user by Google Id
  * @param {int}  project_id
- * @param {object} newProjectData
+ * @param {Object} newProjectData
  * @returns {int} number of row affected , 1 if ok, 0 if failed
  *//*
 async function updateByGoogleId(google_id, newUserData) {
@@ -48,7 +48,7 @@ async function logoutByTokenId(tokenId) {
 /**
  * get user by Google Id
  * @param {string} google_id
- * @returns {object} user found
+ * @returns {Object} user found
  */
 async function getUserByGoogleId(google_id) {
     let res = await db.query(
@@ -62,7 +62,7 @@ async function getUserByGoogleId(google_id) {
 /**
  * get user by email
  * @param {string} user_email
- * @returns {object} user found
+ * @returns {Object} user found
  */
 async function getUserByEmail(email) {
     let res = await db.query(
@@ -119,7 +119,7 @@ async function checkUserByTokenId(token_id) {
 /**
  * get user by tokenId
  * @param {int} token_id
- * @returns {object} user found
+ * @returns {Object} user found
  *//*
 async function getUserByTokenId(token_id) {
     let res = await db.query(

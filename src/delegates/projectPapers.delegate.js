@@ -68,8 +68,8 @@ async function insertFromPaper(user_email, arrayEid, project_id) {
  * insert a custom paper into a project
  * @param {string} user_email of user
  * @param {string} project_id
- * @param {object} newPaper
- * @returns {object} projectPaper created
+ * @param {Object} newPaper
+ * @returns {Object} projectPaper created
  */
 async function insertCustomPaper(user_email, project_id, newPaper) {
 
@@ -105,7 +105,7 @@ async function insertCustomPaper(user_email, project_id, newPaper) {
  *  * update a projectPaper
  * @param {string} user_email of user
  * @param {string} projectPaper_id
- * @param {object} newProjectPaperData
+ * @param {Object} newProjectPaperData
  */
 async function update(user_email, projectPaper_id, newProjectPaperData) {
 
@@ -180,7 +180,7 @@ async function deletes(user_email, projectPaper_id) {
 /**
  * select a projectPaper
  * @param {string} projectPaper_id
- * @returns {object} projectPaper found
+ * @returns {Object} projectPaper found
  *//*
  async function selectById(projectPaper_id)  {
 

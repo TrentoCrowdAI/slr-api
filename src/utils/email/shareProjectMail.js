@@ -6,8 +6,8 @@ const config = require(__base + 'config');
 /**
  * function to send email to the recipient to notify him the sharing of project
  * @param recipient_email
- * @param {object} sender user object
- * @param {object} project object
+ * @param {Object} sender user object
+ * @param {Object} project object
  */
 async function shareProjectMail(recipient_email ,sender , project) {
 

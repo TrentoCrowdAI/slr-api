@@ -3,8 +3,8 @@ const db = require(__base + "db/index");
 
 /**
  * insert a project
- * @param {object} newProjectData
- * @returns {object} project created
+ * @param {Object} newProjectData
+ * @returns {Object} project created
  */
 async function insert(newProjectData) {
     let res = await db.query(
@@ -18,7 +18,7 @@ async function insert(newProjectData) {
 /**
  *  * update a project
  * @param {int}  project_id
- * @param {object} newProjectData
+ * @param {Object} newProjectData
  * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function update(project_id, newProjectData) {
@@ -62,7 +62,7 @@ async function deletes(project_id) {
 /**
  * select a project
  * @param {int} project_id
- * @returns {object} project found
+ * @returns {Object} project found
  */
 async function selectById(project_id) {
     let res = await db.query(
@@ -77,7 +77,7 @@ async function selectById(project_id) {
  * select a project by id and userId, both must be integers!
  * @param {int} project_id
  * @param {int} user_id
- * @returns {object} project found
+ * @returns {Object} project found
  */
 async function selectByIdAndUserId(project_id, user_id) {
     let res = await db.query(

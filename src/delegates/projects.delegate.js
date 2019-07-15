@@ -21,8 +21,8 @@ const shareProjectMail = require(__base + 'utils/email/shareProjectMail');
 /**
  * insert a project
  * @param {string} user_email of user
- * @param {object} newProjectData
- * @returns {object} project created
+ * @param {Object} newProjectData
+ * @returns {Object} project created
  */
 async function insert(user_email, newProjectData) {
 
@@ -53,7 +53,7 @@ async function insert(user_email, newProjectData) {
  *  * update project name and description
  * @param {string} user_email of user
  * @param {string}  project_id
- * @param {object} newProjectData where cotains the new name and description
+ * @param {Object} newProjectData where cotains the new name and description
  */
 async function updateNameAndDescription(user_email, project_id, newProjectData) {
 
@@ -117,7 +117,7 @@ async function deletes(user_email, project_id) {
  * select a project
  * @param {string} user_email of user
  * @param {string} project_id
- * @returns {object} project found
+ * @returns {Object} project found
  */
 async function selectById(user_email, project_id) {
 
@@ -235,7 +235,7 @@ async function selectAllByUserId(user_email, orderBy, sort, start, count) {
  * @param {string} user_email of user
  * @param {string} project_id
  * @param {string} collaborator_email
- * @returns {object} project found
+ * @returns {Object} project found
  */
 async function shareProject(user_email, project_id, collaborator_email) {
 
@@ -285,7 +285,7 @@ async function shareProject(user_email, project_id, collaborator_email) {
  * @param {string} user_email of user
  * @param {string} project_id
  * @param {string} collaborator_id
- * @returns {object} project found
+ * @returns {Object} project found
  */
 async function deleteShareProject(user_email, project_id, collaborator_id) {
 
@@ -323,7 +323,7 @@ async function deleteShareProject(user_email, project_id, collaborator_id) {
  * @param {string} user_email of user
  * @param {string} project_id
  * @param {string} screeners_id
- * @returns {object} project found
+ * @returns {Object} project found
  */
 async function addScreeners(user_email, project_id, screeners_id) {
 
@@ -378,7 +378,7 @@ async function addScreeners(user_email, project_id, screeners_id) {
  * @param {string} user_email of user
  * @param {string} project_id
  * @param {string} screeners_id
- * @returns {object} project found
+ * @returns {Object} project found
  */
 async function deleteScreeners(user_email, project_id, screeners_id) {
 

@@ -38,8 +38,9 @@ router.post('/filters', async (req, res, next) => {
     try {
 
         let user_email = res.locals.user_email;
-        let newFilterData = req.body;
-        let filter = await filtersDelegate.insert(user_email, newFilterData);
+        let newFilterData = req.body.filter;
+        let project_id = req.body.project_id;
+        let filter = await filtersDelegate.insert(user_email, newFilterData, project_id);
 
         res.status(201).json(filter);
     }

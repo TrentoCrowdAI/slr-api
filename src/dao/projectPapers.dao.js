@@ -1,13 +1,14 @@
 const db = require(__base + "db/index");
 //supply the auxiliary function
 const support = require(__base + 'utils/support');
-
+//the config file
+const config = require(__base + 'config');
 
 /**
  * insert a projectPaper
- * @param {object} newProjectPaperData
+ * @param {Object} newProjectPaperData
  * @param {int} project_id
- * @returns {object} projectPaper created
+ * @returns {Object} projectPaper created
  */
 
 async function insert(newProjectPaperData, project_id) {
@@ -30,7 +31,7 @@ async function insertByList(arrayProjectPaperData, project_id) {
     let values = "";
     //create sql values by array of papers
     for (let i = 0; i < arrayProjectPaperData.length; i++) {
-        values += " ( now() , now() , " + null + " , $" + (i + 1) + " , " +project_id+" ) ";
+        values += " ( now() , now() , " + null + " , $" + (i + 1) + " , " + project_id + " ) ";
         //if isn't last cycle, add a comma ad end of string
         if (i < arrayProjectPaperData.length - 1) {
             values += ",";
@@ -74,7 +75,7 @@ async function insertFromPaper(arrayEid, project_id) {
 /**
  *  * update a projectPaper
  * @param {int} projectPaper_id
- * @param {object} newProjectPaperData
+ * @param {Object} newProjectPaperData
  * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function update(projectPaper_id, newProjectPaperData) {
@@ -107,7 +108,7 @@ async function deletes(projectPaper_id) {
 /**
  * select a projectPaper
  * @param {int} projectPaper_id
- * @returns {object} projectPaper found
+ * @returns {Object} projectPaper found
  */
 
 async function selectById(projectPaper_id) {
@@ -152,24 +153,25 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
 
 
 /**
- * select all projectPapers that haven't the automated screening value, screening result and vote
+ * select all projectPapers that haven't the automated screening value and screened field
  * @param {int} project_id
  * @returns {array[]} array of projectPapers
  */
-async function selectAllNotEvaluatedNotScreenedNotVotedByProject(project_id) {
+async function selectAllNotEvaluatedAndScreened(project_id) {
 
 
     //query to get projectPapers
     let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1 AND ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'automatedScreening') AND NOT(P.data->'metadata' ? 'screening')) )  AND P.id NOT IN( SELECT CAST(V.data->>'project_paper_id' AS INTEGER) FROM public."+db.TABLES.votes+"  V )",
+        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1 AND ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'automatedScreening') AND NOT(P.data->'metadata' ? 'screened')) )  ",
         [project_id]
     );
 
     return res.rows;
 }
 
+
 /**
- * select the projectPapers that haven't the screening result and vote
+ * select the projectPapers that isn't screened
  * @param {int} project_id
  * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
@@ -178,7 +180,7 @@ async function selectAllNotEvaluatedNotScreenedNotVotedByProject(project_id) {
  * @returns {Object} array of projectPapers and total number of result
  * @returns {array[]} array of projectPapers
  */
-async function selectNotScreenedNotVotedByProject(project_id, orderBy, sort, start, count) {
+async function selectNotScreenedByProject(project_id, orderBy, sort, start, count) {
 
     //if the orderBy is based on the propriety of json data
     if (orderBy !== "date_created") {
@@ -187,13 +189,13 @@ async function selectNotScreenedNotVotedByProject(project_id, orderBy, sort, sta
 
     //query to get projectPapers
     let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screening')) ) AND P.id NOT IN( SELECT CAST(V.data->>'project_paper_id' AS INTEGER) FROM public."+db.TABLES.votes+"  V )  ORDER BY  " + orderBy + "   " + sort + " LIMIT $2 OFFSET $3",
+        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screened')) )   ORDER BY  " + orderBy + "   " + sort + " LIMIT $2 OFFSET $3",
         [project_id, count, start]
     );
 
     //query to get total number of result
     let resForTotalNumber = await db.query(
-        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screening')) ) AND P.id NOT IN( SELECT CAST(V.data->>'project_paper_id' AS INTEGER) FROM public."+db.TABLES.votes+"  V )  ",
+        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screened')) )   ",
         [project_id]
     );
 
@@ -202,7 +204,7 @@ async function selectNotScreenedNotVotedByProject(project_id, orderBy, sort, sta
 }
 
 /**
- * select all projectPapers that have the vote but haven't the screening result
+ * select all projectPapers that have  screening_status = manual
  * @param {int} project_id
  * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
@@ -211,7 +213,7 @@ async function selectNotScreenedNotVotedByProject(project_id, orderBy, sort, sta
  * @returns {Object} array of projectPapers and total number of result
  * @returns {array[]} array of projectPapers
  */
-async function selectVotedNotScreenedByProject(project_id, orderBy, sort, start, count) {
+async function selectManualByProject(project_id, orderBy, sort, start, count) {
 
     //if the orderBy is based on the propriety of json data
     if (orderBy !== "date_created") {
@@ -220,14 +222,14 @@ async function selectVotedNotScreenedByProject(project_id, orderBy, sort, start,
 
     //query to get projectPapers
     let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screening')) ) AND P.id IN( SELECT CAST(V.data->>'project_paper_id' AS INTEGER) FROM public."+db.TABLES.votes+"  V ) ORDER BY  " + orderBy + "   " + sort + " LIMIT $2 OFFSET $3",
-        [project_id, count, start]
+        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  P.data ? 'metadata'  AND P.data->'metadata' ? 'screened' AND  P.data.metadata.screened = $2  ORDER BY  " + orderBy + "   " + sort + " LIMIT $3 OFFSET $4",
+        [project_id, config.screening_status.manual, count, start]
     );
 
     //query to get total number of result
     let resForTotalNumber = await db.query(
-        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screening')) ) AND P.id IN( SELECT CAST(V.data->>'project_paper_id' AS INTEGER) FROM public."+db.TABLES.votes+"  V )  ",
-        [project_id]
+        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  P.data ? 'metadata'  AND P.data->'metadata' ? 'screened' AND  P.data.metadata.screened = $2  ",
+        [project_id, config.screening_status.manual]
     );
 
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
@@ -253,19 +255,18 @@ async function selectScreenedByProject(project_id, orderBy, sort, start, count) 
 
     //query to get projectPapers
     let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND P.data ? 'metadata' AND P.data->'metadata' ? 'screening' ORDER BY  " + orderBy + "   " + sort + " LIMIT $2 OFFSET $3",
+        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND P.data ? 'metadata' AND P.data->'metadata' ? 'screened' ORDER BY  " + orderBy + "   " + sort + " LIMIT $2 OFFSET $3",
         [project_id, count, start]
     );
 
     //query to get total number of result
     let resForTotalNumber = await db.query(
-        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND P.data ? 'metadata' AND P.data->'metadata' ? 'screening'  ",
+        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND P.data ? 'metadata' AND P.data->'metadata' ? 'screened'  ",
         [project_id]
     );
 
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 }
-
 
 
 /**
@@ -394,9 +395,9 @@ module.exports = {
     deletes,
     selectById,
     selectByProject,
-    selectAllNotEvaluatedNotScreenedNotVotedByProject,
-    selectNotScreenedNotVotedByProject,
-    selectVotedNotScreenedByProject,
+    selectAllNotEvaluatedAndScreened,
+    selectNotScreenedByProject,
+    selectManualByProject,
     selectScreenedByProject,
 
 

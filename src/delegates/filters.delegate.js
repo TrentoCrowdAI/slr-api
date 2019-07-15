@@ -18,15 +18,14 @@ const validationSchemes = require(__base + 'utils/validation.schemes');
 /**
  * insert a filter into a project
  * @param {string} user_email of user
- * @param {object} newFilterData
- * @returns {object} filter created
+ * @param {Object} newFilterData
+ * @returns {Object} filter created
  */
-async function insert(user_email, newFilterData) {
+async function insert(user_email, newFilterData, project_id) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
     //check validation of project id and transform the value in integer
-    let project_id = newFilterData.project_id;
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
     //check input format
@@ -46,10 +45,10 @@ async function insert(user_email, newFilterData) {
     errorCheck.isValidProjectOwner(project);
 
     //call DAO layer
-    let res = await filtersDao.insert(newFilterData);
+    let res = await filtersDao.insert(newFilterData, project_id);
 
     //update the last modified date
-    let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
+    await projectsDao.updateLastModifiedDate(project_id);
 
     return res;
 }
@@ -58,7 +57,7 @@ async function insert(user_email, newFilterData) {
  *  * update a filter, the project_id will not be change
  * @param {string} user_email of user
  * @param {string} filter_id
- * @param {object} newFilterData
+ * @param {Object} newFilterData
  */
 async function update(user_email, filter_id, newFilterData) {
 
@@ -82,17 +81,16 @@ async function update(user_email, filter_id, newFilterData) {
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
-    let project = await projectsDao.selectByIdAndUserId(filter.data.project_id, user.id);
+    let project = await projectsDao.selectByIdAndUserId(filter.project_id, user.id);
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
     //update the last modified date
-    let updateProjectDate = await projectsDao.updateLastModifiedDate(filter.data.project_id);
+    await projectsDao.updateLastModifiedDate(filter.project_id);
 
     //call DAO layer
     //avoid change of project_id by update;
-    newFilterData.project_id = filter.data.project_id;
-    let numberRow = await filtersDao.update(filter_id, newFilterData);
+    await filtersDao.update(filter_id, newFilterData);
 
 
 }
@@ -118,12 +116,12 @@ async function deletes(user_email, filter_id) {
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
-    let project = await projectsDao.selectByIdAndUserId(filter.data.project_id, user.id);
+    let project = await projectsDao.selectByIdAndUserId(filter.project_id, user.id);
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
     //update the last modified date
-    let updateProjectDate = await projectsDao.updateLastModifiedDate(filter.data.project_id);
+    let updateProjectDate = await projectsDao.updateLastModifiedDate(filter.project_id);
 
     //call DAO layer
     let numberRow = await filtersDao.deletes(filter_id);
@@ -136,7 +134,7 @@ async function deletes(user_email, filter_id) {
  * select a filter
  * @param {string} user_email of user
  * @param {string} filter_id
- * @returns {object} filter found
+ * @returns {Object} filter found
  */
 async function selectById(user_email, filter_id) {
 
@@ -153,7 +151,7 @@ async function selectById(user_email, filter_id) {
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
-    let project = await projectsDao.selectByIdAndUserId(filter.data.project_id, user.id);
+    let project = await projectsDao.selectByIdAndUserId(filter.project_id, user.id);
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 

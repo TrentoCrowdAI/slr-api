@@ -27,8 +27,8 @@ const validationSchemes = require(__base + 'utils/validation.schemes');
 
 /**
  * insert a paper
- * @param {object} newPaperData
- * @returns {object} paper created
+ * @param {Object} newPaperData
+ * @returns {Object} paper created
  */
 async function insert(newPaperData) {
     //check input format
@@ -47,7 +47,7 @@ async function insert(newPaperData) {
 /**
  *  * update a paper
  * @param {string}  paper_id
- * @param {object} newPaperData
+ * @param {Object} newPaperData
  */
 async function update(paper_id, newPaperData) {
 
@@ -94,7 +94,7 @@ async function deletes(paper_id) {
 /**
  * select a paper
  * @param {string} paper_id
- * @returns {object} paper found
+ * @returns {Object} paper found
  */
 async function selectById(paper_id) {
 
@@ -590,7 +590,7 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
     let queryData = {};
     queryData.title = project.data.name;
     queryData.description = project.data.description;
-    queryData.arrayFilter = filters.results;
+    queryData.arrayFilter = filters;
     //confidence value
     queryData.min_confidence = min_confidence;
     queryData.max_confidence = max_confidence;

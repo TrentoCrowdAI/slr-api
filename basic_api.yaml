@@ -24,7 +24,7 @@ tags:
     description: Manage the filters
 
 
-    
+
 paths:
 
   # normal search ==============================================================
@@ -39,7 +39,7 @@ paths:
         - Papers
       security:
         - basicAuth: []
-        
+
       parameters:
         - $ref: '#/parameters/Query'
         - $ref: '#/parameters/SearchBy'
@@ -134,7 +134,7 @@ paths:
         - Projects
       security:
         - basicAuth: []
-        
+
       parameters:
 
         - $ref: '#/parameters/OrderBy'
@@ -163,7 +163,7 @@ paths:
         - Projects
       security:
         - basicAuth: []
-        
+
       parameters:
         - $ref: '#/parameters/Project_post_put_body'
       responses:
@@ -188,7 +188,7 @@ paths:
         - Projects
       security:
         - basicAuth: []
-        
+
       parameters:
         - $ref: '#/parameters/Project_id_in_path'
       responses:
@@ -212,7 +212,7 @@ paths:
         - Projects
       security:
         - basicAuth: []
-        
+
       parameters:
         - $ref: '#/parameters/Project_id_in_path'
         - $ref: '#/parameters/Project_post_put_body'
@@ -234,7 +234,7 @@ paths:
         - Projects
       security:
         - basicAuth: []
-        
+
       parameters:
         - $ref: '#/parameters/Project_id_in_path'
       responses:
@@ -416,7 +416,7 @@ paths:
         - Projects Papers
       security:
         - basicAuth: []
-        
+
       parameters:
         - $ref: '#/parameters/Project_id'
         - $ref: '#/parameters/OrderBy'
@@ -445,7 +445,7 @@ paths:
         - Projects Papers
       security:
         - basicAuth: []
-        
+
       parameters:
         - $ref: '#/parameters/Project_paper_post_body'
       responses:
@@ -471,7 +471,7 @@ paths:
         - Projects Papers
       security:
         - basicAuth: []
-        
+
       parameters:
         - $ref: '#/parameters/Project_paper_id_in_path'
 
@@ -496,7 +496,7 @@ paths:
         - Projects Papers
       security:
         - basicAuth: []
-        
+
       parameters:
         - $ref: '#/parameters/Project_paper_id_in_path'
         - $ref: '#/parameters/Paper_post_put_body'
@@ -518,7 +518,7 @@ paths:
         - Projects Papers
       security:
         - basicAuth: []
-        
+
       parameters:
         - $ref: '#/parameters/Project_paper_id_in_path'
       responses:
@@ -540,7 +540,7 @@ paths:
         - Projects Papers
       security:
         - basicAuth: []
-        
+
       parameters:
         - $ref: '#/parameters/Project_paper_custom_post_body'
       responses:
@@ -689,7 +689,7 @@ paths:
         - basicAuth: []
 
       parameters:
-        - $ref: '#/parameters/Filter_post_put_body'
+        - $ref: '#/parameters/Filter_post_body'
       responses:
         '201':
           description: Created
@@ -741,7 +741,7 @@ paths:
 
       parameters:
         - $ref: '#/parameters/Filter_id_in_path'
-        - $ref: '#/parameters/Filter_post_put_body'
+        - $ref: '#/parameters/Filter_put_body'
       responses:
         '204':
           $ref: '#/responses/204_no_content'
@@ -790,10 +790,10 @@ paths:
         - basicAuth: []
       consumes:
         - multipart/form-data
-        
+
       parameters:
         - $ref: '#/parameters/Pdf_post_body'
-   
+
 
       responses:
         '200':
@@ -1079,7 +1079,7 @@ definitions:
                 type: array
                 items:
                   type: object
-                  properties: 
+                  properties:
                     id:
                       type: integer
                       example: 4
@@ -1342,7 +1342,7 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Project'
-  
+
   Result_projects:
     type: object
     properties:
@@ -1368,7 +1368,7 @@ definitions:
       authors:
         type: string
         example: mario rosi, luigi mr, aa bbb
-        
+
   User_data:
     type: object
     properties:
@@ -1406,9 +1406,9 @@ definitions:
   Filter_data:
     type: object
     properties:
-      project_id:
-        type: integer
-        example: "1"
+      name:
+        type: string
+        example: "filter a"
       predicate:
         type: string
       inclusion_description:
@@ -1630,7 +1630,7 @@ parameters:
         - notes
         - manual
         - doi
-        
+
   Pdf_post_body:
     in: formData
     name: file
@@ -1728,7 +1728,7 @@ parameters:
     type: integer
     required: true
 
-  Filter_post_put_body:
+  Filter_put_body:
     in: body
     name: body
     description: filter data to be stored
@@ -1736,10 +1736,42 @@ parameters:
     schema:
       $ref: "#/definitions/Filter_data"
       required:
-        - project_id
+        - name
         - predicate
         - inclusion_description
         - exclusion_description
+
+  Filter_post_body:
+    in: body
+    name: body
+    description: filter data and project id
+    required: true
+    schema:
+      type: object
+      properties:
+        filter:
+          type: object
+          properties:
+            name:
+              type: string
+              example: "filter a"
+            predicate:
+              type: string
+            inclusion_description:
+              type: string
+            exclusion_description:
+              type: string
+          required:
+            - name
+            - predicate
+            - inclusion_description
+            - exclusion_description
+        project_id:
+          type: integer
+          example: 1
+      required:
+        - filter
+        - project_id
 
 
   User_id_post_body:
@@ -1784,7 +1816,7 @@ parameters:
 
 
 
-# are not used yet =============================
+  # are not used yet =============================
 
   Type_for_paper:
     in: query
@@ -1805,7 +1837,7 @@ parameters:
       - computer science
       - physics
     description: the subject of the papers to search
-    
+
 #====================
 
 securityDefinitions:

@@ -317,6 +317,7 @@ function fakeAutomatedEvaluationService(arrayPaper, arrayFilter){
     //declare the variable for following cycle
     let randomValue;
     let sum;
+    let filter;
     let averageValue;
 
     let max_confidence = 1.00;
@@ -341,10 +342,8 @@ function fakeAutomatedEvaluationService(arrayPaper, arrayFilter){
             randomValue = Math.floor(Math.random() * range * 100 + min_confidence * 100) / 100;
             //add up the value
             sum += randomValue;
-            //create filter object where will storage the tuple of filter id - value
-            filter = {};
-            //create the tuple
-            filter[arrayFilter[j].id] = randomValue;
+            //create filter object where will storage the filter id and value
+            filter = {"id" : arrayFilter[j].id, "filterValue" : randomValue};
             //push the tuple in the
             response[arrayPaper[i].id].filters.push(filter);
         }

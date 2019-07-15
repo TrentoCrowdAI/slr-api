@@ -5,14 +5,15 @@ const support = require(__base + 'utils/support');
 
 /**
  * insert a filter
- * @param {object} newFilterData
- * @returns {object} filter created
+ * @param {Object} newFilterData
+ * @param {int} project_id
+ * @returns {Object} filter created
  */
 
-async function insert(newFilterData) {
+async function insert(newFilterData, project_id) {
     let res = await db.query(
-        'INSERT INTO public.' + db.TABLES.filters + '("date_created", "date_last_modified", "date_deleted", "data") VALUES($1,$2,$3, $4) RETURNING *',
-        [new Date(), new Date(), null, newFilterData]
+        'INSERT INTO public.' + db.TABLES.filters + '("date_created", "date_last_modified", "date_deleted", "data",  "project_id") VALUES($1,$2,$3, $4, $5) RETURNING *',
+        [new Date(), new Date(), null, newFilterData, project_id]
     );
 
     return res.rows[0];
@@ -24,7 +25,7 @@ async function insert(newFilterData) {
 /**
  *  * update a filter
  * @param {int} filter_id
- * @param {object} newFilterData
+ * @param {Object} newFilterData
  * @returns {int} number of row affected , 1 if ok, 0 if failed
  */
 async function update(filter_id, newFilterData) {
@@ -58,7 +59,7 @@ async function deletes(filter_id) {
 /**
  * select a filter
  * @param {int} filter_id
- * @returns {object} filter found
+ * @returns {Object} filter found
  */
 
 async function selectById(filter_id) {
@@ -108,13 +109,13 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
 
     //query to get filters
     let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.filters + ' WHERE data->>\'project_id\' = $1  ORDER BY  ' + orderBy + '   ' + sort + ' LIMIT $2 OFFSET $3',
+        'SELECT * FROM public.' + db.TABLES.filters + ' WHERE project_id = $1  ORDER BY  ' + orderBy + '   ' + sort + ' LIMIT $2 OFFSET $3',
         [project_id, count, start]
     );
 
     //query to get total number of result
     let resForTotalNumber = await db.query(
-        'SELECT COUNT(*)  FROM public.' + db.TABLES.filters + ' WHERE data->>\'project_id\' = $1  ',
+        'SELECT COUNT(*)  FROM public.' + db.TABLES.filters + ' WHERE project_id = $1  ',
         [project_id]
     );
 
@@ -124,18 +125,18 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
 /**
  * select all filters associated with a project
  * @param {int} project_id
- * @returns {Object} array of filters and total number of result
+ * @returns {Object[]} array of filters
  */
 async function selectAllByProject(project_id) {
 
 
     //query to get filters
     let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.filters + ' WHERE data->>\'project_id\' = $1',
+        'SELECT * FROM public.' + db.TABLES.filters + ' WHERE project_id = $1',
         [project_id]
     );
 
-    return {"results": res.rows, "totalResults": (res.rows[0]) ? res.rows[0].count : 0};
+    return  res.rows;
 }
 
 

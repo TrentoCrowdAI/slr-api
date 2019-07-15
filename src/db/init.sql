@@ -5,6 +5,7 @@ DROP TABLE IF EXISTS "public"."projects";
 DROP TABLE IF EXISTS "public"."users";
 DROP TABLE IF EXISTS "public"."filters";
 DROP TABLE IF EXISTS "public"."votes";
+DROP TABLE IF EXISTS "public"."screenings";
 
 -- searches: {
 --  id: <serial8>, //paper id
@@ -65,7 +66,7 @@ CREATE TABLE "public"."project_papers" (
 "date_deleted" timestamptz,
 "data" jsonb NOT NULL,
 "project_id" int8 NOT NULL,
-PRIMARY KEY ("id", "project_id"),
+PRIMARY KEY ("id"),
 CONSTRAINT "project_id" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 )
 WITH (OIDS=FALSE)
@@ -106,7 +107,9 @@ CREATE TABLE "public"."filters" (
 "date_last_modified" timestamptz NOT NULL,
 "date_deleted" timestamptz,
 "data" jsonb NOT NULL,
-PRIMARY KEY ("id")
+"project_id" int8 NOT NULL,
+PRIMARY KEY ("id"),
+CONSTRAINT "project_id" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 )
 WITH (OIDS=FALSE)
 ;
@@ -127,7 +130,29 @@ CREATE TABLE "public"."votes" (
 "date_last_modified" timestamptz NOT NULL,
 "date_deleted" timestamptz,
 "data" jsonb NOT NULL,
-PRIMARY KEY ("id")
+"user_id" int8 NOT NULL,
+"project_paper_id" int8 NOT NULL,
+"project_id" int8 NOT NULL,
+PRIMARY KEY ("id"),
+CONSTRAINT "user_id" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT "project_paper_id" FOREIGN KEY ("project_paper_id") REFERENCES "public"."project_papers" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT "project_id" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+)
+WITH (OIDS=FALSE)
+;
+
+
+CREATE TABLE "public"."screenings" (
+"id" serial8 NOT NULL,
+"date_created" timestamptz NOT NULL,
+"date_last_modified" timestamptz NOT NULL,
+"date_deleted" timestamptz,
+"data" jsonb NOT NULL,
+"user_id" int8 NOT NULL,
+"project_id" int8 NOT NULL,
+PRIMARY KEY ("id"),
+CONSTRAINT "user_id" FOREIGN KEY ("user_id") REFERENCES "public"."users" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
+CONSTRAINT "project_id" FOREIGN KEY ("project_id") REFERENCES "public"."projects" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
 )
 WITH (OIDS=FALSE)
 ;

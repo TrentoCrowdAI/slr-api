@@ -16,7 +16,7 @@ const timeOutTime = 10 * 1000;
  * @param url
  * @param options for request
  * @param {int} timeOutTime
- * @return {object} response data
+ * @return {Object} response data
  */
 async function request(url, options, timeOutTime) {
     try {
@@ -65,7 +65,7 @@ async function request(url, options, timeOutTime) {
  * get method
  * @param url
  * @param queryData query string
- * @return {object} response data
+ * @return {Object} response data
  */
 async function get(url, queryData = "") {
 
@@ -98,7 +98,7 @@ async function get(url, queryData = "") {
  * raw get method
  * @param url
  * @param queryData query string
- * @return {object} response data
+ * @return {Object} response data
  */
 async function getRaw(url, queryData = "") {
 
@@ -179,7 +179,7 @@ async function postSimilarPaper(url, bodyData = "") {
  * post pdf method
  * @param url
  * @param fsStream read stream of file
- * @return {object} response data
+ * @return {Object} response data
  */
 async function postPdf(url, fsStream) {
 
@@ -231,7 +231,7 @@ function checkResponseStatus(response, data) {
 /**
  * parse the response of  http request
  * @param response response object
- * @return {object} data parsed
+ * @return {Object} data parsed
  */
 async function parseResponseData(response) {
 
