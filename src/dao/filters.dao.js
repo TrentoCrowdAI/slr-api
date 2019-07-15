@@ -122,6 +122,23 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
 }
 
 /**
+ * select the filters associated with a project
+ * @param {int} project_id
+ * @returns {Object} array of filters and total number of result
+ */
+async function selectLatestByProject(project_id) {
+
+
+    //query to get latest filters
+    let res = await db.query(
+        'SELECT * FROM public.' + db.TABLES.filters + ' WHERE data->>\'project_id\' = $1  ORDER BY date_last_modified DESC LIMIT 1',
+        [project_id]
+    );
+
+    return {"filterData": res.rows[0]};
+}
+
+/**
  * select all filters associated with a project
  * @param {int} project_id
  * @returns {Object} array of filters and total number of result
@@ -147,5 +164,5 @@ module.exports = {
     selectByArrayId,
     selectByProject,
     selectAllByProject,
-
+    selectLatestByProject
 };

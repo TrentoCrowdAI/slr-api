@@ -46,7 +46,15 @@ async function insert(user_email, newFilterData) {
     errorCheck.isValidProjectOwner(project);
 
     //call DAO layer
-    let res = await filtersDao.insert(newFilterData);
+    let lastFilter = await filtersDao.selectLatestByProject(project_id);
+
+    let newName = "C1";
+    if(typeof lastFilter.filterData !== "undefined"){
+        newName = "C" + (parseInt(lastFilter.filterData.data.name.slice(1)) + 1);
+    }
+
+    //call DAO layer
+    let res = await filtersDao.insert({...newFilterData, name: newName});
 
     //update the last modified date
     let updateProjectDate = await projectsDao.updateLastModifiedDate(project_id);
@@ -67,6 +75,7 @@ async function update(user_email, filter_id, newFilterData) {
 
     //check validation of filter_id and transform the value in integer
     filter_id = errorCheck.setAndCheckValidFilterId(filter_id);
+    errorCheck.setAndCheckValidProjectId(newFilterData.project_id);
 
     //check input format
     let valid = ajv.validate(validationSchemes.filter, newFilterData);
@@ -89,9 +98,8 @@ async function update(user_email, filter_id, newFilterData) {
     //update the last modified date
     let updateProjectDate = await projectsDao.updateLastModifiedDate(filter.data.project_id);
 
-    //call DAO layer
-    //avoid change of project_id by update;
-    newFilterData.project_id = filter.data.project_id;
+    //avoid change of project_id and label by update;
+    newFilterData.project_id = filter.data.project_id; newFilterData.name = filter.data.name;
     let numberRow = await filtersDao.update(filter_id, newFilterData);
 
 

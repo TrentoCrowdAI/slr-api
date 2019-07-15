@@ -1409,6 +1409,9 @@ definitions:
       project_id:
         type: integer
         example: "1"
+      name:
+        type: string
+        example: "c1"
       predicate:
         type: string
       inclusion_description:
@@ -1416,6 +1419,18 @@ definitions:
       exclusion_description:
         type: string
 
+  Filter_data_for_post_put:
+    type: object
+    properties:
+      project_id:
+        type: integer
+        example: "1"
+      predicate:
+        type: string
+      inclusion_description:
+        type: string
+      exclusion_description:
+        type: string
 
   Filter:
     type: object
@@ -1734,7 +1749,7 @@ parameters:
     description: filter data to be stored
     required: true
     schema:
-      $ref: "#/definitions/Filter_data"
+      $ref: "#/definitions/Filter_data_for_post_put"
       required:
         - project_id
         - predicate
