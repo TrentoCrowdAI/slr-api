@@ -1406,9 +1406,18 @@ definitions:
   Filter_data:
     type: object
     properties:
+<<<<<<< HEAD
       name:
         type: string
         example: "filter a"
+=======
+      project_id:
+        type: integer
+        example: "1"
+      name:
+        type: string
+        example: "c1"
+>>>>>>> 768ef5a5e5235218cfb4af43f8f6074ba5e64539
       predicate:
         type: string
       inclusion_description:
@@ -1416,6 +1425,18 @@ definitions:
       exclusion_description:
         type: string
 
+  Filter_data_for_post_put:
+    type: object
+    properties:
+      project_id:
+        type: integer
+        example: "1"
+      predicate:
+        type: string
+      inclusion_description:
+        type: string
+      exclusion_description:
+        type: string
 
   Filter:
     type: object
@@ -1734,7 +1755,7 @@ parameters:
     description: filter data to be stored
     required: true
     schema:
-      $ref: "#/definitions/Filter_data"
+      $ref: "#/definitions/Filter_data_for_post_put"
       required:
         - name
         - predicate

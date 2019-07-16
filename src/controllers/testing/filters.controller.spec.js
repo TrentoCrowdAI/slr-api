@@ -71,7 +71,7 @@ let notValidExampleForProjectId = {
 };
 let notValidExampleForProjectIdNotNumber = {
     "project_id": "abc",
-    "name  ": "abc",
+    "name": "abc",
     "predicate": "aaa",
     "inclusion_description": "bbb",
     "exclusion_description": "ccc",
