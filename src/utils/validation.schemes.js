@@ -168,7 +168,7 @@ const filter={
         }
     },
     "required": [ "name", "predicate",  "inclusion_description", "exclusion_description"]
-}
+};
 
 
 //scheme of manual screening
@@ -185,7 +185,9 @@ const vote={
         }
     },
     "required": ["project_paper_id", "answer"]
-}
+};
+
+
 
 module.exports = {
     paper,

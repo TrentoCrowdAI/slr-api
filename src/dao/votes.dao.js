@@ -6,19 +6,20 @@ const support = require(__base + 'utils/support');
 /**
  * insert a vote
  * @param {Object} newVoteData
+ * @param {int} user_id
+ * @param {int} project_paper_id
+ * @param {int} project_id
  * @returns {Object} vote created
  */
 
-async function insert(newVoteData) {
+async function insert(newVoteData, user_id, project_paper_id, project_id,) {
     let res = await db.query(
-        'INSERT INTO public.' + db.TABLES.votes + '("date_created", "date_last_modified", "date_deleted", "data") VALUES($1,$2,$3, $4) RETURNING *',
-        [new Date(), new Date(), null, newVoteData]
+        'INSERT INTO public.' + db.TABLES.votes + '("date_created", "date_last_modified", "date_deleted", "data", "user_id", "project_paper_id", "project_id") VALUES($1,$2,$3, $4, $5, $6, $7) RETURNING *',
+        [new Date(), new Date(), null, newVoteData, user_id, project_paper_id, project_id]
     );
 
     return res.rows[0];
 }
-
-
 
 
 /**
@@ -70,6 +71,20 @@ async function selectById(vote_id) {
     return res.rows[0];
 }
 
+/**
+ * select the votes by user id
+ * @param {int} user_id
+ * @returns {array[]} the list of vote found
+ */
+
+async function selectByUserId(user_id) {
+    let res = await db.query(
+        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE user_id = $1",
+        [user_id]
+    );
+
+    return res.rows;
+}
 
 /**
  * select the votes by project_paper id
@@ -79,8 +94,24 @@ async function selectById(vote_id) {
 
 async function selectByProjectPaperId(projectPaper_id) {
     let res = await db.query(
-        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE data->>'project_paper_id' = $1",
+        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE project_paper_id = $1",
         [projectPaper_id]
+    );
+
+    return res.rows;
+}
+
+
+/**
+ * select the votes by project id
+ * @param {int} project_id
+ * @returns {array[]} the list of vote found
+ */
+
+async function selectByProjectId(project_id) {
+    let res = await db.query(
+        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE project_id = $1",
+        [project_id]
     );
 
     return res.rows;
@@ -88,14 +119,14 @@ async function selectByProjectPaperId(projectPaper_id) {
 
 /**
  * select the votes by project_paper id and user id
-  * @param {int} projectPaper_id
+ * @param {int} projectPaper_id
  * @param {int} user_id
  * @returns {Object} vote found
  */
 
-async function seletctByProjectPaperIdAndUserId(projectPaper_id, user_id) {
+async function selectByProjectPaperIdAndUserId(projectPaper_id, user_id) {
     let res = await db.query(
-        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE data->>'project_paper_id' = $1 AND data->>'user_id' = $2 ",
+        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE project_paper_id = $1 AND user_id = $2 ",
         [projectPaper_id, user_id]
     );
 
@@ -103,83 +134,14 @@ async function seletctByProjectPaperIdAndUserId(projectPaper_id, user_id) {
 }
 
 
-/**
- * select a vote list
- * @param {array[]} arrayFilterId
- * @returns {array[]} vote list found
-
-async function selectByArrayId(arrayFilterId) {
-
-    //transform array in string where each element is surrounded by '
-    let joinString = support.arrayToString(arrayFilterId, ",", "");
-
-    //if joinString is empty
-    if (joinString === "") {
-        joinString = 0;
-    }
-
-    let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.votes + " WHERE id IN ("+joinString+")"
-    );
-
-    return res.rows;
-}
-
-/**
- * select the vote associated with a project
- * @param {int} project_id
- * @param {string} orderBy each paper data.propriety
- * @param {string} sort {ASC or DESC}
- * @param {int} start offset position where we begin to get
- * @param {int} count number of projects
- * @returns {Object} array of vote and total number of result
-
-async function selectByProject(project_id, orderBy, sort, start, count) {
-
-
-
-    //query to get vote
-    let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.votes + ' WHERE data->>\'project_id\' = $1  ORDER BY  ' + orderBy + '   ' + sort + ' LIMIT $2 OFFSET $3',
-        [project_id, count, start]
-    );
-
-    //query to get total number of result
-    let resForTotalNumber = await db.query(
-        'SELECT COUNT(*)  FROM public.' + db.TABLES.votes + ' WHERE data->>\'project_id\' = $1  ',
-        [project_id]
-    );
-
-    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
-}
-
-/**
- * select all vote associated with a project
- * @param {int} project_id
- * @returns {Object} array of vote and total number of result
-
-async function selectAllByProject(project_id) {
-
-
-    //query to get vote
-    let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.votes + ' WHERE data->>\'project_id\' = $1',
-        [project_id]
-    );
-
-    return {"results": res.rows, "totalResults": (res.rows[0]) ? res.rows[0].count : 0};
-}
- */
-
 module.exports = {
     insert,
     update,
     deletes,
     selectById,
+    selectByUserId,
     selectByProjectPaperId,
-    seletctByProjectPaperIdAndUserId
-    //selectByArrayId,
-   // selectByProject,
-   // selectAllByProject,
+    selectByProjectId,
+    selectByProjectPaperIdAndUserId
 
 };

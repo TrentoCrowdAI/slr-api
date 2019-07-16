@@ -305,7 +305,7 @@ async function insertVote(user_email, projectPaper_id, answer) {
     }
 
     //check if user already voted on this projectPaper
-    let voteExistence = await votesDao.seletctByProjectPaperIdAndUserId(projectPaper_id, user.id);
+    let voteExistence = await votesDao.selectByProjectPaperIdAndUserId(projectPaper_id, user.id);
     if (voteExistence) {
         throw errHandler.createBadRequestError("the user already voted for this projectPaper!");
     }

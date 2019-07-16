@@ -18,6 +18,7 @@ module.exports = {
         users: 'users',
         filters: 'filters',
         votes: 'votes',
+        screenings: 'screenings',
     },
 
     //local port to start the service
