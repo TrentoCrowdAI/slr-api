@@ -24,12 +24,10 @@ router.get('/papers', async (req, res, next) => {
         let searchBy = req.query.searchBy;
         let year = req.query.year;
         let query = req.query.query;
-        // if (query === undefined) {
-        projectPapers = await projectPapersDelegate.selectByProject(user_email, project_id, orderBy, sort, start, count);
-        //}
-        // else {
-        //   projectPapers = await projectPapersDelegate.searchPaperByProject(user_email, query, project_id, searchBy, year, orderBy, sort, start, count);
-        // }
+        let type = req.query.type;
+
+        projectPapers = await projectPapersDelegate.selectByProject(user_email, project_id, type, orderBy, sort, start, count);
+
         res.status(200).json(projectPapers);
     }
     catch (e) {

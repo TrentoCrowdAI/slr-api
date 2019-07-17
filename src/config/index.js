@@ -62,10 +62,16 @@ module.exports = {
 
     "screening_status": {
         "manual": "manual",
-        "screened": "screened"
+        "screened": "screened",
+        "backlog": "backlog",
+        "all": "all"
 
     },
+    "manual_screening_type": {
+        "single_predicate": "single-predicate",
+        "multi_predicate": "multi-predicate",
 
+    },
 
 
     /*external service================================*/

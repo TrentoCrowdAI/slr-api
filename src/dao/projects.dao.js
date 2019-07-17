@@ -44,8 +44,6 @@ async function updateLastModifiedDate(project_id) {
 }
 
 
-
-
 /**
  *  * delete a project
  * @param {int} project_id
@@ -82,7 +80,7 @@ async function selectById(project_id) {
 async function selectByIdAndUserId(project_id, user_id) {
     let res = await db.query(
         "SELECT * FROM public." + db.TABLES.projects + "  WHERE id = $1 AND data->'user_id' ? $2",
-        [project_id, user_id+""]
+        [project_id, user_id + ""]
     );
 
 
@@ -121,49 +119,48 @@ async function selectAll(orderBy, sort, start, count) {
  * @param {int} count number of projects
  * @returns {Object} array of projects and total number of result
  */
-async function selectAllByUserId(user_id, orderBy, sort, start, count) {
+async function selectByUserId(user_id, orderBy, sort, start, count) {
 
     //query to get projects
     let res = await db.query(
         'SELECT * FROM public.' + db.TABLES.projects + ' WHERE data->\'user_id\' ? $1  ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $2 OFFSET $3',
-        [user_id+"", count, start]
+        [user_id + "", count, start]
     );
 
     //query to get total number of result
     let resForTotalNumber = await db.query(
-        'SELECT COUNT(*) FROM public.' + db.TABLES.projects + ' WHERE data->\'user_id\' ? $1  ', [user_id+""]);
+        'SELECT COUNT(*) FROM public.' + db.TABLES.projects + ' WHERE data->\'user_id\' ? $1  ', [user_id + ""]);
 
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 }
 
+
 /**
- * select project by a single keyword
- * @param {string} keyword to search
- * @param {string} orderBy [id, date_created, date_last_modified, date_deleted}
- * @param {string} sort {ASC or DESC}
+ * select the project by a specific  screening user
+ * @param {int} user_id
+ * @param {string} orderBy [id, date_created, date_last_modified, date_deleted]
+ * @param {string} sort [ASC or DESC]
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
  * @returns {Object} array of projects and total number of result
-
-async function selectBySingleKeyword(keyword, orderBy, sort, start, count) {
-
+ */
+async function selectByScreeningUser(user_id, orderBy, sort, start, count) {
 
     //query to get projects
     let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.projects + ' WHERE data->>\'name\' LIKE $1 OR data->>\'description\' LIKE $1  ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $2 OFFSET $3',
-        ["%"+keyword+"%", count, start]
+        "SELECT * FROM public." + db.TABLES.projects + " P, public." + db.TABLES.screenings + " S WHERE P.id = S.project_id AND S.user_id = $1  ORDER BY P." + orderBy + " " + sort + " LIMIT $2 OFFSET $3",
+        [user_id, count, start]
     );
 
     //query to get total number of result
     let resForTotalNumber = await db.query(
-        'SELECT COUNT(*) FROM public.' + db.TABLES.projects + ' WHERE data->>\'name\' LIKE $1 OR data->>\'description\' LIKE $1 ',
-        ["%"+keyword+"%"]
+        "SELECT * FROM public." + db.TABLES.projects + " P, public." + db.TABLES.screenings + " S WHERE P.id = S.project_id AND S.user_id = $1",
+        [user_id]
     );
 
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
-
 }
-*/
+
 
 module.exports = {
     insert,
@@ -172,8 +169,8 @@ module.exports = {
     deletes,
     selectById,
     //selectAll,
-    selectAllByUserId,
+    selectByUserId,
     selectByIdAndUserId,
     //selectBySingleKeyword
-
+    selectByScreeningUser,
 };

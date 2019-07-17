@@ -129,7 +129,7 @@ const csvPaperFields = {
     "required": ["authors", "title", "year", "source_title", "link", "abstract", "document_type", "source", "abstract_structured", "filter_oa_include", "filter_study_include", "notes", "manual", "doi"]
 };
 
-//scheme of project, has 2 attributes
+//scheme project, has 2 attributes
 const project = {
     "type": "object",
     "properties": {
@@ -145,7 +145,7 @@ const project = {
     "required": ["name", "description"]
 };
 
-//scheme of filtes
+//scheme filtes
 const filter={
     "type": "object",
     "properties": {
@@ -177,21 +177,45 @@ const filter={
 
 
 
-//scheme of manual screening
+//scheme vote
 const vote={
     "type": "object",
     "properties": {
-        "project_paper_id": {
-            "type": "string",
-            "isNotEmpty": true
-        },
+
         "answer": {
             "type": "string",
             "isNotEmpty": true
+        },
+        "metadata": {
+            "type": "object",
+            "isNotEmpty": true
         }
+
     },
-    "required": ["project_paper_id", "answer"]
+    "required": ["answer","metadata"]
 };
+
+//scheme metadata of vote
+const vote_metadata={
+    "type": "object",
+    "properties": {
+
+        "type": {
+            "type": "string",
+            "isNotEmpty": true
+        },
+        "highlights": {
+            "type": "array"
+        },
+        "tags": {
+            "type": "array"
+        },
+
+    },
+    "required": ["type","highlights", "tags"]
+};
+
+
 
 
 
@@ -202,4 +226,5 @@ module.exports = {
     csvPaperFields,
     filter,
     vote,
+    vote_metadata,
 };

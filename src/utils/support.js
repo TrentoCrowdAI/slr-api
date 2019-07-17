@@ -54,9 +54,9 @@ function arrayOfObjectToString(arraySource, fieldName, separator, surroundedBy) 
 
 /**
  * difference operation of two arrays A - B
- * @param {array[]} arrayA
- * @param {array[]} arrayB
- * @return {array[]} result of difference
+ * @param {Object[]} arrayA
+ * @param {Object[]} arrayB
+ * @return {Object[]} result of difference
  */
 function differenceOperation(arrayA, arrayB) {
 
@@ -72,7 +72,7 @@ function differenceOperation(arrayA, arrayB) {
 
 /**
  * difference operation, where exclude the element with A[i].field included in subArray B
- * @param {array[object]}arrayA
+ * @param {Object[]}arrayA
  * @param {array[stirng]}arrayB
  * @param fieldName
  * @return {*}
@@ -97,7 +97,7 @@ function differenceOperationByField(arrayA, arrayB, fieldName) {
  * remove paper object from array by a array of eids
  * @param arrayA array papers
  * @param arrayB array eids
- * @return {array[]} new array papers
+ * @return {Object[]} new array papers
  */
 function removeElementFromArrayByEids(arrayA, arrayB) {
 
@@ -117,7 +117,7 @@ function removeElementFromArrayByEids(arrayA, arrayB) {
  * remove a specific element from array
  * @param arraySource
  * @param elementToRemove element to remove
- * @return {array[]} new array
+ * @return {Object[]} new array
  */
 function removeElementFromArray(arraySource, elementToRemove) {
 

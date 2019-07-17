@@ -671,7 +671,7 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
  * @param {string} offset position where we begin to get
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
- * @returns {Array[]} array of papers
+ * @returns {Object[]} array of papers
  *//*
  async function selectAll(number, offset, orderBy, sort) {
 
@@ -707,7 +707,7 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
  * @param {string} before id where we begin to get backwards
  * @param {string} orderBy
  * @param {string} sort {ASC or DESC}
- * @returns {Array[Object]} array of papers
+ * @returns {Object[]} array of papers
  *//*
  async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
 

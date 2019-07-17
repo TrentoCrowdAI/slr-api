@@ -36,7 +36,6 @@ async function insert(user_email, newFilterData, project_id) {
     }
 
 
-
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
@@ -44,17 +43,13 @@ async function insert(user_email, newFilterData, project_id) {
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
-    //call DAO layer
-    let lastFilter = await filtersDao.selectLatestByProject(project_id);
+    //call DAO layer to get number of filters
+    let newNumberForFilters = await filtersDao.countByProject(project_id)+1;
+    //set name of filter
+    newFilterData.name = "C"+newNumberForFilters;
 
-    let newName = "C1";
-    if(typeof lastFilter.filterData !== "undefined"){
-        newName = "C" + (parseInt(lastFilter.filterData.data.name.slice(1)) + 1);
-    }
-
-    //call DAO layer
-    let res = await filtersDao.insert({...newFilterData, name: newName});
-
+    //call DAO layer to insert the filter data
+    let res = await filtersDao.insert(newFilterData, project_id);
 
     //update the last modified date
     await projectsDao.updateLastModifiedDate(project_id);

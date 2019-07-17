@@ -22,9 +22,9 @@ async function insert(newProjectPaperData, project_id) {
 
 /**
  * insert a list of projectPaper
- * @param {array[]} arrayProjectPaperData
+ * @param {Object[]} arrayProjectPaperData
  * @param {int} project_id
- * @returns {array[object]} projectPaper created
+ * @returns {Object[]} projectPaper created
  */
 async function insertByList(arrayProjectPaperData, project_id) {
 
@@ -48,9 +48,9 @@ async function insertByList(arrayProjectPaperData, project_id) {
 
 /**
  * insert a list of projectPaper by copy from fake_paper table
- * @param {array[]} arrayEid array of paper eid
+ * @param {Object[]} arrayEid array of paper eid
  * @param {int} project_id
- * @returns {array[]} projectPaper created
+ * @returns {Object[]} projectPaper created
  */
 async function insertFromPaper(arrayEid, project_id) {
 
@@ -152,10 +152,11 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
 }
 
 
+
 /**
  * select all projectPapers that haven't the automated screening value and screened field
  * @param {int} project_id
- * @returns {array[]} array of projectPapers
+ * @returns {Object[]} array of projectPapers
  */
 async function selectAllNotEvaluatedAndScreened(project_id) {
 
@@ -178,7 +179,7 @@ async function selectAllNotEvaluatedAndScreened(project_id) {
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
  * @returns {Object} array of projectPapers and total number of result
- * @returns {array[]} array of projectPapers
+ * @returns {Object[]} array of projectPapers
  */
 async function selectNotScreenedByProject(project_id, orderBy, sort, start, count) {
 
@@ -211,7 +212,7 @@ async function selectNotScreenedByProject(project_id, orderBy, sort, start, coun
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
  * @returns {Object} array of projectPapers and total number of result
- * @returns {array[]} array of projectPapers
+ * @returns {Object[]} array of projectPapers
  */
 async function selectManualByProject(project_id, orderBy, sort, start, count) {
 
@@ -222,13 +223,13 @@ async function selectManualByProject(project_id, orderBy, sort, start, count) {
 
     //query to get projectPapers
     let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  P.data ? 'metadata'  AND P.data->'metadata' ? 'screened' AND  P.data.metadata.screened = $2  ORDER BY  " + orderBy + "   " + sort + " LIMIT $3 OFFSET $4",
+        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  P.data ? 'metadata'  AND P.data->'metadata' ? 'screened' AND  P.data->'metadata'->>'screened'  = $2  ORDER BY  " + orderBy + "   " + sort + " LIMIT $3 OFFSET $4",
         [project_id, config.screening_status.manual, count, start]
     );
 
     //query to get total number of result
     let resForTotalNumber = await db.query(
-        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  P.data ? 'metadata'  AND P.data->'metadata' ? 'screened' AND  P.data.metadata.screened = $2  ",
+        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  P.data ? 'metadata'  AND P.data->'metadata' ? 'screened' AND  P.data->'metadata'->>'screened'  = $2  ",
         [project_id, config.screening_status.manual]
     );
 
@@ -244,7 +245,7 @@ async function selectManualByProject(project_id, orderBy, sort, start, count) {
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
  * @returns {Object} array of projectPapers and total number of result
- * @returns {array[]} array of projectPapers
+ * @returns {Object[]} array of projectPapers
  */
 async function selectScreenedByProject(project_id, orderBy, sort, start, count) {
 
@@ -255,14 +256,14 @@ async function selectScreenedByProject(project_id, orderBy, sort, start, count) 
 
     //query to get projectPapers
     let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND P.data ? 'metadata' AND P.data->'metadata' ? 'screened' ORDER BY  " + orderBy + "   " + sort + " LIMIT $2 OFFSET $3",
-        [project_id, count, start]
+        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND P.data ? 'metadata' AND P.data->'metadata' ? 'screened' AND  P.data->'metadata'->>'screened' = $2 ORDER BY  " + orderBy + "   " + sort + " LIMIT $3 OFFSET $4",
+        [project_id, config.screening_status.screened, count, start]
     );
 
     //query to get total number of result
     let resForTotalNumber = await db.query(
-        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND P.data ? 'metadata' AND P.data->'metadata' ? 'screened'  ",
-        [project_id]
+        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND P.data ? 'metadata' AND P.data->'metadata' ? 'screened'  AND  P.data->'metadata'->>'screened'  = $2 ",
+        [project_id, config.screening_status.manual]
     );
 
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
@@ -319,28 +320,41 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 }
 
-/*=== deprecated function ===
- async function selectByIdAndProjectId(paper_id, project_id){
- let paper_eid = await db.query(//I retrieve the eid of the paper to add
- 'SELECT data->>\'EID\' as eid FROM public.' + db.TABLES.searches + ' WHERE id = $1',
- [paper_id]
- );
- paper_eid = paper_eid.rows[0].eid;
- let res = await db.query(//I check if the paper with the current eid is already in the project
- 'SELECT id FROM public.' + db.TABLES.projectPapers + ' WHERE "project_id" = $1 AND data ->>\'EID\' = $2',
- [project_id, paper_eid]
- );
- return res.rows[0];//this will be defined only if the paper is already in the project
- }*/
+
+/**
+ * select a not voted projectPaper by UserId and projectId
+ * @param {int} user_id
+ * @param {int} project_id
+ * @returns {Object} projectPaper found
+ */
+async function selectOneNotVotedByUserIdAndProjectId(user_id, project_id) {
+    let res = await db.query(
+        "SELECT * FROM public." + db.TABLES.projectPapers + " WHERE  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND ( NOT(P.data->'metadata' ? 'screened') OR (P.data->'metadata'->>'screened'=$1) ) ) AND id NOT IN(SELECT project_paper_id FROM public."+db.TABLES.votes+" WHERE user_id = $2 AND project_id = $3 )",
+        [config.screening_status.manual, user_id, project_id]
+    );
+
+    return res.rows[0];
+}
+
+
+
+
+
+
+
+
+
+
+
 
 
 /**
  * internal function==========================================================
  *
  * check existence of papers in tables
- * @param {array[]} arrayEid of paper to check
+ * @param {Object[]} arrayEid of paper to check
  * @param {int} project_id
- * @returns {array[]} arrayEid of papers that are already exist in table
+ * @returns {Object[]} arrayEid of papers that are already exist in table
  */
 async function checkExistenceByEids(arrayEid, project_id) {
 
@@ -363,28 +377,9 @@ async function checkExistenceByEids(arrayEid, project_id) {
     return array;
 }
 
-/*
- * get project id of projectPaper by projectPaper id
- * @param {int} projectPaper_id
- * @returns {int} project id if there is projectPaper, -1 if it isn't exist
- *//*
- async function getProjectIdByProjectPaperId(projectPaper_id) {
 
 
- let res = await db.query(
- 'SELECT project_id FROM public.' + db.TABLES.projectPapers + '  WHERE  id = $1 ; ',
- [projectPaper_id]
- );
 
- let output = -1;
- if(res.rows.length > 0){
- output = parseInt(res.rows[0].project_id);
- }
-
-
- return output;
-
- }*/
 
 
 module.exports = {
@@ -399,10 +394,10 @@ module.exports = {
     selectNotScreenedByProject,
     selectManualByProject,
     selectScreenedByProject,
-
+    selectOneNotVotedByUserIdAndProjectId,
 
     //selectByIdAndProjectId,
     searchPaperByProject,
     checkExistenceByEids,
-    //getProjectIdByProjectPaperId
+
 };

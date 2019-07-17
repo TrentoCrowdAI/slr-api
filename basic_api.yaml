@@ -9,6 +9,8 @@ schemes:
   - https
 consumes:
   - application/json
+  - multipart/form-data
+
 produces:
   - application/json
 tags:
@@ -22,7 +24,10 @@ tags:
     description: Manage the users
   - name: Filters
     description: Manage the filters
-
+  - name: Screenings
+    description: Manage the screenings
+  - name: Votes
+    description: Manage the votes
 
 
 paths:
@@ -122,6 +127,7 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
   # projects ==============================================================
 
   '/projects':
@@ -326,82 +332,6 @@ paths:
           $ref: '#/responses/500_internal_server_error'
 
 
-  # screeners  ============================================================
-
-  '/projects/{project_id}/screeners':
-
-    get:
-      summary: get screeners by project id
-      description: get a list of screeners
-      tags:
-        - Projects
-      security:
-        - basicAuth: []
-      parameters:
-        - $ref: '#/parameters/Project_id_in_path'
-
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Users'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '404':
-          $ref: '#/responses/404_not_found'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
-
-
-    post:
-      summary: add the screeners
-      description: add the screeners into a specific project
-      tags:
-        - Projects
-      security:
-        - basicAuth: []
-
-      parameters:
-        - $ref: '#/parameters/Project_id_in_path'
-        - $ref: '#/parameters/User_id_post_body'
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/User'
-        '204':
-          $ref: '#/responses/204_no_content'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
-
-  '/projects/{project_id}/screeners/{user_id}':
-
-    delete:
-      summary: delete the screeners
-      description: delete the screeners from a specific project
-      tags:
-        - Projects
-      security:
-        - basicAuth: []
-
-      parameters:
-        - $ref: '#/parameters/Project_id_in_path'
-        - $ref: '#/parameters/User_id_in_path'
-      responses:
-        '204':
-          $ref: '#/responses/204_no_content'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
 
 
 
@@ -419,6 +349,7 @@ paths:
 
       parameters:
         - $ref: '#/parameters/Project_id'
+        - $ref: '#/parameters/Type'
         - $ref: '#/parameters/OrderBy'
         - $ref: '#/parameters/Sort'
         - $ref: '#/parameters/Start'
@@ -559,94 +490,6 @@ paths:
 
 
 
-  # screening ==============================================================
-  '/screening/automated':
-
-    post:
-      summary: automated screening
-      description: evaluate all projected paper and assign as screened for paper with confidence value greater than threshold
-      tags:
-        - Projects Papers
-      security:
-        - basicAuth: []
-
-      parameters:
-        - $ref: '#/parameters/AutomatedScreening_post_body'
-      responses:
-        '204':
-          $ref: '#/responses/204_no_content'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '404':
-          $ref: '#/responses/404_not_found'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
-
-  '/screening/backlog':
-
-    get:
-      summary: get backlog list
-      description: get the projectPapers hanven't screening result and vote
-      tags:
-        - Projects Papers
-      security:
-        - basicAuth: []
-
-      parameters:
-        - $ref: '#/parameters/Project_id'
-        - $ref: '#/parameters/Sort'
-        - $ref: '#/parameters/Start'
-        - $ref: '#/parameters/Count'
-
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Project_papers'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '404':
-          $ref: '#/responses/404_not_found'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
-
-
-
-  '/screening/screened':
-
-    get:
-      summary: get screened list
-      description: get the projectPapers already screened
-      tags:
-        - Projects Papers
-      security:
-        - basicAuth: []
-
-      parameters:
-        - $ref: '#/parameters/Project_id'
-        - $ref: '#/parameters/Sort'
-        - $ref: '#/parameters/Start'
-        - $ref: '#/parameters/Count'
-
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Result_of_paper_search_with_screened_result'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '404':
-          $ref: '#/responses/404_not_found'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
-
-
 
 
 
@@ -776,7 +619,7 @@ paths:
 
 
 
-
+#updload file && csv
 
 
   '/upload/pdf':
@@ -838,6 +681,260 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
+
+
+
+
+
+# screenings ==============================================================
+
+  '/screenings/users':
+
+    get:
+      summary: get the screeners by project id
+      description: get a list of screeners
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+      parameters:
+        - $ref: '#/parameters/Project_id'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Users'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+  '/screenings':
+    post:
+      summary: add the screening by array
+      description: add the screening in the table by array
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Screenings_post_body'
+      responses:
+        '200':
+            description: OK
+            schema:
+              $ref: '#/definitions/Screening'
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+    delete:
+      summary: delete the screening
+      description: delete the screeners from a specific project
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id'
+        - $ref: '#/parameters/User_id'
+      responses:
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+  '/screenings/automated':
+
+    post:
+      summary: automated screening
+      description: evaluate all projected paper and assign as screened for paper with confidence value greater than threshold
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/AutomatedScreening_post_body'
+      responses:
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+    get:
+      summary: get automated screening status
+      description: get automated screening status (in percentage), now it only return a random number
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            type: integer
+            description: progress in percentage
+            example: 87
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+  '/screenings/myProjects':
+
+    get:
+      summary: get list of project to screening
+      description: get list of project associated with user by screening table
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/OrderBy'
+        - $ref: '#/parameters/Sort'
+        - $ref: '#/parameters/Start'
+        - $ref: '#/parameters/Count'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Result_projects'
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+  '/screenings/myProjects/{project_id}':
+
+    get:
+      summary: get one last paper to vote
+      description: get  a last paper to vote from a specific project
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Project_paper'
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+  '/votes':
+
+    get:
+      summary: get the votes
+      description: get the votes of a specific project
+      tags:
+        - Votes
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Votes'
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+    post:
+      summary: insert a vote
+      description: insert a vote in the project
+      tags:
+        - Votes
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Vote_post_body'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Vote'
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+
 
 
 #responses ===================================================
@@ -1406,18 +1503,9 @@ definitions:
   Filter_data:
     type: object
     properties:
-<<<<<<< HEAD
       name:
         type: string
         example: "filter a"
-=======
-      project_id:
-        type: integer
-        example: "1"
-      name:
-        type: string
-        example: "c1"
->>>>>>> 768ef5a5e5235218cfb4af43f8f6074ba5e64539
       predicate:
         type: string
       inclusion_description:
@@ -1425,18 +1513,19 @@ definitions:
       exclusion_description:
         type: string
 
-  Filter_data_for_post_put:
+  Filter_data_no_name:
     type: object
     properties:
-      project_id:
-        type: integer
-        example: "1"
+      name:
+        type: string
+        example: "filter a"
       predicate:
         type: string
       inclusion_description:
         type: string
       exclusion_description:
         type: string
+
 
   Filter:
     type: object
@@ -1455,6 +1544,9 @@ definitions:
         example:  "2017-09-24T18:38:00Z"
       data:
         $ref: '#/definitions/Filter_data'
+      project_id:
+        type: integer
+
 
 
   Filters:
@@ -1464,6 +1556,96 @@ definitions:
 
 
 
+  Screening_data:
+    type: object
+    properties:
+      tags:
+        type: array
+        items:
+          type: object
+    example:
+      tags: []
+
+  Screening:
+    type: object
+    properties:
+      ID:
+        type: integer
+        description: the ID on the internal database
+        example: 1
+      date_created:
+        type: string
+        format: date-time
+        example:  "2017-07-21T17:32:28Z"
+      date_last_modified:
+        type: string
+        format: date-time
+        example:  "2017-09-24T18:38:00Z"
+      project_id:
+        type: integer
+      user_id:
+        type: integer
+      data:
+        $ref: '#/definitions/Screening_data'
+
+  Vote_data:
+    type: object
+    properties:
+      answer:
+        type: integer
+        enum:
+          - 0
+          - 1
+      metadata:
+        type: object
+        properties:
+          type:
+            type: string
+            enum:
+              - single-predicate
+              - multi-predicate
+          highlights:
+            type: array
+            items:
+              type: object
+              properties:
+                text:
+                  type: object
+                filter_id:
+                  type: integer
+          tags:
+            type: array
+            items:
+              type: object
+
+  Vote:
+    type: object
+    properties:
+      ID:
+        type: integer
+        description: the ID on the internal database
+        example: 1
+      date_created:
+        type: string
+        format: date-time
+        example:  "2017-07-21T17:32:28Z"
+      date_last_modified:
+        type: string
+        format: date-time
+        example:  "2017-09-24T18:38:00Z"
+      user_id:
+        type: integer
+      project_paper_id:
+        type: integer
+      project_id:
+        type: integer
+      data:
+        $ref: '#/definitions/Vote_data'
+
+  Votes:
+    type: array
+    items:
+      $ref: '#/definitions/Vote'
 
 #parameters==============================================
 
@@ -1653,10 +1835,11 @@ parameters:
         - doi
 
   Pdf_post_body:
-    in: formData
+    in: body
     name: file
-    type: file
-    description: the pdf file to parse
+    schema:
+      type: object
+      description: the pdf file to parse
     required: true
 
 
@@ -1742,6 +1925,14 @@ parameters:
 
 
 
+  Filter_id:
+    in: query
+    name: filter_id
+    description: the internal id of a filter
+    type: integer
+    required: true
+
+
   Filter_id_in_path:
     in: path
     name: filter_id
@@ -1755,9 +1946,8 @@ parameters:
     description: filter data to be stored
     required: true
     schema:
-      $ref: "#/definitions/Filter_data_for_post_put"
+      $ref: "#/definitions/Filter_data_no_name"
       required:
-        - name
         - predicate
         - inclusion_description
         - exclusion_description
@@ -1771,19 +1961,8 @@ parameters:
       type: object
       properties:
         filter:
-          type: object
-          properties:
-            name:
-              type: string
-              example: "filter a"
-            predicate:
-              type: string
-            inclusion_description:
-              type: string
-            exclusion_description:
-              type: string
+          $ref: "#/definitions/Filter_data_no_name"
           required:
-            - name
             - predicate
             - inclusion_description
             - exclusion_description
@@ -1817,6 +1996,15 @@ parameters:
     required: true
 
 
+  User_id:
+    in: query
+    name: user_id
+    description: the internal id of a user
+    type: integer
+    required: true
+
+
+
   AutomatedScreening_post_body:
     in: body
     name: body
@@ -1837,29 +2025,78 @@ parameters:
 
 
 
-  # are not used yet =============================
-
-  Type_for_paper:
+  Type:
     in: query
     name: type
     type: string
     enum:
-      - article
-      - review
-      - book chapter
-    description: the type of papers to search
+      - all
+      - manual
+      - screened
+      - backlog
+    description: the type of projectPaper to select
 
-  Subject_for_paper:
-    in: query
-    name: subject
-    type: string
-    enum:
-      - engineering
-      - computer science
-      - physics
-    description: the subject of the papers to search
 
-#====================
+
+
+  Screenings_post_body:
+    in: body
+    name: body
+
+    schema:
+      type: object
+      properties:
+        project_id:
+          type: integer
+        array_user_ids:
+          type: array
+          items:
+            type: integer
+          example: [1,2,3]
+        array_screening_data:
+          type: array
+          items:
+            $ref: '#/definitions/Screening_data'
+          example:
+            - tags: []
+            - tags: []
+            - tags: []
+
+      required:
+        - project_id
+        - array_user_ids
+        - array_screening_data
+    required: true
+
+
+  Vote_post_body:
+    in: body
+    name: body
+
+    schema:
+      type: object
+      properties:
+        project_id:
+          type: integer
+        user_id:
+          type: integer
+        project_paper_id:
+          type: integer
+        vote:
+          $ref: '#/definitions/Vote_data'
+      example:
+        - project_id: 1
+        - user_id: 2
+        - project_paper_id: 3
+
+      required:
+        - project_id
+        - user_id
+        - project_paper_id
+    required: true
+
+
+
 
 securityDefinitions:
   basicAuth:

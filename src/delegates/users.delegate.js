@@ -3,11 +3,15 @@ const {OAuth2Client} = require('google-auth-library');
 
 const usersDao = require(__base + 'dao/users.dao');
 const projectsDao = require(__base + 'dao/projects.dao');
+const screeningsDao = require(__base + 'dao/screenings.dao');
+
 
 //error handler
 const errHandler = require(__base + 'utils/errors');
 //error check function
 const errorCheck = require(__base + 'utils/errorCheck');
+//supply the auxiliary function
+const support = require(__base + 'utils/support');
 //fetch request
 const conn = require(__base + 'utils/conn');
 //the config file
@@ -193,7 +197,7 @@ async function verifyToken(tokenId) {
  * get a collaborator list by project id
  * @param {string} user_email of user
  * @param {string} project_id
- * @returns {array[Object]} array of user object
+ * @returns {Object[]} array of user object
  */
 
 
@@ -223,7 +227,7 @@ async function verifyToken(tokenId) {
  * get a screeners list by project id
  * @param {string} user_email of user
  * @param {string} project_id
- * @returns {array[Object]} array of user object
+ * @returns {Object[]} array of user object
  */
 
 
@@ -241,9 +245,16 @@ async function getScreenersByProjectId(user_email, project_id) {
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
+    //get all screeners's records
+    let screenings = await screeningsDao.selectAllByProjectId(project_id);
+    //extract user_id and create a new array of ids
+    let users = support.arrayElementFieldToArray(screenings, "user_id");
+
+
     //call DAO layer
-    let res = await usersDao.getUserByArrayIds(project.data.screeners_id);
-    return res.filter(x => x.data.email !== user_email);
+    let res = await usersDao.getUserByArrayIds(users);
+
+    return res;
 
 
 }

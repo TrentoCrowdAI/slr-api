@@ -3,7 +3,6 @@
 // functionality related to HITs.
 //library to parse XML string to object
 
-
 const searchesDelegate = require(__base + 'delegates/searches.delegate');
 const searchesDao = require(__base + 'dao/searches.dao');
 
@@ -35,11 +34,9 @@ async function fakeSimilarSearchService(paperData, start, count) {
         throw errHandler.createBadRequestError('no paper title found');
     }
 
-
     //###########################################
     //call for the service
     //###########################################
-
 
     //temporary fake call for 'search similar service
     let splitted = paperData.title.split(" ");
@@ -64,7 +61,7 @@ async function fakeSimilarSearchService(paperData, start, count) {
  * fake external  automated  search
  * @param {string} title
  * @param {string} description
- * @param {array[]} arrayFilter
+ * @param {Object[]} arrayFilter
  * @param {string} min_confidence minimum confidence value of post
  * @param {string} max_confidence maximum confidence value of post
  * @param {string} start offset position where we begin to get
@@ -120,7 +117,6 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
     else if (descriptionQuery !== "") {
         query += "(" + descriptionQuery + ")";
     }
-
 
 
     //get inclusion and exlusion keywords from list of fiters
@@ -306,14 +302,15 @@ async function automatedScopusSearch(keyword, searchBy, sort, start = 0, count =
 
 /**
  * fake service for automated evaluation of confidence
-* @param {array[]}arrayPaper array of post object
- * @param {array[]} arrayFilter array of filter object
+* @param {Object[]}arrayPaper array of post object
+ * @param {Object[]} arrayFilter array of filter object
  */
 
 function fakeAutomatedEvaluationService(arrayPaper, arrayFilter){
 
-    //create response object
-    let response = {};
+    //create response array
+    let response = [];
+    let element;
     //declare the variable for following cycle
     let randomValue;
     let sum;
@@ -325,13 +322,14 @@ function fakeAutomatedEvaluationService(arrayPaper, arrayFilter){
     //range of confidence value
     let range = max_confidence - min_confidence + 0.01;
 
-
     //for each post
     for(let i=0; i<arrayPaper.length; i++){
+
         //create object for each paper
-        response[arrayPaper[i].id] = {};
-        //create array of filters in the response object
-        response[arrayPaper[i].id].filters=[];
+        //set field id
+        //set field filters array
+        element = {id:arrayPaper[i].id, filters: [] };
+
         //initial the sum to 0
         sum = 0;
 
@@ -344,8 +342,9 @@ function fakeAutomatedEvaluationService(arrayPaper, arrayFilter){
             sum += randomValue;
             //create filter object where will storage the filter id and value
             filter = {"id" : arrayFilter[j].id, "filterValue" : randomValue};
-            //push the tuple in the
-            response[arrayPaper[i].id].filters.push(filter);
+            //push the filter object in the array filters of paper object
+            element.filters.push(filter);
+
         }
 
         //the average value
@@ -359,8 +358,11 @@ function fakeAutomatedEvaluationService(arrayPaper, arrayFilter){
             averageValue = Math.floor(Math.random() * range * 100 + min_confidence * 100) / 100;
         }
 
-        //insert the tuble id-value into the response.
-        response[arrayPaper[i].id].value = averageValue;
+        //set average value of paper
+        element.value = averageValue;
+        //push the paper object in the response array
+        response.push(element);
+
 
     }
 

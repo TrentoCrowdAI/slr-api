@@ -72,7 +72,7 @@ async function parsePdf(file) {
  * parse the csv file
  * @param {Object} fields
  * @param {file}file
- * @return {array[]} list of projectPaper created
+ * @return {Object[]} list of projectPaper created
  */
 async function parseCsv(user_email, project_id, fields, file) {
 

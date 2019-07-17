@@ -349,6 +349,72 @@ function setAndCheckValidThresholdValue(value) {
 
 }
 
+/**
+ * check if the id is a valid integer
+ * convert the value from string type to integer
+ * @param {string} id
+ */
+function setAndCheckValidScreenersId(id) {
+
+    //error check
+    if (id === undefined || id === null) {
+        throw errHandler.createBadRequestError("the screeners's id is empty!");
+    }
+    //cast id to integer type
+    id = Number(id);
+    //error check
+    if (!Number.isInteger(id)) {
+        throw errHandler.createBadRequestError("the screeners's id is not a integer!");
+    }
+    return id;
+
+
+}
+
+/**
+ * check if the id is a valid integer
+ * convert the value from string type to integer
+ * @param {string} id
+ */
+function setAndCheckValidUserId(id) {
+
+    //error check
+    if (id === undefined || id === null) {
+        throw errHandler.createBadRequestError("the user's id is empty!");
+    }
+    //cast id to integer type
+    id = Number(id);
+    //error check
+    if (!Number.isInteger(id)) {
+        throw errHandler.createBadRequestError("the user's id is not a integer!");
+    }
+    return id;
+
+
+}
+
+/**
+ * check if the type has a valid value
+ * if type is null set a default value
+ * @param {string} type
+ */
+function setAndCheckValidProjectPaperType(type) {
+
+    type = type || config.screening_status.all;
+    //error check
+    if (type !== config.screening_status.all && type !== config.screening_status.manual && type !== config.screening_status.screened && type !== config.screening_status.backlog ) {
+        throw errHandler.createBadRequestError("the type is not valid!");
+    }
+
+    return type;
+
+
+}
+
+
+
+
+
 
 /**
  * check the validation of keyword
@@ -369,7 +435,7 @@ function isValidKeyword(keyword) {
 
 /**
  * check the validation of array
- * @param {Array[]}array
+ * @param {Object[]}array
  * @param {boolean} isEmptyValid flag for allowing empty arrays
  */
 function isValidArray(array, isEmptyValid = false) {
@@ -388,7 +454,7 @@ function isValidArray(array, isEmptyValid = false) {
 
 /**
  * check the validation of integer array
- * @param {Array[]}array
+ * @param {Object[]}array
  */
 function isValidArrayInteger(array) {
 
@@ -515,25 +581,8 @@ function isValidCollaboratorId(id) {
 
 }
 
-/**
- * check if the id is a valid integer
- * @param {string} email
- */
-function isValidScreenersId(id) {
-
-    //error check
-    if (id === undefined || id === null) {
-        throw errHandler.createBadRequestError("the screeners's id is empty!");
-    }
-    //cast id to integer type
-    id = Number(id);
-    //error check
-    if (!Number.isInteger(id)) {
-        throw errHandler.createBadRequestError("the screeners's id is not a integer!");
-    }
 
 
-}
 
 
 module.exports = {
@@ -552,6 +601,9 @@ module.exports = {
     setAndCheckValidMaxConfidenceValue,
     setAndCheckValidMinConfidenceValue,
     setAndCheckValidThresholdValue,
+    setAndCheckValidScreenersId,
+    setAndCheckValidUserId,
+    setAndCheckValidProjectPaperType,
     isValidKeyword,
     isValidArray,
     isValidArrayInteger,
@@ -562,7 +614,7 @@ module.exports = {
     isValidFilter,
     isValidGoogleEmail,
     isValidCollaboratorId,
-    isValidScreenersId,
+
 
 
 };

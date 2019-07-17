@@ -76,7 +76,7 @@ async function getUserByEmail(email) {
 /**
  * get users list by array of ids
  * @param {string} arrayIds
- * @returns {array[Object]} list of users found
+ * @returns {Object[]} list of users found
  */
 async function getUserByArrayIds(arrayIds) {
     let res = await db.query(

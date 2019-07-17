@@ -17,7 +17,7 @@ async function insert(newPaperData) {
 
 /**
  * insert a list of paper
- * @param {array[]} arrayPaperData a new list of newPaperData
+ * @param {Object[]} arrayPaperData a new list of newPaperData
  * @returns {Object} paper created
  */
 async function insertByList(arrayPaperData) {
@@ -86,8 +86,8 @@ async function deletes(paper_id) {
 /**
  *  internal function==========================================================
  * check existence of papers in tables
- * @param {array[]} arrayEid of paper to check
- * @returns {array[]} arrayEid of papers that are already exist in table
+ * @param {Object[]} arrayEid of paper to check
+ * @returns {Object[]} arrayEid of papers that are already exist in table
  */
 async function checkExistenceByEids(arrayEid) {
 
@@ -170,7 +170,7 @@ async function checkExistenceByEids(arrayEid) {
  * @param {int} offset position where we begin to get
  * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
  * @param {string} sort {ASC or DESC}
- * @returns {Array[]} array of papers
+ * @returns {Object[]} array of papers
  *//*
  async function selectAll(number, offset, orderBy, sort) {
  let res = await db.query(

@@ -12,6 +12,7 @@ const support = require(__base + 'utils/support');
  * @returns {Object} vote created
  */
 
+
 async function insert(newVoteData, user_id, project_paper_id, project_id,) {
     let res = await db.query(
         'INSERT INTO public.' + db.TABLES.votes + '("date_created", "date_last_modified", "date_deleted", "data", "user_id", "project_paper_id", "project_id") VALUES($1,$2,$3, $4, $5, $6, $7) RETURNING *',
@@ -71,15 +72,16 @@ async function selectById(vote_id) {
     return res.rows[0];
 }
 
+
 /**
  * select the votes by user id
  * @param {int} user_id
- * @returns {array[]} the list of vote found
+ * @returns {Object[]} the list of vote found
  */
 
 async function selectByUserId(user_id) {
     let res = await db.query(
-        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE user_id = $1",
+        "SELECT * FROM public." + db.TABLES.votes + " WHERE user_id = $1",
         [user_id]
     );
 
@@ -89,12 +91,12 @@ async function selectByUserId(user_id) {
 /**
  * select the votes by project_paper id
  * @param {int} projectPaper_id
- * @returns {array[]} the list of vote found
+ * @returns {Object[]} the list of vote found
  */
 
 async function selectByProjectPaperId(projectPaper_id) {
     let res = await db.query(
-        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE project_paper_id = $1",
+        "SELECT * FROM public." + db.TABLES.votes + " WHERE project_paper_id = $1",
         [projectPaper_id]
     );
 
@@ -105,12 +107,12 @@ async function selectByProjectPaperId(projectPaper_id) {
 /**
  * select the votes by project id
  * @param {int} project_id
- * @returns {array[]} the list of vote found
+ * @returns {Object[]} the list of vote found
  */
 
 async function selectByProjectId(project_id) {
     let res = await db.query(
-        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE project_id = $1",
+        "SELECT * FROM public."+ db.TABLES.votes + " WHERE project_id = $1",
         [project_id]
     );
 
@@ -126,7 +128,7 @@ async function selectByProjectId(project_id) {
 
 async function selectByProjectPaperIdAndUserId(projectPaper_id, user_id) {
     let res = await db.query(
-        "SELECT * FROM public.' + db.TABLES.votes + ' WHERE project_paper_id = $1 AND user_id = $2 ",
+        "SELECT * FROM public."+ db.TABLES.votes + " WHERE project_paper_id = $1 AND user_id = $2 ",
         [projectPaper_id, user_id]
     );
 

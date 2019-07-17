@@ -39,7 +39,6 @@ async function update(filter_id, newFilterData) {
     return res.rowCount;
 }
 
-
 /**
  *  * delete a filter
  * @param {int} filter_id
@@ -73,8 +72,8 @@ async function selectById(filter_id) {
 
 /**
  * select a filter list
- * @param {array[]} arrayFilterId
- * @returns {array[]} filter list found
+ * @param {Object[]} arrayFilterId
+ * @returns {Object[]} filter list found
  */
 
 async function selectByArrayId(arrayFilterId) {
@@ -94,6 +93,7 @@ async function selectByArrayId(arrayFilterId) {
     return res.rows;
 }
 
+
 /**
  * select the filters associated with a project
  * @param {int} project_id
@@ -104,8 +104,6 @@ async function selectByArrayId(arrayFilterId) {
  * @returns {Object} array of filters and total number of result
  */
 async function selectByProject(project_id, orderBy, sort, start, count) {
-
-
 
     //query to get filters
     let res = await db.query(
@@ -122,22 +120,7 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 }
 
-/**
- * select the filters associated with a project
- * @param {int} project_id
- * @returns {Object} array of filters and total number of result
- */
-async function selectLatestByProject(project_id) {
 
-
-    //query to get latest filters
-    let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.filters + ' WHERE data->>\'project_id\' = $1  ORDER BY date_last_modified DESC LIMIT 1',
-        [project_id]
-    );
-
-    return {"filterData": res.rows[0]};
-}
 
 /**
  * select all filters associated with a project
@@ -145,7 +128,6 @@ async function selectLatestByProject(project_id) {
  * @returns {Object[]} array of filters
  */
 async function selectAllByProject(project_id) {
-
 
     //query to get filters
     let res = await db.query(
@@ -157,6 +139,27 @@ async function selectAllByProject(project_id) {
 }
 
 
+/**
+ * count the number of filters associated with a project
+ * @param {int} project_id
+ * @returns {int} number of filters
+ */
+async function countByProject(project_id) {
+
+
+    //query to get filters
+    let res = await db.query(
+        'SELECT COUNT(*) FROM public.' + db.TABLES.filters + ' WHERE project_id = $1',
+        [project_id]
+    );
+
+    return  res.rows[0].count;
+
+}
+
+
+
+
 module.exports = {
     insert,
     update,
@@ -165,5 +168,6 @@ module.exports = {
     selectByArrayId,
     selectByProject,
     selectAllByProject,
-    selectLatestByProject
+    selectLatestByProject,
+    countByProject,
 };

@@ -13,17 +13,15 @@ router.get('/projects', async (req, res, next) => {
     try {
         let user_email = res.locals.user_email;
 
-        let projects = undefined;
+
         let orderBy = req.query.orderBy;
         let sort = req.query.sort;
         let start = req.query.start;
         let count = req.query.count;
-        let query = req.query.query;
-        // if(query === undefined){
-        projects = await projectsDelegate.selectAllByUserId(user_email, orderBy, sort, start, count);
-        //   }else{
-        //      projects = await projectsDelegate.selectBySingleKeyword(query, orderBy, sort, start, count);
-        //  }
+
+
+        let projects = await projectsDelegate.selectByUserId(user_email, orderBy, sort, start, count);
+
         res.status(200).json(projects);
     }
     catch (e) {
@@ -148,52 +146,8 @@ router.delete('/projects/:id/collaborators/:user_id', async (req, res, next) => 
 
 
 
-//get a screeners list by project
-router.get('/projects/:id/screeners', async (req, res, next) => {
-
-    try {
-        let user_email = res.locals.user_email;
-        let project_id = req.params.id;
-        let userData = await usersDelegate.getScreenersByProjectId(user_email, project_id);
-        res.status(200).json(userData);
-    }
-    catch (e) {
-        // catch the error threw from delegate and we delegate to the error-handling middleware
-        next(e);
-    }
-});
-
-//add a screnners into a project
-router.post('/projects/:id/screeners', async (req, res, next) => {
-    try {
-        let user_email = res.locals.user_email;
-        let project_id = req.params.id;
-        let screeners_id = req.body.user_id;
-        let userData = await projectsDelegate.addScreeners(user_email, project_id, screeners_id);
-        res.status(201).json(userData);
-    }
-    catch (e) {
-        // catch the error threw from delegate and we delegate to the error-handling middleware
-        next(e);
-    }
-});
 
 
-//delete a screnners from a project
-router.delete('/projects/:id/screeners/:user_id', async (req, res, next) => {
-    try {
-        let user_email = res.locals.user_email;
-        let project_id = req.params.id;
-        let screeners_id = req.params.user_id;
-
-        await projectsDelegate.deleteScreeners(user_email, project_id, screeners_id);
-        res.sendStatus(204);
-    }
-    catch (e) {
-        // catch the error threw from delegate and we delegate to the error-handling middleware
-        next(e);
-    }
-});
 
 
 

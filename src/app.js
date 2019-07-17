@@ -20,8 +20,8 @@ const filtersController = require('./controllers/filters.controller');
 const uploadFileController = require('./controllers/uploadFile.controller');
 //controller for users management
 const usersController = require('./controllers/users.controller');
-//controller for screening management
-const screeningController = require('./controllers/screening.controller');
+//controller for screeners management
+const screeningController = require('./controllers/screenings.controller');
 
 //controller for fake external service
 const externalServicesController = require('./controllers/external.services.controller');

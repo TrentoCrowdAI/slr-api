@@ -166,7 +166,7 @@ async function selectById(user_email, project_id) {
  */
 
 /**
- * select all project of a specific user
+ * select the project of a specific user
  * @param {string} user_email of user
  * @param {string} orderBy [id, date_created, date_last_modified, date_deleted]
  * @param {string} sort [ASC or DESC]
@@ -174,7 +174,7 @@ async function selectById(user_email, project_id) {
  * @param {string} count number of projects
  * @returns {Object} array of projects and total number of result
  */
-async function selectAllByUserId(user_email, orderBy, sort, start, count) {
+async function selectByUserId(user_email, orderBy, sort, start, count) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
@@ -189,7 +189,7 @@ async function selectAllByUserId(user_email, orderBy, sort, start, count) {
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
 
-    let res = await projectsDao.selectAllByUserId(user.id, orderBy, sort, start, count);
+    let res = await projectsDao.selectByUserId(user.id, orderBy, sort, start, count);
 
     //error check
     if (res.results.length === 0) {
@@ -318,97 +318,10 @@ async function deleteShareProject(user_email, project_id, collaborator_id) {
 }
 
 
-/**
- * share the project with other user
- * @param {string} user_email of user
- * @param {string} project_id
- * @param {string} screeners_id
- * @returns {Object} project found
- */
-async function addScreeners(user_email, project_id, screeners_id) {
-
-    //error check for user_email
-    errorCheck.isValidGoogleEmail(user_email);
-    //check validation of project id and transform the value in integer
-    project_id = errorCheck.setAndCheckValidProjectId(project_id);
-
-    //error check for selected user's id
-    errorCheck.isValidScreenersId(screeners_id);
-
-    //get user info
-    let user = await usersDao.getUserByEmail(user_email);
-
-    //get relative project and check relationship between the project and user
-    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
-    //if the user isn't project's owner
-    errorCheck.isValidProjectOwner(project);
-
-    //check existence of selected user
-    let screenersUser = await usersDao.getUserById(screeners_id);
-    if (!screenersUser) {
-        throw errHandler.createBadRequestError("the selected user for screening isn't existe!");
-    }
-    if (!project.data.user_id.includes(screenersUser.id)) {
-        throw errHandler.createBadRequestError("the selected user for screening must be a collaborator of this project!");
-    }
-
-    //if the array screeners_id is not defined
-    if (!project.data.screeners_id) {
-        project.data.screeners_id = [];
-    }
-
-    //if the selected user is already present in this project
-    if (project.data.screeners_id.includes(screenersUser.id)) {
-        throw errHandler.createBadRequestError("the selected user for screening is already present in this project!");
-    }
-
-    //convert id to string and push it into the array
-    project.data.screeners_id.push(screenersUser.id + "");
-    //update the project
-    await projectsDao.update(project.id, project.data);
 
 
-    return screenersUser;
-
-}
 
 
-/**
- * delete a screeners of the project
- * @param {string} user_email of user
- * @param {string} project_id
- * @param {string} screeners_id
- * @returns {Object} project found
- */
-async function deleteScreeners(user_email, project_id, screeners_id) {
-
-    //error check for user_email
-    errorCheck.isValidGoogleEmail(user_email);
-    //check validation of project id and transform the value in integer
-    project_id = errorCheck.setAndCheckValidProjectId(project_id);
-    //check validation of screeners_id
-    errorCheck.isValidScreenersId(screeners_id);
-
-    //get user info
-    let user = await usersDao.getUserByEmail(user_email);
-
-    //get relative project and check relationship between the project and user
-    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
-    //if the user isn't project's owner
-    errorCheck.isValidProjectOwner(project);
-
-    //if the selected user isn't present in this project
-    if (!project.data.screeners_id.includes(screeners_id)) {
-        throw errHandler.createBadRequestError("the selected user for screening isn't present in this project!");
-    }
-
-    //remove the shared user id from array of user of this project
-    project.data.screeners_id = support.removeElementFromArray(project.data.screeners_id, screeners_id + "");
-    //update the project
-    await projectsDao.update(project.id, project.data);
-
-
-}
 
 
 module.exports = {
@@ -417,11 +330,10 @@ module.exports = {
     deletes,
     selectById,
     //selectAll,
-    selectAllByUserId,
+    selectByUserId,
     shareProject,
     deleteShareProject,
-    //selectBySingleKeyword,
-    addScreeners,
-    deleteScreeners,
+
+
 
 };

@@ -20,9 +20,9 @@ const validationSchemes = require(__base + 'utils/validation.schemes');
 /**
  * insert a list of projectPaper by copy from fake_paper table
  * @param {string} user_email of user
- * @param {array[]} arrayEid array of paper eid
+ * @param {Object[]} arrayEid array of paper eid
  * @param {string} project_id
- * @returns {array[]} projectPaper created
+ * @returns {Object[]} projectPaper created
  */
 async function insertFromPaper(user_email, arrayEid, project_id) {
 
@@ -47,7 +47,7 @@ async function insertFromPaper(user_email, arrayEid, project_id) {
     arrayEid = support.differenceOperation(arrayEid, arrayEidExisting);
 
     //initial res with a empty array
-    let res=[];
+    let res = [];
 
     //if at least one post will be inserted
     if (arrayEid.length > 0) {
@@ -204,13 +204,14 @@ async function deletes(user_email, projectPaper_id) {
  * select all projectPaper associated with a project
  * @param {string} user_email of user
  * @param {string} project_id
+ * @param {string} type screened status of paper
  * @param {string} orderBy each paper data.propriety
  * @param {string} sort {ASC or DESC}
  * @param {string} start offset position where we begin to get
  * @param {string} count number of projects
  * @returns {Object} array of projectPapers and total number of result
  */
-async function selectByProject(user_email, project_id, orderBy, sort, start, count) {
+async function selectByProject(user_email, project_id, type, orderBy, sort, start, count) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
@@ -218,6 +219,9 @@ async function selectByProject(user_email, project_id, orderBy, sort, start, cou
     //check the validation of parameters
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
+
+    //check validation of parameters and set default value if is empty
+    type = errorCheck.setAndCheckValidProjectPaperType(type);
     orderBy = errorCheck.setAndCheckValidProjectPaperOrderBy(orderBy);
     sort = errorCheck.setAndCheckValidSort(sort);
     start = errorCheck.setAndCheckValidStart(start);
@@ -231,63 +235,35 @@ async function selectByProject(user_email, project_id, orderBy, sort, start, cou
     errorCheck.isValidProjectOwner(project);
 
     //call DAO layer
-    let res = await projectPapersDao.selectByProject(project_id, orderBy, sort, start, count);
+    let res;
+    switch (type) {
+        case config.screening_status.all:
+            res = await projectPapersDao.selectByProject(project_id, orderBy, sort, start, count);
+            break;
+        case config.screening_status.backlog:
+            res = await projectPapersDao.selectNotScreenedByProject(project_id, orderBy, sort, start, count);
+            break;
+        case config.screening_status.manual:
+            res = await projectPapersDao.selectManualByProject(project_id, orderBy, sort, start, count);
+            break;
+        case config.screening_status.screened:
+            res = await projectPapersDao.selectScreenedByProject(project_id, orderBy, sort, start, count);
+            break;
+    }
+
 
     //error check
     if (res.results.length === 0) {
         throw errHandler.createNotFoundError('the list is empty!');
     }
-    
+
     return res;
 }
 
-/**
- * search papers belonging to a project
- * @param {string} user_email of user
- * @param {string} keyword to search
- * @param {string} project_id
- * @param {string} searchBy [all, author, content] "content" means title+description
- * @param {string} year specific year to search
- * @param {string} orderBy each paper data.propriety
- * @param {string} sort {ASC or DESC}
- * @param {string} start offset position where we begin to get
- * @param {string} count number of papers
- * @returns {Object} array of projectPapers and total number of result
- *//*
- async function searchPaperByProject(user_email, keyword, project_id, searchBy, year, orderBy, sort, start, count) {
 
- //check the validation of parameters
- errorCheck.isValidKeyword(keyword);
- //check validation of project id and transform the value in integer
- project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
- /*=============
- temporary parameter
- * ============ *//*
- searchBy = searchBy || "all";
- if (searchBy !== "all" && searchBy !== "author" && searchBy !== "content") {
- throw errHandler.createBadRequestError('searchBy has a not valid value!');
- }
- year = Number(year) || "";
- if (year !== "" && !Number.isInteger(year)) {
- throw errHandler.createBadRequestError('year has a not valid value!');
- }
 
- /*================= *//*
 
- orderBy = errorCheck.setAndCheckValidProjectPaperOrderBy(orderBy);
- sort = errorCheck.setAndCheckValidSort(sort);
- start = errorCheck.setAndCheckValidStart(start);
- count = errorCheck.setAndCheckValidCount(count);
-
- //call DAO layer
- let res = await projectPapersDao.searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count);
- //error check
- if (res.results.length === 0) {
- throw errHandler.createNotFoundError('the list is empty!');
- }
- return res;
- }*/
 
 
 module.exports = {
@@ -297,5 +273,6 @@ module.exports = {
     deletes,
     //selectById,
     selectByProject,
-    //searchPaperByProject
+    automatedScreening,
+
 };
