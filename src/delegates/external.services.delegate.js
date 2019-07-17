@@ -136,20 +136,20 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
         exclusionString += support.arrayToString(tempArrayOfExclusion, " OR ", "");
 
         //if it isn't last cycle and array of inclusion is not empty
-        if (i < arrayFilter.length - 1 && tempArrayOfInclusion.length > 0) {
+        if (i < arrayFilter.length - 1 && tempArrayOfInclusion.length > 1) {
             inclusionString += " OR ";
         }
         //if it isn't last cycle and array of exclusion is not empty
-        if (i < arrayFilter.length - 1 && tempArrayOfExclusion.length > 0) {
+        if (i < arrayFilter.length - 1 && tempArrayOfExclusion.length > 1) {
             exclusionString += " OR ";
         }
 
     }
 
-    if (inclusionString !== "") {
+    if (inclusionString !== "" && inclusionString !== " OR ") {
         query += " AND (" + inclusionString + ")"
     }
-    if (exclusionString !== "") {
+    if (exclusionString !== "" && exclusionString !== " OR ") {
         query += " AND NOT (" + exclusionString + ")"
     }
 
@@ -160,7 +160,6 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
     //###########################################
     //call for the service
     //###########################################
-
 
     let response = await automatedScopusSearch(query, "advanced", "ASC", start, count);
 
