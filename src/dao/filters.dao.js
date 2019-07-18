@@ -168,6 +168,5 @@ module.exports = {
     selectByArrayId,
     selectByProject,
     selectAllByProject,
-    selectLatestByProject,
     countByProject,
 };

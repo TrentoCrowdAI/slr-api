@@ -44,9 +44,14 @@ INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "dat
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 20 FROM "public"."papers" WHERE id = 20 );
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 21 FROM "public"."papers" WHERE id = 21 );
 
--- range 22-24 for screeners test
+-- range 22-24 for screenings test
 
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 22 FROM "public"."papers" WHERE id = 22 );
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 23 FROM "public"."papers" WHERE id = 23 );
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 24 FROM "public"."papers" WHERE id = 24 );
 
+-- range 25-27 for votes test
+
+INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 25 FROM "public"."papers" WHERE id = 25 );
+INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 26 FROM "public"."papers" WHERE id = 26 );
+INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 27 FROM "public"."papers" WHERE id = 27 );

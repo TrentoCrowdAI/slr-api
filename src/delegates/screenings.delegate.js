@@ -25,19 +25,16 @@ const conn = require(__base + 'utils/conn');
 /**
  * insert screener by array
  * @param {string} user_email of user
- * @param {Object[]} array_screening_data
  * @param {int[]} array_screener_id
  * @param {string} manual_screening_type
  * @param {string} project_id
 
  * @returns {Object[]} list of screenings created
  */
-async function insertByArray(user_email, array_screening_data, array_screener_id, manual_screening_type, project_id,) {
+async function insertByArray(user_email, array_screener_id, manual_screening_type, project_id,) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
-    //check validation of array_screening_data
-    errorCheck.isValidArray(array_screening_data);
     //check validation of array_screener_id
     errorCheck.isValidArrayInteger(array_screener_id);
     //check validation of project id and transform the value in integer
@@ -46,11 +43,6 @@ async function insertByArray(user_email, array_screening_data, array_screener_id
     //check validation of screening type
     if (manual_screening_type !== config.manual_screening_type.single_predicate && manual_screening_type !== config.manual_screening_type.multi_predicate) {
         throw errHandler.createBadRequestError("the manual_screening_type is not valid!");
-    }
-
-
-    if (array_screening_data.length !== array_screener_id.length) {
-        throw errHandler.createBadRequestError("the array_screening_data and array_screener_id must have equal length!");
     }
 
 
@@ -72,7 +64,7 @@ async function insertByArray(user_email, array_screening_data, array_screener_id
         if (!screenersUser) {
             throw errHandler.createBadRequestError("the selected user for screening isn't existe!");
         }
-        if (!project.data.user_id.includes(array_screener_id[i])) {
+        if (!project.data.user_id.includes(array_screener_id[i].toString())) {
             throw errHandler.createBadRequestError("the selected user for screening must be a collaborator of this project!");
         }
 
@@ -84,7 +76,7 @@ async function insertByArray(user_email, array_screening_data, array_screener_id
         }
 
         //insert the screener in the screenings table
-        let res = await screeningsDao.insert(array_screening_data[i], array_screener_id[i], project_id);
+        let res = await screeningsDao.insert({"tags":[]}, array_screener_id[i], project_id);
         //save the res of current element
         finalRes.push(res);
     }

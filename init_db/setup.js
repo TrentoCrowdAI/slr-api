@@ -40,21 +40,34 @@ function returnData(data) {
  */
 async function createDB() {
     
-     console.log("database initialize start-------------------------------------------");
+
+    //get destroy sql
+    let destroySql = await read(path+'destroy.sql').then(returnData);
     //get init sql
     var initSql = await read('src/db/init.sql').then(returnData);
     //get data sql
     var dataSql = await read('src/db/data.sql').then(returnData);
-    //excute init sql
+
+
+    //destroy db
+    await db.queryNotParameter(destroySql).catch(function (error) {
+        console.error(error);
+    });
+    console.log("=====database destroyed=====");
+
+    //execute init sql
     await db.queryNotParameter(initSql).catch (function(error){
         console.error(error);
     }) ;
-    //exceute data sql
+    console.log("=====database created=====");
+
+
+    //execute data sql
     await db.queryNotParameter(dataSql).catch (function(error){
         console.error(error);
     }) ;
-    
-    console.log("database initialize end-------------------------------------------");
+
+    console.log("=====database loaded with initial data=====");
     
 }
 

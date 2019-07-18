@@ -4,9 +4,7 @@
 -- range 1-3 for filters test
 
 INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Machine learning","description":"is closely related to computational statistics, which focuses on making predictions using computers. The study of mathematical optimization delivers methods, theory and application domains to the field of machine learning.","user_id":["1"]}');
-
 INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Data science","description":"is a multi-disciplinary field that uses scientific methods, processes, algorithms and systems to extract knowledge and insights from structured and unstructured data. Data science is the same concept as data mining and big data: use the most powerful hardware, the most powerful programming systems, and the most efficient algorithms to solve problems.","user_id":["2"]}');
-
 INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Data mining","description":"is the process of discovering patterns in large data sets involving methods at the intersection of machine learning, statistics, and database systems.","user_id":["3"]}');
 
 
@@ -49,8 +47,14 @@ INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_del
 INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["21"]}');
 
 
--- range 22-24 for screeners test
+-- range 22-24 for screenings test
 
-INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Database","description":"is an organized collection of data, generally stored and accessed electronically from a computer system.","user_id":["22", "23"],"screeners_id":["22"]}');
-INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["23"],"screeners_id":["23"]}');
-INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["24"],"screeners_id":["24"]}');
+INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Database","description":"is an organized collection of data, generally stored and accessed electronically from a computer system.","user_id":["22", "23"]}');
+INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["22", "23"]}');
+INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["24"]}');
+
+-- range 25-27 for votes test
+
+INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Database","description":"is an organized collection of data, generally stored and accessed electronically from a computer system.","user_id":["25"]}');
+INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["26"]}');
+INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["27"]}');

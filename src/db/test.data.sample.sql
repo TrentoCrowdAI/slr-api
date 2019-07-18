@@ -13,4 +13,6 @@
 
 -- range 19-21 for collaborators test
 
--- range 22-24 for screeners test
+-- range 22-24 for screenings test
+
+-- range 25-27 for votes test

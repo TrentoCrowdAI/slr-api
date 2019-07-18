@@ -2053,14 +2053,12 @@ parameters:
           items:
             type: integer
           example: [1,2,3]
-        array_screening_data:
-          type: array
-          items:
-            $ref: '#/definitions/Screening_data'
-          example:
-            - tags: []
-            - tags: []
-            - tags: []
+        manual_screening_type:
+          type: string
+          description: type of manual screening for this project
+          enum:
+            - single-predicate
+            - multi-predicate
 
       required:
         - project_id

@@ -64,7 +64,7 @@ INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_delete
 INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"email": "test21@gmail.com", "name": "miku club",
   "picture": "https://lh4.googleusercontent.com/-r-lbLfOxy1Y/AAAAAAAAAAI/AAAAAAAAAEA/8Ow_GV8FitI/s96-c/photo.jpg"}');
 
--- range 22-24 for screeners test
+-- range 22-24 for screenings test
 
 
 INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"email": "test22@gmail.com", "name": "miku club",
@@ -72,4 +72,13 @@ INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_delete
 INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"email": "test23@gmail.com", "name": "miku club",
   "picture": "https://lh4.googleusercontent.com/-r-lbLfOxy1Y/AAAAAAAAAAI/AAAAAAAAAEA/8Ow_GV8FitI/s96-c/photo.jpg"}');
 INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"email": "test24@gmail.com", "name": "miku club",
+  "picture": "https://lh4.googleusercontent.com/-r-lbLfOxy1Y/AAAAAAAAAAI/AAAAAAAAAEA/8Ow_GV8FitI/s96-c/photo.jpg"}');
+
+-- range 25-27 for votes test
+
+INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"email": "test25@gmail.com", "name": "miku club",
+  "picture": "https://lh4.googleusercontent.com/-r-lbLfOxy1Y/AAAAAAAAAAI/AAAAAAAAAEA/8Ow_GV8FitI/s96-c/photo.jpg"}');
+INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"email": "test26@gmail.com", "name": "miku club",
+  "picture": "https://lh4.googleusercontent.com/-r-lbLfOxy1Y/AAAAAAAAAAI/AAAAAAAAAEA/8Ow_GV8FitI/s96-c/photo.jpg"}');
+INSERT INTO "public"."users" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"email": "test27@gmail.com", "name": "miku club",
   "picture": "https://lh4.googleusercontent.com/-r-lbLfOxy1Y/AAAAAAAAAAI/AAAAAAAAAEA/8Ow_GV8FitI/s96-c/photo.jpg"}');

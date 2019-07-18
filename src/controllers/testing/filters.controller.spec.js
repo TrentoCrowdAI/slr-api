@@ -15,10 +15,11 @@ const validTokenId3 = "test" + index3;
 // valid examples
 let validExample = {
     "project_id": "1",
-    "name": "abc",
-    "predicate": "aaa",
-    "inclusion_description": "bbb",
-    "exclusion_description": "ccc",
+    "filter": {
+        "predicate": "aaa",
+        "inclusion_description": "bbb",
+        "exclusion_description": "ccc",
+    }
 };
 
 
@@ -64,46 +65,52 @@ describe('good cases on filters ', () => {
 
 //not valid examples
 let notValidExampleForProjectId = {
-    "name": "abc",
-    "predicate": "aaa",
-    "inclusion_description": "bbb",
-    "exclusion_description": "ccc",
+    "filter": {
+        "predicate": "aaa",
+        "inclusion_description": "bbb",
+        "exclusion_description": "ccc",
+    }
 };
 let notValidExampleForProjectIdNotNumber = {
     "project_id": "abc",
-    "name": "abc",
-    "predicate": "aaa",
-    "inclusion_description": "bbb",
-    "exclusion_description": "ccc",
+    "filter": {
+        "predicate": "aaa",
+        "inclusion_description": "bbb",
+        "exclusion_description": "ccc",
+    }
 };
 let notValidExampleForProjectIdNotInteger = {
     "project_id": "1.5",
-    "name": "abc",
-    "predicate": "aaa",
-    "inclusion_description": "bbb",
-    "exclusion_description": "ccc",
+    "filter": {
+        "predicate": "aaa",
+        "inclusion_description": "bbb",
+        "exclusion_description": "ccc",
+    }
 };
 let notValidExampleForExclustionDescription = {
-    "project_id": index+"",
-    "name": "abc",
-    "predicate": "aaa",
-    "inclusion_description": "bbb",
+    "project_id": index + "",
+    "filter": {
+        "predicate": "aaa",
+        "inclusion_description": "bbb",
+    }
 };
 
 
 let notValidExampleForProjectIdNotExist = {
     "project_id": "9999",
-    "name": "abc",
-    "predicate": "aaa",
-    "inclusion_description": "bbb",
-    "exclusion_description": "ccc",
+    "filter": {
+        "predicate": "aaa",
+        "inclusion_description": "bbb",
+        "exclusion_description": "ccc",
+    }
 };
 let notValidExampleForProjectIdNotPermission = {
-    "project_id": index3+"",
-    "name": "abc",
-    "predicate": "aaa",
-    "inclusion_description": "bbb",
-    "exclusion_description": "ccc",
+    "project_id": index3 + "",
+    "filter": {
+        "predicate": "aaa",
+        "inclusion_description": "bbb",
+        "exclusion_description": "ccc",
+    }
 };
 
 
@@ -150,13 +157,13 @@ describe('bad cases on filters ', () => {
 
         test('GET /filters should return 401 if the user hasn\'t permission', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).get('/filters?project_id='+index2).set('Authorization', validTokenId);
+            let response = await request(app).get('/filters?project_id=' + index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401)
         });
 
         test('GET /filters should return 404 if the result is empty', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).get('/filters?project_id='+index3).set('Authorization', validTokenId3);
+            let response = await request(app).get('/filters?project_id=' + index3).set('Authorization', validTokenId3);
             expect(response.status).toBe(404)
         });
 
@@ -210,7 +217,7 @@ describe('bad cases on filters ', () => {
             let response = await request(app).put('/filters/abc').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //filter id is not integer
-             response = await request(app).put('/filters/' + index + '.5').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
+            response = await request(app).put('/filters/' + index + '.5').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
             response = await request(app).put('/filters/' + index).send(notValidExampleForProjectId).set('Accept', 'application/json').set('Authorization', validTokenId);
@@ -297,7 +304,6 @@ describe('bad cases on filters ', () => {
         });
 
     });
-
 
 
 });

@@ -66,7 +66,7 @@
   INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name": "C3", "predicate": "aaa",
   "inclusion_description": "abc", "exclusion_description": "abc"}', 21);
 
--- range 22-24 for screeners test
+-- range 22-24 for screenings test
 
   INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name": "C2", "predicate": "aaa",
   "inclusion_description": "abc", "exclusion_description": "abc"}', 22);
@@ -75,3 +75,12 @@
   INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name": "C3", "predicate": "aaa",
   "inclusion_description": "abc", "exclusion_description": "abc"}', 24);
 
+-- range 25-27 for votes test
+
+
+  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name": "C2", "predicate": "aaa",
+  "inclusion_description": "abc", "exclusion_description": "abc"}', 25);
+  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name": "C3", "predicate": "aaa",
+  "inclusion_description": "abc", "exclusion_description": "abc"}', 26);
+  INSERT INTO "public"."filters"("date_created", "date_last_modified", "date_deleted", "data", "project_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name": "C3", "predicate": "aaa",
+  "inclusion_description": "abc", "exclusion_description": "abc"}', 27);

@@ -37,8 +37,11 @@ function returnData(data) {
 async function createDB() {
 
     let path = "src/db/";
+    //get destroy sql
+    let destroySql = await read(path+'destroy.sql').then(returnData);
     //get init sql
     let initSql = await read(path+'init.sql').then(returnData);
+
 
     //get data sql
     let dataSql = [];
@@ -47,13 +50,23 @@ async function createDB() {
     dataSql.push(await read(path+'test.data.projects.papers.sql').then(returnData));
     dataSql.push(await read(path+'test.data.filters.sql').then(returnData));
     dataSql.push(await read(path+'test.data.users.sql').then(returnData));
+    dataSql.push(await read(path+'test.data.screenings.sql').then(returnData));
+    dataSql.push(await read(path+'test.data.votes.sql').then(returnData));
 
-    //excute init sql
+
+    //destroy db
+    await db.queryNotParameter(destroySql).catch(function (error) {
+        console.error(error);
+    });
+    console.log("=====database destroyed=====");
+
+    //init db
     await db.queryNotParameter(initSql).catch(function (error) {
         console.error(error);
     });
-    console.log("=====database initiated=====");
-    //exceute data sql
+    console.log("=====database created=====");
+
+    //execute test data sql
     for(let i=0; i<dataSql.length; i++){
         await db.queryNotParameter(dataSql[i]).catch(function (error) {
             console.error(error);

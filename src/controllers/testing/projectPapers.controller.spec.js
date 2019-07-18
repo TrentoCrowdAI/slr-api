@@ -1,4 +1,7 @@
 const request = require('supertest');
+//the config file
+const config = require(__base + 'config');
+
 const app = require(__base + 'app');
 const timeOut = 20 * 1000;
 
@@ -51,6 +54,31 @@ describe('good cases on projectPapers ', () => {
         let response = await request(app).get('/papers?project_id=' + index).set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
+
+    test('GET /papers?project_id=1&type=all should return 200 if it finds something', async () => {
+        jest.setTimeout(timeOut);
+        let response = await request(app).get('/papers?project_id=' + index+'&type='+config.screening_status.all).set('Authorization', validTokenId);
+        expect(response.status).toBe(200);
+    });
+
+    test('GET /papers?project_id=1&type=manual should return 200 if it finds something', async () => {
+        jest.setTimeout(timeOut);
+        let response = await request(app).get('/papers?project_id=' + index+'&type='+config.screening_status.manual).set('Authorization', validTokenId);
+        expect(response.status).toBe(200);
+    });
+
+    test('GET /papers?project_id=1&type=backlog should return 200 if it finds something', async () => {
+        jest.setTimeout(timeOut);
+        let response = await request(app).get('/papers?project_id=' + index+'&type='+config.screening_status.backlog).set('Authorization', validTokenId);
+        expect(response.status).toBe(200);
+    });
+
+    test('GET /papers?project_id=1&type=screened should return 200 if it finds something', async () => {
+        jest.setTimeout(timeOut);
+        let response = await request(app).get('/papers?project_id=' + index+'&type='+config.screening_status.screened).set('Authorization', validTokenId);
+        expect(response.status).toBe(200);
+    });
+
 
 
     test('POST /papers should return 201(on eid array)', async () => {
@@ -272,6 +300,10 @@ describe('bad cases on projectPapers ', () => {
             expect(response.status).toBe(400);
             //the count is less than 1
             response = await request(app).get('/papers?project_id=1&count=0').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+
+            //the type is not valid
+            response = await request(app).get('/papers?project_id='+index).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
         });

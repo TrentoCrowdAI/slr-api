@@ -77,9 +77,9 @@ async function insert(user_email, voteData, project_paper_id, project_id) {
 
 
     //check existence of screener in screenings table
-    let screeningsRecords = await screeningsDao.selectByUserIdAndProjectId(screeners_id, project_id);
+    let screeningsRecord = await screeningsDao.selectByUserIdAndProjectId(screeners_id, project_id);
     //if the selected user isn't present in the screenings table
-    if (!screeningsRecords) {
+    if (!screeningsRecord) {
         throw errHandler.createBadRequestError("the user isn't a screeners of this project!");
     }
 
@@ -92,14 +92,23 @@ async function insert(user_email, voteData, project_paper_id, project_id) {
     //insert the vote into DB
     let newVote = await votesDao.insert(voteData, user.id, project_paper_id, project_id);
 
+    //copy the vote tags to tags of screenings table
+    screeningsRecord.data.tags = voteData.metadata.tags;
+    //update screenings record
+    await screeningsDao.update(screeningsRecord.id, screeningsRecord.data);
+
+    /*
+
+    ####################################################################
+    #################################################################
+
+     */
+
     //if projectPaper hasn't metadata field in the data
     if (!projectPaper.data.metadata) {
         //create the metadata object
         projectPaper.data.metadata = {};
     }
-    //update the projectPaper screened status of projectPaper
-    projectPaper.data.metadata.screened = config.screening_status.manual;
-
 
     //get all votes
     let allVotes = await votesDao.selectByProjectPaperId(project_paper_id);
@@ -131,6 +140,14 @@ async function insert(user_email, voteData, project_paper_id, project_id) {
             projectPaper.data.metadata.screening.result = "1";
         }
 
+        //set the projectPaper screened status of projectPaper as screened
+        projectPaper.data.metadata.screened = config.screening_status.screened;
+
+    }
+    //if there aren't all votes
+    else{
+        //set the projectPaper screened status of projectPaper as manual
+        projectPaper.data.metadata.screened = config.screening_status.manual;
     }
 
     //update the projectPaper Object
