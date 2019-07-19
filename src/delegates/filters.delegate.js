@@ -61,6 +61,7 @@ async function insert(user_email, newFilterData, project_id) {
  *  * update a filter, the project_id will not be change
  * @param {string} user_email of user
  * @param {string} filter_id
+
  * @param {Object} newFilterData
  */
 async function update(user_email, filter_id, newFilterData) {
@@ -70,7 +71,7 @@ async function update(user_email, filter_id, newFilterData) {
 
     //check validation of filter_id and transform the value in integer
     filter_id = errorCheck.setAndCheckValidFilterId(filter_id);
-    errorCheck.setAndCheckValidProjectId(newFilterData.project_id);
+
 
     //check input format
     let valid = ajv.validate(validationSchemes.filter, newFilterData);
@@ -94,7 +95,8 @@ async function update(user_email, filter_id, newFilterData) {
     await projectsDao.updateLastModifiedDate(filter.project_id);
 
     //call DAO layer
-    //avoid change of project_id by update;
+    //copy the name of filter
+    newFilterData.name = filter.data.name;
     await filtersDao.update(filter_id, newFilterData);
 
 

@@ -1516,9 +1516,6 @@ definitions:
   Filter_data_no_name:
     type: object
     properties:
-      name:
-        type: string
-        example: "filter a"
       predicate:
         type: string
       inclusion_description:
@@ -2063,7 +2060,7 @@ parameters:
       required:
         - project_id
         - array_user_ids
-        - array_screening_data
+        - manual_screening_type
     required: true
 
 
@@ -2074,8 +2071,6 @@ parameters:
     schema:
       type: object
       properties:
-        project_id:
-          type: integer
         user_id:
           type: integer
         project_paper_id:
@@ -2083,12 +2078,10 @@ parameters:
         vote:
           $ref: '#/definitions/Vote_data'
       example:
-        - project_id: 1
         - user_id: 2
         - project_paper_id: 3
 
       required:
-        - project_id
         - user_id
         - project_paper_id
     required: true

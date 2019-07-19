@@ -38,12 +38,12 @@ INSERT INTO "public"."screenings"("date_created", "date_last_modified", "date_de
 INSERT INTO "public"."screenings"("date_created", "date_last_modified", "date_deleted", "data", "project_id", "user_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"tags": []}', 21, 21);
 
 -- range 22-24 for screenings test
-INSERT INTO "public"."screenings"("date_created", "date_last_modified", "date_deleted", "data", "project_id", "user_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"tags": []}', 22,22);
+INSERT INTO "public"."screenings"("date_created", "date_last_modified", "date_deleted", "data", "project_id", "user_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"tags": []}', 22, 22);
 INSERT INTO "public"."screenings"("date_created", "date_last_modified", "date_deleted", "data", "project_id", "user_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"tags": []}', 23, 22);
 INSERT INTO "public"."screenings"("date_created", "date_last_modified", "date_deleted", "data", "project_id", "user_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"tags": []}', 24, 24);
 
 
 -- range 25-27 for votes test
 INSERT INTO "public"."screenings"("date_created", "date_last_modified", "date_deleted", "data", "project_id", "user_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"tags": []}', 25, 25);
-INSERT INTO "public"."screenings"("date_created", "date_last_modified", "date_deleted", "data", "project_id", "user_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"tags": []}', 26, 26);
-INSERT INTO "public"."screenings"("date_created", "date_last_modified", "date_deleted", "data", "project_id", "user_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"tags": []}', 27, 27);
+INSERT INTO "public"."screenings"("date_created", "date_last_modified", "date_deleted", "data", "project_id", "user_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"tags": []}', 26, 25);
+INSERT INTO "public"."screenings"("date_created", "date_last_modified", "date_deleted", "data", "project_id", "user_id") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"tags": []}', 27, 25);

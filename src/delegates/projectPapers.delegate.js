@@ -12,6 +12,8 @@ const errHandler = require(__base + 'utils/errors');
 const support = require(__base + 'utils/support');
 //error check function
 const errorCheck = require(__base + 'utils/errorCheck');
+//the config file
+const config = require(__base + 'config');
 //the packaged for input validation
 const ajv = require(__base + 'utils/ajv');
 const validationSchemes = require(__base + 'utils/validation.schemes');
@@ -273,6 +275,5 @@ module.exports = {
     deletes,
     //selectById,
     selectByProject,
-    automatedScreening,
 
 };

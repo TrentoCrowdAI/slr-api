@@ -30,33 +30,35 @@ const validationSchemes = require(__base + 'utils/validation.schemes');
  * if all vote is inserted, screens the paper by average of answer in votes
  * @param {string} user_email of user
  * @param {string} project_paper_id
- * @param {string} project_id
+
 
  * @returns {Object} vote created
  */
-async function insert(user_email, voteData, project_paper_id, project_id) {
+async function insert(user_email, voteData, project_paper_id) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
 
     //check validation of projectPaper_id and transform the value in integer
     project_paper_id = errorCheck.setAndCheckValidProjectPaperId(project_paper_id);
-    //check validation of project id and transform the value in integer
-    project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
 
     //check format of vote data
     let valid = ajv.validate(validationSchemes.vote, voteData);
+    //if is not a valid input
+    if (!valid) {
+        throw errHandler.createBadRequestError('the new vote data is not valid!');
+    }
     // check format of vote's metadata
     let valid2 = ajv.validate(validationSchemes.vote_metadata, voteData.metadata);
     //if is not a valid input
-    if (!valid || !valid2) {
-        throw errHandler.createBadRequestError('the new vote data is not valid!');
+    if (!valid2) {
+        throw errHandler.createBadRequestError('the new vote data.metadata is not valid!');
     }
 
     //check validation of answer
     if (voteData.answer !== "0" && voteData.answer !== "1") {
-        throw errHandler.createBadRequestError("the answer isn't valide!");
+        throw errHandler.createBadRequestError("the answer isn't valid!");
     }
 
     //get projectPaper object by projectPaper id
@@ -68,16 +70,18 @@ async function insert(user_email, voteData, project_paper_id, project_id) {
         throw errHandler.createBadRequestError("the projectPaper is already screened!");
     }
 
+    //get project id from projectPaper
+    let project_id = projectPaper.project_id;
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
-    let project = await projectsDao.selectByIdAndUserId(projectPaper.project_id, user.id);
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
 
     //check existence of screener in screenings table
-    let screeningsRecord = await screeningsDao.selectByUserIdAndProjectId(screeners_id, project_id);
+    let screeningsRecord = await screeningsDao.selectByUserIdAndProjectId(user.id, project_id);
     //if the selected user isn't present in the screenings table
     if (!screeningsRecord) {
         throw errHandler.createBadRequestError("the user isn't a screeners of this project!");
@@ -151,7 +155,7 @@ async function insert(user_email, voteData, project_paper_id, project_id) {
     }
 
     //update the projectPaper Object
-    await projectPapersDao.update(projectPaper_id, projectPaper.data);
+    await projectPapersDao.update(project_paper_id, projectPaper.data);
 
 
     return newVote;
@@ -175,7 +179,7 @@ async function selectByProjectId(user_email, project_id) {
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
-    let project = await projectsDao.selectByIdAndUserId(projectPaper.project_id, user.id);
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 

@@ -21,7 +21,9 @@ const uploadFileController = require('./controllers/uploadFile.controller');
 //controller for users management
 const usersController = require('./controllers/users.controller');
 //controller for screeners management
-const screeningController = require('./controllers/screenings.controller');
+const screeningsController = require('./controllers/screenings.controller');
+//controller for votes management
+const votesController = require('./controllers/votes.controller');
 
 //controller for fake external service
 const externalServicesController = require('./controllers/external.services.controller');
@@ -68,7 +70,8 @@ app.use(projectsController);
 app.use(projectPapersController);
 app.use(filtersController);
 app.use(uploadFileController);
-app.use(screeningController);
+app.use(screeningsController);
+app.use(votesController);
 
 
 
@@ -77,7 +80,7 @@ app.use(screeningController);
 app.use((e, req, res, next) => {
 
     //print the error object in the console
-    console.error('[Error]', e);
+   // console.error('[Error]', e);
 
     let error = errorsHelper.createBoomErrorForService(e);
 

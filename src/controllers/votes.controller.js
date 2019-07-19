@@ -19,12 +19,11 @@ router.post('/votes', async (req, res, next) => {
         let user_email = res.locals.user_email;
         let project_paper_id = req.body.project_paper_id;
 
-        let project_id = req.body.project_id;
         let voteData = req.body.vote;
         
-        let voteCreated = await votesDelegate.insert(user_email, voteData, project_paper_id, project_id);
+        let voteCreated = await votesDelegate.insert(user_email, voteData, project_paper_id);
 
-        res.status(200).json(voteCreated);
+        res.status(201).json(voteCreated);
 
     }
     catch (e) {

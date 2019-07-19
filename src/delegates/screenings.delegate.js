@@ -14,6 +14,8 @@ const errHandler = require(__base + 'utils/errors');
 const support = require(__base + 'utils/support');
 //error check function
 const errorCheck = require(__base + 'utils/errorCheck');
+//the config file
+const config = require(__base + 'config');
 //the packaged for input validation
 const ajv = require(__base + 'utils/ajv');
 const validationSchemes = require(__base + 'utils/validation.schemes');
@@ -62,16 +64,17 @@ async function insertByArray(user_email, array_screener_id, manual_screening_typ
         //check existence of selected user
         let screenersUser = await usersDao.getUserById(array_screener_id[i]);
         if (!screenersUser) {
-            throw errHandler.createBadRequestError("the selected user for screening isn't existe!");
+            throw errHandler.createBadRequestError("the selected user for screening isn't exist!");
         }
         if (!project.data.user_id.includes(array_screener_id[i].toString())) {
             throw errHandler.createBadRequestError("the selected user for screening must be a collaborator of this project!");
         }
 
         //check existence of screener in screenings table
-        let screeningsRecords = await screeningsDao.selectByUserIdAndProjectId(array_screener_id[i], project_id);
+        let screeningsRecord = await screeningsDao.selectByUserIdAndProjectId(array_screener_id[i], project_id);
         //if the selected user is already present in the screenings table
-        if (screeningsRecords.length) {
+
+        if (screeningsRecord) {
             throw errHandler.createBadRequestError("the selected user for screening is already present in this project!");
         }
 
@@ -120,9 +123,9 @@ async function deletes(user_email, screeners_id, project_id) {
 
 
     //check existence of screener in screenings table
-    let screeningsRecords = await screeningsDao.selectByUserIdAndProjectId(screeners_id, project_id);
+    let screeningsRecord = await screeningsDao.selectByUserIdAndProjectId(screeners_id, project_id);
     //if the selected user isn't present in the screenings table
-    if (!screeningsRecords) {
+    if (!screeningsRecord) {
         throw errHandler.createBadRequestError("the selected user for screening isn't  present in this project!");
     }
 

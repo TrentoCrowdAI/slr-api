@@ -39,14 +39,16 @@ function returnData(data) {
  
  */
 async function createDB() {
-    
+
+
+    let path = "src/db/";
 
     //get destroy sql
     let destroySql = await read(path+'destroy.sql').then(returnData);
     //get init sql
-    var initSql = await read('src/db/init.sql').then(returnData);
+    var initSql = await read(path+'init.sql').then(returnData);
     //get data sql
-    var dataSql = await read('src/db/data.sql').then(returnData);
+    var dataSql = await read(path+'data.sql').then(returnData);
 
 
     //destroy db

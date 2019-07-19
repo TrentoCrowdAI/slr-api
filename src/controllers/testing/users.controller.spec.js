@@ -43,7 +43,7 @@ describe('bad cases on users', () => {
         expect(response.status).toBe(400);
     });
 
-    test('GET /projects should return 401 if user \'s token is not valid', async () => {
+    test.skip('GET /projects should return 401 if user \'s token is not valid', async () => {
         jest.setTimeout(timeOut);
         let response = await request(app).get('/projects').set('Authorization', notValidTokenId);
         expect(response.status).toBe(401);
