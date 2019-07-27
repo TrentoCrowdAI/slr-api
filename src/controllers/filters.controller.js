@@ -73,9 +73,8 @@ router.put('/filters/:filter_id', async (req, res, next) => {
         let user_email = res.locals.user_email;
         let filter_id = req.params.filter_id;
         //the new data of filter to update
-        let newFilterData = req.body.filter;
-        let project_id = req.body.project_id;
-
+        let newFilterData = req.body;
+        
         await filtersDelegate.update(user_email, filter_id, newFilterData);
         res.sendStatus(204);
     }

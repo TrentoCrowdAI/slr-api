@@ -44,7 +44,8 @@ async function insert(user_email, newFilterData, project_id) {
     errorCheck.isValidProjectOwner(project);
 
     //call DAO layer to get number of filters
-    let newNumberForFilters = await filtersDao.countByProject(project_id)+1;
+    let nFilters = await filtersDao.countByProject(project_id);
+    let newNumberForFilters = parseInt(nFilters) + 1;
     //set name of filter
     newFilterData.name = "C"+newNumberForFilters;
 

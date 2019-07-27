@@ -179,10 +179,14 @@ async function verifyToken(tokenId) {
         //check user's existence by google email
         let userFromDB = await usersDao.getUserByEmail(user.email);
 
-        //if it doesn't exist in DB yet
+        //if it doesn't exist in DB yet 
         if (!userFromDB) {
             //insert it
             let res = await usersDao.insert(user);
+        }
+        //or never logged in
+        else if(userFromDB.data && userFromDB.data.name !== user.name){
+            let res = await usersDao.update(user);
         }
 
         user_email = user.email;

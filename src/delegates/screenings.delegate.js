@@ -171,11 +171,75 @@ async function selectAllByProjectId(user_email, project_id) {
 
 }
 
+/**
+ * internal function to help manage the auto screening service
+ * @param {Object[]} projectPapers
+ * @param {Float} threshold
+ * @param {Object} queryData 
+ */
+async function manageAutoScreeningService(projectPapers, threshold, queryData) {
+    console.log("waiting for fake eval")
+    let response = await conn.post(config.automated_evaluation_server, queryData);
+
+    //for each result
+    for (let i = 0; i < response.length; i++) {
+        //for each projectPaper
+        for (let j = 0; j < projectPapers.length; j++) {
+
+            //if key id is equal to projectPaper id
+            if (response[i].id === projectPapers[j].id) {
+
+                //if metadata filed is not defined
+                if (!projectPapers[j].data.metadata) {
+                    //create a new object
+                    projectPapers[j].data.metadata = {};
+                }
+                //if automatedScreening filed is not defined
+                if (!projectPapers[j].data.metadata.automatedScreening) {
+                    //create a new object
+                    projectPapers[j].data.metadata.automatedScreening = {};
+                }
+
+                //save the confidence value
+                projectPapers[j].data.metadata.automatedScreening.value = response[i].value;
+                //save the filter array
+                projectPapers[j].data.metadata.automatedScreening.filters = response[i].filters;
+
+                //if the confidence value is grater than threshold
+                if (response[i].value >= threshold) {
+
+
+                    //create a new screening object and set value
+                    //set screening result as true
+                    //set source of screening result as "automated screening"
+                    projectPapers[j].data.metadata.screening = {
+                        "result": 1,
+                        "source": config.screening_source.automated_screening
+                    };
+                    //set screened status
+                    projectPapers[j].data.metadata.screened = config.screening_status.screened;
+
+                }
+
+            }
+
+
+        }
+
+    }
+
+    //for each projectPaper
+    for (let j = 0; j < projectPapers.length; j++) {
+        //update in the DB
+        await projectPapersDao.update(projectPapers[j].id, projectPapers[j].data);
+    }
+
+}
 
 /**
  * automated screening,
  * the function will evaluate all papers not evaluated, not voted, not screened.
- * than screened the papers with confidence value greater than threshold value
+ * Then, the papers with confidence value greater than threshold value, will be set as Screened
  * @param {string} user_email of user
  * @param {string} project_id
  * @param {string} threshold value of confidence
@@ -207,60 +271,8 @@ async function automatedScreening(user_email, project_id, threshold) {
     queryData.arrayPaper = projectPapers;
     queryData.arrayFilter = filters;
 
-    let response = await conn.post(config.automated_evaluation_server, queryData);
-
-    //for each result
-    for (let i = 0; i < response.length; i++) {
-        //for each projectPaper
-        for (let j = 0; j < projectPapers.length; j++) {
-
-            //if key id is equal to projectPaper id
-            if (response[i].id === projectPapers[j].id) {
-
-                //if metadata filed is not defined
-                if (!projectPapers[j].data.metadata) {
-                    //create a new object
-                    projectPapers[j].data.metadata = {};
-                }
-                //if automatedScreening filed is not defined
-                if (!projectPapers[j].data.metadata.automatedScreening) {
-                    //create a new object
-                    projectPapers[j].data.metadata.automatedScreening = {};
-                }
-
-                //save the confidence value
-                projectPapers[j].data.metadata.automatedScreening.value = response[i].value;
-                //save the filter array
-                projectPapers[j].data.metadata.automatedScreening.filter = response[i].filters;
-
-                //if the confidence value is grater than threshold
-                if (response[i].value >= threshold) {
-
-
-                    //create a new screening object and set value
-                    //set screening result as true
-                    //set source of screening result as "automated screening"
-                    projectPapers[j].data.metadata.screening = {
-                        "result": 1,
-                        "source": config.screening_source.automated_screening
-                    };
-                    //set screened status
-                    projectPapers[j].data.metadata.screened = config.screening_status.screened;
-
-                }
-
-            }
-
-
-        }
-
-    }
-
-    //for each projectPaper
-    for (let j = 0; j < projectPapers.length; j++) {
-        //update in the DB
-        await projectPapersDao.update(projectPapers[j].id, projectPapers[j].data);
-    }
+    //after everything is set up, I let a function handle call & response of external service
+    manageAutoScreeningService(projectPapers, threshold, queryData);
 
 
 }
@@ -280,14 +292,13 @@ async function getAutomatedScreeningStatus(user_email, project_id) {
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
-    let max = 100;
-    let min = 0;
-    //range of value
-    let range = max - min + 1;
-    //calculate the random value
-    let randomValue = Math.floor(Math.random() * range + min);
+    //get number of autoScreened papers and totalPaper
+    let statusData = await projectPapersDao.countAutoScreenedOutOfTotalPapers(project_id);
 
-    return randomValue;
+    //calculate the random value
+    let statusPercentage = Math.floor(statusData.totalAutoScreened/statusData.totalResults * 100);
+
+    return statusPercentage;
 
 }
 

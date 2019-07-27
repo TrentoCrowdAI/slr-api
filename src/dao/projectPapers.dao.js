@@ -238,6 +238,29 @@ async function selectManualByProject(project_id, orderBy, sort, start, count) {
 }
 
 /**
+ * counts the papers that have been automatically screened and the total number of papers
+ * @param {int} project_id
+ * @returns {Object} totalAutoScreened, totalPapers
+ */
+async function countAutoScreenedOutOfTotalPapers(project_id) {
+
+    //query to get total number of result
+    let resForTotalAutoScreened = await db.query(
+        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  P.data ? 'metadata'  AND P.data->'metadata' ? 'automatedScreening' ",
+        [project_id]
+    );
+
+    //query to get total number of result
+    let resForTotalNumber = await db.query(
+        'SELECT COUNT(*)  FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1  ',
+        [project_id]
+    );
+
+    return {"totalAutoScreened": resForTotalAutoScreened.rows[0].count, "totalResults": resForTotalNumber.rows[0].count};
+
+}
+
+/**
  * select all projectPapers that have the final screening result
  * @param {int} project_id
  * @param {string} orderBy each paper data.propriety
@@ -263,10 +286,16 @@ async function selectScreenedByProject(project_id, orderBy, sort, start, count) 
     //query to get total number of result
     let resForTotalNumber = await db.query(
         "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND P.data ? 'metadata' AND P.data->'metadata' ? 'screened'  AND  P.data->'metadata'->>'screened'  = $2 ",
-        [project_id, config.screening_status.manual]
+        [project_id, config.screening_status.screened]
     );
 
-    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
+    //query to get total number of papers in a project
+    let resForTotalPapers = await db.query(
+        'SELECT COUNT(*)  FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1  ',
+        [project_id]
+    );
+
+    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count, "totalPapers": resForTotalPapers.rows[0].count};
 }
 
 
@@ -395,6 +424,7 @@ module.exports = {
     selectManualByProject,
     selectScreenedByProject,
     selectOneNotVotedByUserIdAndProjectId,
+    countAutoScreenedOutOfTotalPapers,
 
     //selectByIdAndProjectId,
     searchPaperByProject,

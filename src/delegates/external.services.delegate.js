@@ -97,8 +97,9 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
     title = title.replace(/and|or|not/gi, "").replace(/\s+/g, " ");
     description = description.replace(/and|or|not/gi, "").replace(/\s+/g, " ");
     //split string in array by space
-    let titleArray = title.split(" ");
-    let descriptionArray = description.split(" ");
+    let titleArray = title.split(" ").filter((x) => x);//avoid empty strings
+    console.log(titleArray);
+    let descriptionArray = description.split(" ").filter((x) => x);
 
     //initial the query string
     let query = "ALL(";
@@ -127,9 +128,9 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
     for (let i = 0; i < arrayFilter.length; i++) {
         //console.log(i +"<"+arrayFilter.length);
         //get split array of inclusion of current filter
-        tempArrayOfInclusion = arrayFilter[i].data.inclusion_description.replace(/and|or|not/gi, "").replace(/\s+/g, " ").split(" ");
+        tempArrayOfInclusion = arrayFilter[i].data.inclusion_description.replace(/and|or|not/gi, "").replace(/\s+/g, " ").split(" ").filter((x) => x);
         //get split array of exclusion of current filter
-        tempArrayOfExclusion = arrayFilter[i].data.exclusion_description.replace(/and|or|not/gi, "").replace(/\s+/g, " ").split(" ");
+        tempArrayOfExclusion = arrayFilter[i].data.exclusion_description.replace(/and|or|not/gi, "").replace(/\s+/g, " ").split(" ").filter((x) => x);
         //concatenate the array to string of or
         inclusionString += support.arrayToString(tempArrayOfInclusion, " OR ", "");
         //concatenate the array to string of or
@@ -222,7 +223,7 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
  * @returns {Object} array of papers and total number of result
  */
 async function automatedScopusSearch(keyword, searchBy, sort, start = 0, count = 10) {
-
+    console.log(keyword);
     //prepare the query object
     let queryData = {};
     queryData.apiKey = config.scopus.apiKey;

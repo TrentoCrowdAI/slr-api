@@ -14,7 +14,18 @@ async function insert(newUserData) {
     return res.rows[0];
 }
 
-
+/**
+ * update a user by email
+ * @param {Object} newUserData
+ * @returns {int} number of row affected , 1 if ok, 0 if failed
+ */
+async function update(newUserData) {
+    res = await db.query(
+        'UPDATE public.' + db.TABLES.users + ' SET "date_last_modified" = $1,  "data" = $2 WHERE data->>\'email\' = $3',
+        [new Date(), newUserData, newUserData.email]
+    );
+    return res.rowCount;
+}
 /**
  *  * update a user by Google Id
  * @param {int}  project_id
@@ -132,6 +143,7 @@ async function getUserByTokenId(token_id) {
 
 module.exports = {
     insert,
+    update,
     getUserByGoogleId,
     getUserByEmail,
     getUserByArrayIds,
