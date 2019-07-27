@@ -21,6 +21,12 @@ let validExample = {
         "exclusion_description": "ccc",
     }
 };
+// valid examples
+let validExampleUpdate = {
+    "predicate": "aaa",
+    "inclusion_description": "bbb",
+    "exclusion_description": "ccc",
+};
 
 
 describe('good cases on filters ', () => {
@@ -48,7 +54,7 @@ describe('good cases on filters ', () => {
 
     test('PUT /filters/:id should return 204', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).put('/filters/' + index).send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
+        let response = await request(app).put('/filters/' + index).send(validExampleUpdate).set('Accept', 'application/json').set('Authorization', validTokenId);
         expect(response.status).toBe(204);
     });
 
@@ -218,10 +224,10 @@ describe('bad cases on filters ', () => {
             jest.setTimeout(timeOut);
 
             //filter id is not number
-            let response = await request(app).put('/filters/abc').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
+            let response = await request(app).put('/filters/abc').send(validExampleUpdate).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //filter id is not integer
-            response = await request(app).put('/filters/' + index + '.5').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
+            response = await request(app).put('/filters/' + index + '.5').send(validExampleUpdate).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
 
@@ -234,14 +240,14 @@ describe('bad cases on filters ', () => {
 
         test('PUT /filters/:id should return 404 if filter is not present', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).put('/filters/99999').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
+            let response = await request(app).put('/filters/99999').send(validExampleUpdate).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(404);
         });
 
 
         test('PUT /filters/:id should return 401 if user hasn\'t permission', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).put('/filters/' + index2).send(validExample).set('Authorization', validTokenId);
+            let response = await request(app).put('/filters/' + index2).send(validExampleUpdate).set('Authorization', validTokenId);
 
 
 
