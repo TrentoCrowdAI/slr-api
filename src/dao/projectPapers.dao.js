@@ -358,8 +358,12 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
  */
 async function selectOneNotVotedByUserIdAndProjectId(user_id, project_id) {
     let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.projectPapers + " P  WHERE  ( ( NOT(P.data ? 'metadata') ) OR (P.data ? 'metadata'  AND ( NOT(P.data->'metadata' ? 'screened') OR (P.data->'metadata'->>'screened'=$1) ) )  )  AND P.id NOT IN( SELECT project_paper_id FROM public."+db.TABLES.votes+" WHERE user_id = $2 AND project_id = $3 )",
-        [config.screening_status.manual, user_id, project_id]
+        "SELECT * FROM public." + db.TABLES.projectPapers + " P  WHERE  project_id= $1"+" AND "+
+        "( ( NOT(P.data ? 'metadata') ) " + " OR "+
+        "(P.data ? 'metadata' AND (NOT(P.data->'metadata' ? 'automatedScreening') ) )  )  "+
+        "AND P.id NOT IN( SELECT project_paper_id FROM public."+db.TABLES.votes+" WHERE user_id = $1 AND project_id = $2 )" + 
+        " ORDER BY data->>'date_created' DESC",
+        [user_id, project_id]
     );
 
     return res.rows[0];

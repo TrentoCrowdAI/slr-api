@@ -221,7 +221,7 @@ async function verifyToken(tokenId) {
 
     //call DAO layer
     let res = await usersDao.getUserByArrayIds(project.data.user_id);
-    return res.filter(x => x.data.email !== user_email);
+    return res;
 
 
 }

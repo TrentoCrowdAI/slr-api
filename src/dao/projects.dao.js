@@ -107,7 +107,7 @@ async function selectAll(orderBy, sort, start, count) {
     let resForTotalNumber = await db.query(
         'SELECT COUNT(*) FROM public.' + db.TABLES.projects);
 
-    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
+    return {"results": res.rows, "totalResults": resForTotalNumber.rowCount};
 }
 
 /**
@@ -131,7 +131,7 @@ async function selectByUserId(user_id, orderBy, sort, start, count) {
     let resForTotalNumber = await db.query(
         'SELECT COUNT(*) FROM public.' + db.TABLES.projects + ' WHERE data->\'user_id\' ? $1  ', [user_id + ""]);
 
-    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
+    return {"results": res.rows, "totalResults": resForTotalNumber.rowCount};
 }
 
 
@@ -148,7 +148,7 @@ async function selectByScreeningUser(user_id, orderBy, sort, start, count) {
 
     //query to get projects
     let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.projects + " P, public." + db.TABLES.screenings + " S WHERE P.id = S.project_id AND S.user_id = $1  ORDER BY P." + orderBy + " " + sort + " LIMIT $2 OFFSET $3",
+        "SELECT S.id, S.date_created, S.date_last_modified, S.date_deleted, S.project_id, S.data, P.id as project_id, P.data as project_data FROM public." + db.TABLES.projects + " P, public." + db.TABLES.screenings + " S WHERE P.id = S.project_id AND S.user_id = $1  ORDER BY P." + orderBy + " " + sort + " LIMIT $2 OFFSET $3",
         [user_id, count, start]
     );
 
@@ -158,7 +158,7 @@ async function selectByScreeningUser(user_id, orderBy, sort, start, count) {
         [user_id]
     );
 
-    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
+    return {"results": res.rows, "totalResults": resForTotalNumber.rowCount};
 }
 
 
