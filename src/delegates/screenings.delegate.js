@@ -79,7 +79,7 @@ async function insertByArray(user_email, array_screener_id, manual_screening_typ
         }
 
         //insert the screener in the screenings table
-        let res = await screeningsDao.insert({"tags":[]}, array_screener_id[i], project_id);
+        let res = await screeningsDao.insert({"tags":[], "manual_screening_type": manual_screening_type}, array_screener_id[i], project_id);
         //save the res of current element
         finalRes.push(res);
     }
@@ -337,29 +337,80 @@ async function selectByScreeningUser(user_email, orderBy, sort, start, count) {
 }
 
 /**
- * get  a last paper to vote from a specific project
+ * select a screening
  * @param {string} user_email of user
- * @param {string} project_id
- * @returns {Object} projectPaper found
+ * @param {string} screening_id
+ * @returns {Object} screening found
  */
-async function selectOneNotVotedByUserIdAndProjectId(user_email, project_id) {
+async function selectById(user_email, screening_id) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
 
-    //check validation of project id and transform the value in integer
-    project_id = errorCheck.setAndCheckValidProjectId(project_id);
+    //check validation of screening id and transform the value in integer
+    screening_id = errorCheck.setAndCheckValidScreeningId(screening_id);
 
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
-    //check relationship between the project and user
-    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
+
+    //get screening info
+    let screening = await screeningsDao.selectById(screening_id);
+
+    //if screening doesn't exists
+    if(screening === undefined){
+        throw errHandler.createNotFoundError("the screening doesn't exists");
+    }
+
+    //if user is not assigned to the selected screening I throw an error
+    if(user.id !== screening.user_id){
+        throw errHandler.createUnauthorizedError("unauthorized operation");
+    }
+
+    //I get the project in order to check if the user is still a collaborator
+    let project = await projectsDao.selectByIdAndUserId(screening.project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+
+    //I also add the title of the screening to be the same as the project title
+    let screeningData = {...screening, data: {...(screening.data), name: project.data.name}};
+
+    return screeningData;
+}
+
+/**
+ * get  a last paper to vote from a specific screening
+ * @param {string} user_email of user
+ * @param {string} screening_id
+ * @returns {Object} projectPaper found
+ */
+async function selectOneNotVotedByUserIdAndProjectId(user_email, screening_id) {
+
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
+
+    //check validation of screening id and transform the value in integer
+    screening_id = errorCheck.setAndCheckValidScreeningId(screening_id);
+
+    //get user info
+    let user = await usersDao.getUserByEmail(user_email);
+
+    //get screening info
+    let screening = await screeningsDao.selectById(screening_id);
+
+    //if user is not assigned to the selected screening I throw an error
+    if(user.id !== screening.user_id){
+        throw errHandler.createUnauthorizedError("unauthorized operation");
+    }
+
+    //I get the project in order to check if the user is still a collaborator
+    let project = await projectsDao.selectByIdAndUserId(screening.project_id, user.id);
+
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
 
     //call DAO layer
-    let res = await projectPapersDao.selectOneNotVotedByUserIdAndProjectId(user.id, project_id);
+    let res = await projectPapersDao.selectOneNotVotedByUserIdAndProjectId(user.id, screening.project_id);
 
     //if there isn't the projectPaper to vote
     if (!res) {
@@ -373,6 +424,7 @@ async function selectOneNotVotedByUserIdAndProjectId(user_email, project_id) {
 module.exports = {
     insertByArray,
     deletes,
+    selectById,
     selectAllByProjectId,
     automatedScreening,
     getAutomatedScreeningStatus,

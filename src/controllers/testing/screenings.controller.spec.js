@@ -62,15 +62,15 @@ describe('good cases on screenings', () => {
         expect(response.status).toBe(200);
     });
 
-    test('GET /screenings/myProjects should return 200', async () => {
+    test('GET /screenings should return 200', async () => {
         jest.setTimeout(timeOut);
-        response = await request(app).get('/screenings/myProjects').set('Authorization', validTokenId);
+        response = await request(app).get('/screenings').set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 
-    test('GET /screenings/myProjects/:project_id should return 200', async () => {
+    test('GET /screenings/:screening_id should return 200', async () => {
         jest.setTimeout(timeOut);
-        response = await request(app).get('/screenings/myProjects/' + index).set('Authorization', validTokenId);
+        response = await request(app).get('/screenings/' + index).set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 

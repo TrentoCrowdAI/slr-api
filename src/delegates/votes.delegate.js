@@ -23,6 +23,8 @@ const conn = require(__base + 'utils/conn');
 const ajv = require(__base + 'utils/ajv');
 const validationSchemes = require(__base + 'utils/validation.schemes');
 
+//require lodash array library
+const _array = require('lodash/array');
 
 /**
  * insert the vote of a exist projectPaper
@@ -97,7 +99,7 @@ async function insert(user_email, voteData, project_paper_id) {
     let newVote = await votesDao.insert(voteData, user.id, project_paper_id, project_id);
 
     //copy the vote tags to tags of screenings table
-    screeningsRecord.data.tags = voteData.metadata.tags;
+    screeningsRecord.data.tags = _array.union([...(screeningsRecord.data.tags),...(voteData.metadata.tags)]);
     //update screenings record
     await screeningsDao.update(screeningsRecord.id, screeningsRecord.data);
 

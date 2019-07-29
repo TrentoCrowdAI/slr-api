@@ -46,6 +46,26 @@ function setAndCheckValidProjectId(project_id) {
 }
 
 /**
+ * check validation of screening id and transform the value in integer
+ * @param {number} screening_id
+ * @return {int} screening_id
+ */
+function setAndCheckValidScreeningId(screening_id) {
+    //error check
+    if (screening_id === undefined || screening_id === null) {
+        throw errHandler.createBadRequestError('Project id is not defined!');
+    }
+
+    //cast screening_id to integer type
+    screening_id = Number(screening_id);
+    //error check
+    if (!Number.isInteger(screening_id)) {
+        throw errHandler.createBadRequestError('Project id is not a integer!');
+    }
+    return screening_id;
+}
+
+/**
  * set a default value if orderBy of project isn't defined and check its validation
  * @param {string} orderBy
  * @return {string} orderBy
@@ -604,6 +624,7 @@ module.exports = {
     setAndCheckValidScreenersId,
     setAndCheckValidUserId,
     setAndCheckValidProjectPaperType,
+    setAndCheckValidScreeningId,
     isValidKeyword,
     isValidArray,
     isValidArrayInteger,
