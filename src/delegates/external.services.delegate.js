@@ -98,7 +98,6 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
     description = description.replace(/and|or|not/gi, "").replace(/\s+/g, " ");
     //split string in array by space
     let titleArray = title.split(" ").filter((x) => x);//avoid empty strings
-    console.log(titleArray);
     let descriptionArray = description.split(" ").filter((x) => x);
 
     //initial the query string
@@ -223,7 +222,6 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
  * @returns {Object} array of papers and total number of result
  */
 async function automatedScopusSearch(keyword, searchBy, sort, start = 0, count = 10) {
-    console.log(keyword);
     //prepare the query object
     let queryData = {};
     queryData.apiKey = config.scopus.apiKey;

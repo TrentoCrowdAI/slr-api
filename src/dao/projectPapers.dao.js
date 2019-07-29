@@ -357,12 +357,18 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
  * @returns {Object} projectPaper found
  */
 async function selectOneNotVotedByUserIdAndProjectId(user_id, project_id) {
+    //SELECT P.date_created,P.data->'title' FROM public.project_papers P  WHERE  project_id= 9 AND 
+    //( ( NOT(P.data ? 'metadata') )  OR 
+    //((P.data ? 'metadata') AND (NOT(P.data->'metadata' ? 'screened'))) OR
+    //((P.data->'metadata'?'screened') AND (P.data->'metadata'->>'screened' <> 'screened'))  )  
+    //AND P.id NOT IN( SELECT project_paper_id FROM public.votes WHERE user_id = 3 AND project_id = 9 ) ORDER BY date_created, data->'title' ASC
     let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.projectPapers + " P  WHERE  project_id= $1"+" AND "+
+        "SELECT * FROM public." + db.TABLES.projectPapers + " P  WHERE  project_id= $2"+" AND "+
         "( ( NOT(P.data ? 'metadata') ) " + " OR "+
-        "(P.data ? 'metadata' AND (NOT(P.data->'metadata' ? 'automatedScreening') ) )  )  "+
+        "(P.data ? 'metadata' AND (NOT(P.data->'metadata' ? 'screened') ) )  OR"+
+        "((P.data->'metadata'?'screened') AND (P.data->'metadata'->>'screened' <> 'screened'))  )"+
         "AND P.id NOT IN( SELECT project_paper_id FROM public."+db.TABLES.votes+" WHERE user_id = $1 AND project_id = $2 )" + 
-        " ORDER BY data->>'date_created' DESC",
+        " ORDER BY date_created, data->'title' ASC",
         [user_id, project_id]
     );
 

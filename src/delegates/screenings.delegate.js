@@ -178,7 +178,6 @@ async function selectAllByProjectId(user_email, project_id) {
  * @param {Object} queryData 
  */
 async function manageAutoScreeningService(projectPapers, threshold, queryData) {
-    console.log("waiting for fake eval")
     let response = await conn.post(config.automated_evaluation_server, queryData);
 
     //for each result

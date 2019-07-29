@@ -53,7 +53,7 @@ async function insert(user_email, voteData, project_paper_id) {
     let valid2 = ajv.validate(validationSchemes.vote_metadata, voteData.metadata);
     //if is not a valid input
     if (!valid2) {
-        throw errHandler.createBadRequestError('the new vote data.metadata is not valid!');
+        throw errHandler.createBadRequestError('the new vote data.metadata is not valid!('+ ajv.errorsText() +')');
     }
 
     //check validation of answer
