@@ -359,7 +359,8 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Project_papers'
+            $ref: '#/definitions/Result_of_paper_search_with_screened_result'
+#            $ref: '#/definitions/Project_papers'
         '400':
           $ref: '#/responses/400_bad_request'
         '401':
@@ -410,7 +411,8 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Project_paper'
+            $ref: '#/definitions/Paper_data_with_screened_result'
+#            $ref: '#/definitions/Project_paper'
         '400':
           $ref: '#/responses/400_bad_request'
         '401':
@@ -717,6 +719,34 @@ paths:
 
 
   '/screenings':
+    get:
+      summary: get list of project to screening
+      description: get list of project associated with user by screening table
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/OrderBy'
+        - $ref: '#/parameters/Sort'
+        - $ref: '#/parameters/Start'
+        - $ref: '#/parameters/Count'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Result_projects'
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
     post:
       summary: add the screening by array
       description: add the screening in the table by array
@@ -817,26 +847,23 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
-  '/screenings/myProjects':
+  '/screenings/{screening_id}':
 
     get:
-      summary: get list of project to screening
-      description: get list of project associated with user by screening table
+      summary: get screening data
+      description: get the data of a specific screening
       tags:
         - Screenings
       security:
         - basicAuth: []
 
       parameters:
-        - $ref: '#/parameters/OrderBy'
-        - $ref: '#/parameters/Sort'
-        - $ref: '#/parameters/Start'
-        - $ref: '#/parameters/Count'
+        - $ref: '#/parameters/Screening_id_in_path'
       responses:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Result_projects'
+            $ref: '#/definitions/Screening'
         '204':
           $ref: '#/responses/204_no_content'
         '400':
@@ -848,19 +875,18 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
-
-  '/screenings/myProjects/{project_id}':
+  '/screenings/{screening_id}/next':
 
     get:
-      summary: get one last paper to vote
-      description: get  a last paper to vote from a specific project
+      summary: get next paper to vote
+      description: get a paper to vote from a specific project
       tags:
         - Screenings
       security:
         - basicAuth: []
 
       parameters:
-        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/Screening_id_in_path'
       responses:
         '200':
           description: OK
@@ -1268,7 +1294,27 @@ definitions:
         example: "10.1000/182"
       metadata:
         type: object
+        description: "this will be present in case of manual screening"
         properties:
+          screened:
+            type: "string"
+            enum: ["manual", "screened", "auto"]
+          votes:
+            type: array
+            items:
+              type: object
+              properties:
+                answer:
+                  type: string
+                  enum: ["0","1","2"]
+                user:
+                  type: object
+                  properties:
+                    name: 
+                      type: string
+                    picture:
+                      type: string
+                      description: url to image
           screening:
             type: object
             properties:
@@ -1410,6 +1456,9 @@ definitions:
       name:
         type: string
         example: "robots research"
+      manual_screening_type:
+        type: string
+        enum: ["single-predicate", "multi-predicate", undefined]
       description:
         type: string
         example: >-
@@ -1559,9 +1608,13 @@ definitions:
       tags:
         type: array
         items:
-          type: object
-    example:
-      tags: []
+          type: string
+      manual_screening_type:
+        type: string
+        enum: ["single-predicate", "multi-predicate", undefined]
+      name:
+        type: string
+        description: it's the same as the project name linked to this screening
 
   Screening:
     type: object
@@ -1593,6 +1646,8 @@ definitions:
         enum:
           - 0
           - 1
+          - 2
+        description: "0 = no, 1 = yes, 2 = undecided"
       metadata:
         type: object
         properties:
@@ -1605,11 +1660,7 @@ definitions:
             type: array
             items:
               type: object
-              properties:
-                text:
-                  type: object
-                filter_id:
-                  type: integer
+              description: "there's no standard format for the highlights"
           tags:
             type: array
             items:
@@ -2064,6 +2115,13 @@ parameters:
     required: true
 
 
+  Screening_id_in_path:
+    in: path
+    name: screening_id
+    description: the internal id of a screening
+    type: integer
+    required: true
+
   Vote_post_body:
     in: body
     name: body
@@ -2071,18 +2129,13 @@ parameters:
     schema:
       type: object
       properties:
-        user_id:
-          type: integer
         project_paper_id:
           type: integer
         vote:
           $ref: '#/definitions/Vote_data'
-      example:
-        - user_id: 2
-        - project_paper_id: 3
 
       required:
-        - user_id
+        - vote
         - project_paper_id
     required: true
 
