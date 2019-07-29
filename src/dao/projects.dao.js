@@ -131,7 +131,7 @@ async function selectByUserId(user_id, orderBy, sort, start, count) {
     let resForTotalNumber = await db.query(
         'SELECT COUNT(*) FROM public.' + db.TABLES.projects + ' WHERE data->\'user_id\' ? $1  ', [user_id + ""]);
 
-    return {"results": res.rows, "totalResults": resForTotalNumber.rowCount};
+    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 }
 
 
