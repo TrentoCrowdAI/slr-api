@@ -50,7 +50,9 @@ projects = {
             name,
             description,
             user_id: [], //where will save the user_id for collaborator management
-            screeners_id: [], //where will save the user_id for screener management
+            //screeners_id: [], //where will save the user_id for screener management (not present)
+            manual_screening_type //will appear once the project will start being manually screened 
+                                  //as multi-predicate or single-predicate
         }
 }
 
@@ -80,7 +82,8 @@ project_papers = {
             manual,
             doi,
             metadata: {
-
+                screened: "manual", //can be manual/automated/screened, it's used to retireve the different papers for the
+                                    //different tabs
                 automatedSearch: { //if the paper comes from automated search
                     value: 0.50, //average value of confidence
                     filters: [
@@ -91,8 +94,7 @@ project_papers = {
                             filters_id2: filter_value2 //tuple of filter id and its confidence value
                         }
                     ]
-                }
-                ,
+                },
                 automatedScreening: { //if the paper is evaluated by automated screening service
                     value: 0.50, //average value of confidence
                     filters: [
@@ -104,8 +106,18 @@ project_papers = {
                         }
                     ]
                 },
+                votes: [ //array with minimal info about manual votes received by the paper
+                         //so we can display the list of papers correlated with their own votes
+                    {
+                        answer: "0", //can be 0=no/1=yes/2=undecided
+                        user : { //data about the user
+                            name,
+                            picture
+                        }
+                    }
+                ],
                 screening: { //if the paper is already screened by automated screening or manual screening
-                    result: 0, //1 means true, 0 means false
+                    result: "0", //1 means in, 0 means out
                     source: "automated screening" //provenance of result
                 }
             }
@@ -133,8 +145,8 @@ let filters = {
     date_created,
     date_last_modified,
     date_deleted,
+    project_id,
     data: {
-        project_id,
         name,
         predicate,
         inclusion_description,
@@ -151,14 +163,32 @@ let votes = {
     date_created,
     date_last_modified,
     date_deleted,
+    user_id,
+    project_paper_id,
+    project_id,
     data: {
-        user_id,
-        project_paper_id,
-        answer: 1 //    1 means positive answer, 0 means negative answer
+        answer: "1", //    1 means positive answer, 0 means negative answer, 2 means undecided
+        metadata: {
+            tags: [], //array of string assigned to the paper voted
+            type, //can be single-predicate or multi-predicate
+            highlights: [] //array of highlights information
+        }
     }
 
 }
 
+let screenings = {
+    id,
+    date_created,
+    date_last_modified,
+    date_deleted,
+    project_id,
+    user_id,
+    data: {
+        tags: [], //all the tags the user used for the papers in the screeening
+        manual_screening_type //can be 'single-predicate' or 'multi-predicate'
+    }
+}
 
 
 
