@@ -366,10 +366,10 @@ async function selectOneNotVotedByUserIdAndProjectId(user_id, project_id) {
         "SELECT * FROM public." + db.TABLES.projectPapers + " P  WHERE  project_id= $2"+" AND "+
         "( ( NOT(P.data ? 'metadata') ) " + " OR "+
         "(P.data ? 'metadata' AND (NOT(P.data->'metadata' ? 'screened') ) )  OR"+
-        "((P.data->'metadata'?'screened') AND (P.data->'metadata'->>'screened' <> 'screened'))  )"+
+        "((P.data->'metadata'?'screened') AND (P.data->'metadata'->>'screened' <> $3))  )"+
         "AND P.id NOT IN( SELECT project_paper_id FROM public."+db.TABLES.votes+" WHERE user_id = $1 AND project_id = $2 )" + 
         " ORDER BY date_created, data->'title' ASC",
-        [user_id, project_id]
+        [user_id, project_id, config.screening_status.screened]
     );
 
     return res.rows[0];
