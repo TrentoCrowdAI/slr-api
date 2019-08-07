@@ -61,6 +61,13 @@ describe('good cases on projects', () => {
     });
 
 
+    test('GET /projects/:project_id/screeners should return 200', async () => {
+        jest.setTimeout(timeOut);
+        let response = await request(app).get('/projects/' + index+'/screeners').set('Authorization', validTokenId);
+        expect(response.status).toBe(200);
+    });
+
+
 });
 
 
@@ -242,6 +249,33 @@ describe('bad cases on projects', () => {
             let response = await request(app).get('/projects/'+index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
+    });
+
+    describe('bad cases on GET /projects/:project_id/screeners', () => {
+
+        test('GET /projects/:project_id/screeners should return 400 if parameters aren\'t valid', async () => {
+            jest.setTimeout(timeOut);
+            //if the project id is not a number
+            let response = await request(app).get('/projects/abc/screeners').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+            //if the project id is not a integer
+            response = await request(app).get('/projects/' + index+'.5'+'/screeners').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+        });
+
+
+        test('GET /projects/:project_id/screeners should return 401 if it finds nothing', async () => {
+            jest.setTimeout(timeOut);
+            let response = await request(app).get('/projects/9999/screeners').set('Authorization', validTokenId);
+            expect(response.status).toBe(401);
+        });
+
+        test('GET /projects/:project_id/screeners should return 401 if user hasn\'t permission', async () => {
+            jest.setTimeout(timeOut);
+            let response = await request(app).get('/projects/'+index3+'/screeners').set('Authorization', validTokenId);
+            expect(response.status).toBe(401);
+        });
+
     });
 
 });

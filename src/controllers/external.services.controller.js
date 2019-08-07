@@ -63,8 +63,26 @@ router.post('/external/automatedEvaluation', async (req, res, next) => {
         //input
         let arrayPaper = req.body.arrayPaper;
         let arrayFilter = req.body.arrayFilter;
+        let project_id = req.body.project_id;
 
-        let papers = await externalServicesDelegate.fakeAutomatedEvaluationService(arrayPaper, arrayFilter);
+        let papers = await externalServicesDelegate.fakeAutomatedEvaluationService(arrayPaper, arrayFilter, project_id);
+
+        res.status(200).json(papers);
+    }
+    catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+/*fake service to get automated evaluation progress*/
+router.get('/external/automatedEvaluation', async (req, res, next) => {
+    try {
+
+        //input
+        let project_id = req.query.project_id;
+
+        let papers = await externalServicesDelegate.fakeGetAutomatedScreeningStatus(project_id);
 
         res.status(200).json(papers);
     }

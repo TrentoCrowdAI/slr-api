@@ -333,6 +333,33 @@ paths:
 
 
 
+# screeners users ===========================================================
+  '/projects/{project_id}/screeners':
+
+    get:
+      summary: get the screeners by project id
+      description: get a list of screeners
+      tags:
+        - Projects
+      security:
+        - basicAuth: []
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Users'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '404':
+          $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
 
 
 
@@ -691,31 +718,7 @@ paths:
 
 # screenings ==============================================================
 
-  '/screenings/users':
 
-    get:
-      summary: get the screeners by project id
-      description: get a list of screeners
-      tags:
-        - Screenings
-      security:
-        - basicAuth: []
-      parameters:
-        - $ref: '#/parameters/Project_id'
-
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Users'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '404':
-          $ref: '#/responses/404_not_found'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
 
 
   '/screenings':

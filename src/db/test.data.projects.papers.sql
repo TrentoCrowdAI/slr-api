@@ -56,5 +56,6 @@ INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "dat
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 26 FROM "public"."searches" WHERE id = 26 );
 INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 27 FROM "public"."searches" WHERE id = 27 );
 
--- extra paper for user 22, ao he will have to screen this paper
-INSERT INTO "public"."project_papers"("date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT "date_created", "date_last_modified", "date_deleted", "data", 22 FROM "public"."searches" WHERE id = 27 );
+
+-- extra paper for project 22, ao he will have to screen this paper
+INSERT INTO "public"."project_papers"("id", "date_created", "date_last_modified", "date_deleted", "data", "project_id") (SELECT 999901, "date_created", "date_last_modified", "date_deleted", "data", 22 FROM "public"."searches" WHERE id = 27 );

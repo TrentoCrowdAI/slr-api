@@ -9,19 +9,6 @@ const screeningsDelegate = require(__base + 'delegates/screenings.delegate');
 
 const router = express.Router();
 
-//get all screeners associated with a project
-router.get('/screenings/users', async (req, res, next) => {
-
-    try {
-        let user_email = res.locals.user_email;
-        let project_id = req.query.project_id;
-        let users = await usersDelegate.getScreenersByProjectId(user_email, project_id);
-        res.status(200).json(users);
-    } catch (e) {
-        // catch the error threw from delegate and we delegate to the error-handling middleware
-        next(e);
-    }
-});
 
 
 //add the screening in the table

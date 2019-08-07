@@ -30,11 +30,6 @@ const validExampleForAutomatedScreening = {
 describe('good cases on screenings', () => {
 
 
-    test('GET /screenings/users should return 200', async () => {
-        jest.setTimeout(timeOut);
-        let response = await request(app).get('/screenings/users?project_id=' + index).set('Authorization', validTokenId);
-        expect(response.status).toBe(200);
-    });
 
 
     test('POST /screenings should return 201', async () => {
@@ -159,32 +154,7 @@ const notValidExampleForAlreadyExist = {
 describe('bad cases on screenings', () => {
 
 
-    describe('bad cases on GET /screenings/users', () => {
 
-        test('GET /screenings/users should return 400 if parameters aren\'t valid', async () => {
-            jest.setTimeout(timeOut);
-            //if the project id is not a number
-            let response = await request(app).get('/screenings/users?project_id=abc').set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-            //if the project id is not a integer
-            response = await request(app).get('/screenings/users?project_id=' + index + '.5').set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-        });
-
-
-        test('GET /projects/:id/screeners should return 401 if it finds nothing', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).get('/screenings/users?project_id=9999').set('Authorization', validTokenId);
-            expect(response.status).toBe(401);
-        });
-
-        test('GET /projects/:id/screeners should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).get('/screenings/users?project_id=' + index3).set('Authorization', validTokenId);
-            expect(response.status).toBe(401);
-        });
-
-    });
 
 
     describe('bad cases on POST /screenings', () => {

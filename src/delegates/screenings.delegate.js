@@ -174,7 +174,7 @@ async function selectAllByProjectId(user_email, project_id) {
 /**
  * internal function to help manage the auto screening service
  * @param {Object[]} projectPapers
- * @param {Float} threshold
+ * @param {number} threshold
  * @param {Object} queryData 
  */
 async function manageAutoScreeningService(projectPapers, threshold, queryData) {
@@ -269,6 +269,7 @@ async function automatedScreening(user_email, project_id, threshold) {
     let queryData = {};
     queryData.arrayPaper = projectPapers;
     queryData.arrayFilter = filters;
+    queryData.project_id = project_id;
 
     //after everything is set up, I let a function handle call & response of external service
     manageAutoScreeningService(projectPapers, threshold, queryData);
@@ -291,13 +292,9 @@ async function getAutomatedScreeningStatus(user_email, project_id) {
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
-    //get number of autoScreened papers and totalPaper
-    let statusData = await projectPapersDao.countAutoScreenedOutOfTotalPapers(project_id);
+    let response = await conn.get(config.automated_evaluation_server, {"project_id": project_id});
 
-    //calculate the random value
-    let statusPercentage = Math.floor(statusData.totalAutoScreened/statusData.totalResults * 100);
-
-    return statusPercentage;
+    return response;
 
 }
 

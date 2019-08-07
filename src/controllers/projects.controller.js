@@ -144,6 +144,22 @@ router.delete('/projects/:id/collaborators/:user_id', async (req, res, next) => 
 });
 
 
+//get all screeners associated with a project
+router.get('/projects/:project_id/screeners', async (req, res, next) => {
+
+    try {
+        let user_email = res.locals.user_email;
+        let project_id = req.params.project_id;
+        let users = await usersDelegate.getScreenersByProjectId(user_email, project_id);
+        res.status(200).json(users);
+    } catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+
+
 
 
 

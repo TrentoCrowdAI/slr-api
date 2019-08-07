@@ -302,9 +302,10 @@ async function automatedScopusSearch(keyword, searchBy, sort, start = 0, count =
  * fake service for automated evaluation of confidence
 * @param {Object[]}arrayPaper array of post object
  * @param {Object[]} arrayFilter array of filter object
+ * @param {string} project_id
  */
 
-function fakeAutomatedEvaluationService(arrayPaper, arrayFilter){
+function fakeAutomatedEvaluationService(arrayPaper, arrayFilter, project_id){
 
     //create response array
     let response = [];
@@ -369,8 +370,39 @@ function fakeAutomatedEvaluationService(arrayPaper, arrayFilter){
 }
 
 
+/**
+ * get automated screening status (in percentage)
+ * will return false for first request and request within 3 seconds from first request, true for the request after 3 seconds  from first request
+ * @param {string} project_id
+ * @returns {int} progress in percentage
+ */
+async function fakeGetAutomatedScreeningStatus(project_id) {
+
+
+    //check validation of project id and transform the value in integer
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
+
+    //if is the first request for this project id
+    if(!global["project_"+project_id]){
+        //set false
+        global["project_"+project_id] = false;
+    }
+
+    //timeout of 3 seconds
+    setTimeout(() => {
+        //set true
+        global["project_"+project_id] = true;
+    }, 3000);
+
+
+    return global["project_"+project_id];
+
+}
+
+
 module.exports = {
     fakeSimilarSearchService,
     fakeAutomatedSearchService,
     fakeAutomatedEvaluationService,
+    fakeGetAutomatedScreeningStatus,
 };
