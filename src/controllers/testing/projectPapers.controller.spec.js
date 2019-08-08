@@ -58,28 +58,27 @@ describe('good cases on projectPapers ', () => {
 
     test('GET /papers?project_id=1&type=all should return 200 if it finds something', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).get('/papers?project_id=' + index+'&type='+config.screening_status.all).set('Authorization', validTokenId);
+        let response = await request(app).get('/papers?project_id=' + index + '&type=' + config.screening_status.all).set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 
     test('GET /papers?project_id=10&type=manual should return 200 if it finds something', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).get('/papers?project_id=' + index+'&type='+config.screening_status.manual).set('Authorization', validTokenId);
+        let response = await request(app).get('/papers?project_id=' + index + '&type=' + config.screening_status.manual).set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 
     test('GET /papers?project_id=10&type=backlog should return 200 if it finds something', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).get('/papers?project_id=' + index3+'&type='+config.screening_status.backlog).set('Authorization', validTokenId3);
+        let response = await request(app).get('/papers?project_id=' + index3 + '&type=' + config.screening_status.backlog).set('Authorization', validTokenId3);
         expect(response.status).toBe(200);
     });
 
     test('GET /papers?project_id=11&type=screened should return 200 if it finds something', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).get('/papers?project_id=' + index2+'&type='+config.screening_status.screened).set('Authorization', validTokenId2);
+        let response = await request(app).get('/papers?project_id=' + index2 + '&type=' + config.screening_status.screened).set('Authorization', validTokenId2);
         expect(response.status).toBe(200);
     });
-
 
 
     test('POST /papers should return 201(on eid array)', async () => {
@@ -233,11 +232,11 @@ describe('bad cases on projectPapers ', () => {
             expect(response.status).toBe(400);
 
             //the projectPaper id is not a integer
-             response = await request(app).put('/papers/'+index+'.5').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
+            response = await request(app).put('/papers/' + index + '.5').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
             //the paper of post body is not valid
-            response = await request(app).put('/papers/'+index).send(notValidExampleForUpdate).set('Accept', 'application/json').set('Authorization', validTokenId);
+            response = await request(app).put('/papers/' + index).send(notValidExampleForUpdate).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
         });
 
@@ -304,8 +303,34 @@ describe('bad cases on projectPapers ', () => {
             expect(response.status).toBe(400);
 
             //the type is not valid
-            response = await request(app).get('/papers?project_id='+index+'&type=abc').set('Authorization', validTokenId);
+            response = await request(app).get('/papers?project_id=' + index + '&type=abc').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
+
+            //the min confidence is not a number
+            response = await request(app).get('/papers?project_id=' + index + '&type=backlog&min_confidence=a').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+            //the min confidence is less than 0
+            response = await request(app).get('/papers?project_id=' + index + '&type=backlog&min_confidence=-0.1').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+            //the min confidence is greater than 1
+            response = await request(app).get('/papers?project_id=' + index + '&type=backlog&min_confidence=1.1').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+
+
+            //the max confidence is not a number
+            response = await request(app).get('/papers?project_id=' + index + '&type=backlog&max_confidence=a').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+            //the max confidence is less than 0
+            response = await request(app).get('/papers?project_id=' + index + '&type=backlog&max_confidence=-0.1').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+            //the max confidence is greater than 1
+            response = await request(app).get('/papers?project_id=' + index + '&type=backlog&max_confidence=1.1').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+
+            //the min confidence is greater than max confidence
+            response = await request(app).get('/papers?project_id=' + index + '&type=backlog&min_confidence=0.8&max_confidence=0.6').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+
 
         });
 
@@ -318,13 +343,13 @@ describe('bad cases on projectPapers ', () => {
 
         test('GET /papers should return 401 if the user hasn\'t permission', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).get('/papers?project_id='+index2).set('Authorization', validTokenId);
+            let response = await request(app).get('/papers?project_id=' + index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401)
         });
 
         test('GET /papers should return 404 if the result is empty', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).get('/papers?project_id='+index3).set('Authorization', validTokenId3);
+            let response = await request(app).get('/papers?project_id=' + index3).set('Authorization', validTokenId3);
             expect(response.status).toBe(404)
         });
     });

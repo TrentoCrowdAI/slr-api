@@ -211,9 +211,11 @@ async function deletes(user_email, projectPaper_id) {
  * @param {string} sort {ASC or DESC}
  * @param {string} start offset position where we begin to get
  * @param {string} count number of projects
+ * @param {string} min_confidence minimum confidence value of post
+ * @param {string} max_confidence maximum confidence value of post
  * @returns {Object} array of projectPapers and total number of result
  */
-async function selectByProject(user_email, project_id, type, orderBy, sort, start, count) {
+async function selectByProject(user_email, project_id, type, orderBy, sort, start, count, min_confidence, max_confidence) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
@@ -229,6 +231,17 @@ async function selectByProject(user_email, project_id, type, orderBy, sort, star
     start = errorCheck.setAndCheckValidStart(start);
     count = errorCheck.setAndCheckValidCount(count);
 
+
+    if (type === config.screening_status.backlog) {
+        //check and set the confidence value
+        min_confidence = errorCheck.setAndCheckValidMinConfidenceValue(min_confidence);
+        max_confidence = errorCheck.setAndCheckValidMaxConfidenceValue(max_confidence);
+
+        if (max_confidence < min_confidence) {
+            throw errHandler.createBadRequestError('the max_confidence cannot be less than min_confidence!');
+        }
+    }
+
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user
@@ -243,7 +256,7 @@ async function selectByProject(user_email, project_id, type, orderBy, sort, star
             res = await projectPapersDao.selectByProject(project_id, orderBy, sort, start, count);
             break;
         case config.screening_status.backlog:
-            res = await projectPapersDao.selectNotScreenedByProject(project_id, orderBy, sort, start, count);
+            res = await projectPapersDao.selectNotScreenedByProject(project_id, orderBy, sort, start, count, min_confidence, max_confidence );
             break;
         case config.screening_status.manual:
             res = await projectPapersDao.selectManualByProject(project_id, orderBy, sort, start, count);
@@ -261,11 +274,6 @@ async function selectByProject(user_email, project_id, type, orderBy, sort, star
 
     return res;
 }
-
-
-
-
-
 
 
 module.exports = {

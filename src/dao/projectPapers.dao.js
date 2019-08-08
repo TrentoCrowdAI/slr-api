@@ -152,7 +152,6 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
 }
 
 
-
 /**
  * select all projectPapers that haven't the automated screening value and screened field
  * @param {int} project_id
@@ -179,26 +178,49 @@ async function selectAllNotEvaluatedAndScreened(project_id) {
  * @param {int} start offset position where we begin to get
  * @param {int} count number of projects
  * @returns {Object} array of projectPapers and total number of result
+ * @param {number} min_confidence minimum confidence value of post
+ * @param {number} max_confidence maximum confidence value of post
  * @returns {Object[]} array of projectPapers
  */
-async function selectNotScreenedByProject(project_id, orderBy, sort, start, count) {
+async function selectNotScreenedByProject(project_id, orderBy, sort, start, count, min_confidence, max_confidence) {
 
     //if the orderBy is based on the propriety of json data
     if (orderBy !== "date_created") {
         orderBy = "data->>'" + orderBy + "'";
     }
 
-    //query to get projectPapers
-    let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screened')) )   ORDER BY  " + orderBy + "   " + sort + " LIMIT $2 OFFSET $3",
-        [project_id, count, start]
-    );
+    let res;
+    let resForTotalNumber;
 
-    //query to get total number of result
-    let resForTotalNumber = await db.query(
-        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screened')) )   ",
-        [project_id]
-    );
+    //if the min confidence is equal to 0 or is missing, includes papers that haven't confidence scores
+    if (min_confidence === 0) {
+
+        res = await db.query(
+            "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screened') AND (  NOT(P.data->'metadata' ? 'automatedScreening') OR P.data->'metadata'->'automatedScreening'->>'value' <= $2)   ) )   ORDER BY  " + orderBy + "   " + sort + " LIMIT $3 OFFSET $4",
+            [project_id, max_confidence,count, start]
+        );
+
+        //query to get total number of result
+        resForTotalNumber = await db.query(
+            "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screened') AND (  NOT(P.data->'metadata' ? 'automatedScreening') OR P.data->'metadata'->'automatedScreening'->>'value' <= $2)   ) )   ",
+            [project_id, max_confidence]
+        );
+
+    }
+    else{
+        res = await db.query(
+            "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screened') AND   P.data->'metadata' ? 'automatedScreening' AND P.data->'metadata'->'automatedScreening'->>'value' >= $2 AND P.data->'metadata'->'automatedScreening'->>'value' <=  $3       ORDER BY  " + orderBy + "   " + sort + " LIMIT $4 OFFSET $5",
+            [project_id, min_confidence, max_confidence, count, start]
+        );
+
+        //query to get total number of result
+        resForTotalNumber = await db.query(
+            "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screened') AND   P.data->'metadata' ? 'automatedScreening' AND P.data->'metadata'->'automatedScreening'->>'value' >= $2 AND P.data->'metadata'->'automatedScreening'->>'value' <=  $3  ",
+            [project_id, min_confidence,max_confidence]
+        );
+    }
+
+
 
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 
@@ -256,7 +278,10 @@ async function countAutoScreenedOutOfTotalPapers(project_id) {
         [project_id]
     );
 
-    return {"totalAutoScreened": resForTotalAutoScreened.rows[0].count, "totalResults": resForTotalNumber.rows[0].count};
+    return {
+        "totalAutoScreened": resForTotalAutoScreened.rows[0].count,
+        "totalResults": resForTotalNumber.rows[0].count
+    };
 
 }
 
@@ -295,7 +320,11 @@ async function selectScreenedByProject(project_id, orderBy, sort, start, count) 
         [project_id]
     );
 
-    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count, "totalPapers": resForTotalPapers.rows[0].count};
+    return {
+        "results": res.rows,
+        "totalResults": resForTotalNumber.rows[0].count,
+        "totalPapers": resForTotalPapers.rows[0].count
+    };
 }
 
 
@@ -363,28 +392,17 @@ async function selectOneNotVotedByUserIdAndProjectId(user_id, project_id) {
     //((P.data->'metadata'?'screened') AND (P.data->'metadata'->>'screened' <> 'screened'))  )  
     //AND P.id NOT IN( SELECT project_paper_id FROM public.votes WHERE user_id = 3 AND project_id = 9 ) ORDER BY date_created, data->'title' ASC
     let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.projectPapers + " P  WHERE  project_id= $2"+" AND "+
-        "( ( NOT(P.data ? 'metadata') ) " + " OR "+
-        "(P.data ? 'metadata' AND (NOT(P.data->'metadata' ? 'screened') ) )  OR"+
-        "((P.data->'metadata'?'screened') AND (P.data->'metadata'->>'screened' <> $3))  )"+
-        "AND P.id NOT IN( SELECT project_paper_id FROM public."+db.TABLES.votes+" WHERE user_id = $1 AND project_id = $2 )" + 
+        "SELECT * FROM public." + db.TABLES.projectPapers + " P  WHERE  project_id= $2" + " AND " +
+        "( ( NOT(P.data ? 'metadata') ) " + " OR " +
+        "(P.data ? 'metadata' AND (NOT(P.data->'metadata' ? 'screened') ) )  OR" +
+        "((P.data->'metadata'?'screened') AND (P.data->'metadata'->>'screened' <> $3))  )" +
+        "AND P.id NOT IN( SELECT project_paper_id FROM public." + db.TABLES.votes + " WHERE user_id = $1 AND project_id = $2 )" +
         " ORDER BY date_created, data->'title' ASC",
         [user_id, project_id, config.screening_status.screened]
     );
 
     return res.rows[0];
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
 /**
@@ -415,10 +433,6 @@ async function checkExistenceByEids(arrayEid, project_id) {
     }
     return array;
 }
-
-
-
-
 
 
 module.exports = {

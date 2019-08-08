@@ -21,14 +21,17 @@ router.get('/papers', async (req, res, next) => {
         let sort = req.query.sort;
         let start = req.query.start;
         let count = req.query.count;
-        let searchBy = req.query.searchBy;
-        let year = req.query.year;
-        let query = req.query.query;
+        //let searchBy = req.query.searchBy;
+        //let year = req.query.year;
+        //let query = req.query.query;
         let type = req.query.type;
+        let min_confidence = req.query.min_confidence;
+        let max_confidence = req.query.max_confidence;
 
-        projectPapers = await projectPapersDelegate.selectByProject(user_email, project_id, type, orderBy, sort, start, count);
+        projectPapers = await projectPapersDelegate.selectByProject(user_email, project_id, type, orderBy, sort, start, count, min_confidence, max_confidence);
 
         res.status(200).json(projectPapers);
+
     }
     catch (e) {
         // catch the error threw from delegate and we delegate to the error-handling middleware

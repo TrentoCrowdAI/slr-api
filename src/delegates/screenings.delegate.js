@@ -132,6 +132,45 @@ async function deletes(user_email, screeners_id, project_id) {
     //delete the screener from the screenings table
     await screeningsDao.deleteByUserIdAndProjectId(screeners_id, project_id);
 
+/* ==================================================
+ update the paper screening status without this screener
+ ==================================================
+
+    //get number of screeners
+    let numberScreeners = await screeningsDao.countByProject(project_id);
+
+
+    //if votes's number  is equal to the number of screeners
+    if (allVotes.length === parseInt(numberScreeners)) {
+
+        //start screened paper
+        let positiveNumber = 0;
+        let negativeNumber = 0;
+        //for each vote
+        for (let i = 0; i < allVotes.length; i++) {
+            //count their negative cases and positive cases
+            if (allVotes[i].data.answer === "0") {
+                negativeNumber++;
+            } else if (allVotes[i].data.answer === "1"){
+                positiveNumber++;
+            }
+        }
+
+        //create a object for screening
+        //set screening source
+        //set screening result, 0 (false) for default
+        projectPaper.data.metadata.screening = {source: config.screening_source.manual_screening, result: "0"};
+        //if positive cases is greater or equal than negative cases
+        if (positiveNumber >= negativeNumber) {
+            projectPaper.data.metadata.screening.result = "1";
+        }
+
+        //set the projectPaper screened status of projectPaper as screened
+        projectPaper.data.metadata.screened = config.screening_status.screened;
+
+    }
+*/
+
 
 }
 
