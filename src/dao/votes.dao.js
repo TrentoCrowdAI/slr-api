@@ -58,6 +58,23 @@ async function deletes(vote_id) {
 }
 
 /**
+ *  * delete the votes by project and user
+ * @param {int} project_id
+ * @param {int} user_id
+ * @returns {int} number of row affected , 1 if ok, 0 if failed
+ */
+
+async function deleteByProjectIdAndUserId(project_id, user_id) {
+
+    let res = await db.query(
+        'DELETE FROM public.' + db.TABLES.votes + ' WHERE project_id = $1 AND user_id = $2 ',
+        [project_id, user_id]
+    );
+
+    return res.rowCount;
+}
+
+/**
  * select a vote
  * @param {int} vote_id
  * @returns {Object} vote found
@@ -140,6 +157,7 @@ module.exports = {
     insert,
     update,
     deletes,
+    deleteByProjectIdAndUserId,
     selectById,
     selectByUserId,
     selectByProjectPaperId,

@@ -49,9 +49,9 @@ INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_del
 
 -- range 22-24 for screenings test
 
-INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Database","description":"is an organized collection of data, generally stored and accessed electronically from a computer system.","user_id":["22", "23","24"]}');
+INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"Database","description":"is an organized collection of data, generally stored and accessed electronically from a computer system.","user_id":["22", "23","24","25"]}');
 INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["22", "23"]}');
-INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["24"]}');
+INSERT INTO "public"."projects" ("date_created", "date_last_modified", "date_deleted", "data") VALUES ( '2019-03-07 19:47:54.404+00', '2019-03-07 19:47:54.404+00', null, '{"name":"React","description":"is a JavaScript library for building user interfaces. It is maintained by Facebook and a community of individual developers and companies.","user_id":["24","25"]}');
 
 -- range 25-27 for votes test
 

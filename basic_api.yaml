@@ -719,9 +719,8 @@ paths:
 # screenings ==============================================================
 
 
-
-
   '/screenings':
+
     get:
       summary: get list of project to screening
       description: get list of project associated with user by screening table
@@ -750,6 +749,8 @@ paths:
           $ref: '#/responses/404_not_found'
         '500':
           $ref: '#/responses/500_internal_server_error'
+
+
     post:
       summary: add the screening by array
       description: add the screening in the table by array
@@ -764,7 +765,7 @@ paths:
         '200':
             description: OK
             schema:
-              $ref: '#/definitions/Screening'
+              $ref: '#/definitions/Screenings'
         '204':
           $ref: '#/responses/204_no_content'
         '400':
@@ -847,6 +848,33 @@ paths:
           $ref: '#/responses/401_unauthorized'
         '404':
           $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+
+
+  '/screenings/addScreeners':
+    post:
+      summary: add the screening after starting
+      description: add the screening after starting manual screening
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id'
+        - $ref: '#/parameters/User_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Screening'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
         '500':
           $ref: '#/responses/500_internal_server_error'
 
@@ -1640,6 +1668,12 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/Screening_data'
+
+
+  Screenings:
+    type: array
+    items:
+      $ref: '#/definitions/Screening'
 
   Vote_data:
     type: object

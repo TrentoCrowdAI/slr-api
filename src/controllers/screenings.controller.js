@@ -133,16 +133,18 @@ router.get('/screenings/:screening_id/next', async (req, res, next) => {
 
 
 /*add the new screener after starting the manual screening*/
-router.get('/screenings/:screening_id/addScreeners', async (req, res, next) => {
+router.post('/screenings/addScreeners', async (req, res, next) => {
 
     try {
 
         let user_email = res.locals.user_email;
-        let screening_id = req.params.screening_id;
+        let project_id = req.body.project_id;
+        let  screeners_id = req.body.user_id;
 
-        let projectPaper = await screeningsDelegate.selectOneNotVotedByUserIdAndProjectId(user_email, screening_id);
+        let projectPaper = await screeningsDelegate.insert(user_email, screeners_id, project_id);
         res.status(200).json(projectPaper);
     } catch (e) {
+
         // catch the error threw from delegate and we delegate to the error-handling middleware
         next(e);
     }

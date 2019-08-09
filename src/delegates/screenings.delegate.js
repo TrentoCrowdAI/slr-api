@@ -7,6 +7,7 @@ const usersDao = require(__base + 'dao/users.dao');
 const screeningsDao = require(__base + 'dao/screenings.dao');
 const projectPapersDao = require(__base + 'dao/projectPapers.dao');
 const filtersDao = require(__base + 'dao/filters.dao');
+const votesDao = require(__base + 'dao/votes.dao');
 
 //error handler
 const errHandler = require(__base + 'utils/errors');
@@ -79,7 +80,10 @@ async function insertByArray(user_email, array_screener_id, manual_screening_typ
         }
 
         //insert the screener in the screenings table
-        let res = await screeningsDao.insert({"tags":[], "manual_screening_type": manual_screening_type}, array_screener_id[i], project_id);
+        let res = await screeningsDao.insert({
+
+            "manual_screening_type": manual_screening_type
+        }, array_screener_id[i], project_id);
         //save the res of current element
         finalRes.push(res);
     }
@@ -92,6 +96,100 @@ async function insertByArray(user_email, array_screener_id, manual_screening_typ
     }
 
     return finalRes;
+
+}
+
+
+/**
+ * insert screener after starting manual screening
+ * @param {string} user_email of user
+ * @param {string} screeners_id
+ * @param {string} project_id
+
+ * @returns {Object[]} list of screenings created
+ */
+async function insert(user_email, screeners_id, project_id,) {
+
+    //error check for user_email
+    errorCheck.isValidGoogleEmail(user_email);
+    //check validation of screener's id and transform the value in integer
+    screeners_id = errorCheck.setAndCheckValidScreenersId(screeners_id);
+    //check validation of project id and transform the value in integer
+    project_id = errorCheck.setAndCheckValidProjectId(project_id);
+
+
+    //get user info
+    let user = await usersDao.getUserByEmail(user_email);
+
+    //get relative project and check relationship between the project and user
+    let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
+    //if the user isn't project's owner
+    errorCheck.isValidProjectOwner(project);
+    //if the manual screening precess isn't not start yet
+    if(!project.data.manual_screening_type){
+        throw errHandler.createBadRequestError("the project is not yet initialized for manual screening!");
+    }
+
+
+    //check existence of selected user
+    let screenersUser = await usersDao.getUserById(screeners_id);
+    if (!screenersUser) {
+        throw errHandler.createBadRequestError("the selected user for screening isn't exist!");
+    }
+    if (!project.data.user_id.includes(screeners_id.toString())) {
+        throw errHandler.createBadRequestError("the selected user for screening must be a collaborator of this project!");
+    }
+
+    //check existence of screener in screenings table
+    let screeningsRecord = await screeningsDao.selectByUserIdAndProjectId(screeners_id, project_id);
+    //if the selected user is already present in the screenings table
+    if (screeningsRecord) {
+        throw errHandler.createBadRequestError("the selected user for screening is already present in this project!");
+    }
+
+    //insert the screener in the screenings table
+    let res = await screeningsDao.insert({
+
+        "manual_screening_type": project.data.manual_screening_type
+    }, screeners_id, project_id);
+
+    /* ==================================================
+     update the paper screening status after adding this screener
+     ==================================================*/
+
+    //get all papers id of this project
+    let projectPapers = await projectPapersDao.selectAllByProjectId(project_id);
+    //get number of screeners
+    let numberScreeners = await screeningsDao.countByProject(project_id);
+
+    let votes;
+
+
+    //for each paper
+    for (let i = 0; i < projectPapers.length; i++) {
+
+        //get the votes of this paper
+        votes = await votesDao.selectByProjectPaperId(projectPapers[i].id);
+
+        //if is a paper is screened
+        if (projectPapers[i].data.metadata && projectPapers[i].data.metadata.screened === config.screening_status.screened) {
+            //if votes's number  is equal to (the number of screeners -1 )
+            if (votes.length === (parseInt(numberScreeners)-1) ) {
+
+                //delete screening property
+                delete projectPapers[i].data.metadata.screening;
+
+                //set the projectPaper screened status of projectPaper as manual
+                projectPapers[i].data.metadata.screened = config.screening_status.manual;
+
+                //update the projectPaper Object
+                await projectPapersDao.update(projectPapers[i].id, projectPapers[i].data);
+
+            }
+        }
+    }
+
+    return res;
 
 }
 
@@ -132,44 +230,67 @@ async function deletes(user_email, screeners_id, project_id) {
     //delete the screener from the screenings table
     await screeningsDao.deleteByUserIdAndProjectId(screeners_id, project_id);
 
-/* ==================================================
- update the paper screening status without this screener
- ==================================================
+    //delete all votes of this screener on this project
+    await votesDao.deleteByProjectIdAndUserId(project_id, user.id);
 
+    /* ==================================================
+     update the paper screening status without this screener
+     ==================================================*/
+
+    //get all papers id of this project
+    let projectPapers = await projectPapersDao.selectAllByProjectId(project_id);
     //get number of screeners
     let numberScreeners = await screeningsDao.countByProject(project_id);
 
+    let votes;
+    let positiveNumber;
+    let negativeNumber;
 
-    //if votes's number  is equal to the number of screeners
-    if (allVotes.length === parseInt(numberScreeners)) {
+    //for each paper
+    for (let i = 0; i < projectPapers.length; i++) {
 
-        //start screened paper
-        let positiveNumber = 0;
-        let negativeNumber = 0;
-        //for each vote
-        for (let i = 0; i < allVotes.length; i++) {
-            //count their negative cases and positive cases
-            if (allVotes[i].data.answer === "0") {
-                negativeNumber++;
-            } else if (allVotes[i].data.answer === "1"){
-                positiveNumber++;
+        //get the votes of this paper
+        votes = await votesDao.selectByProjectPaperId(projectPapers[i].id);
+
+        //if is a paper has some votes, but not all
+        if (projectPapers[i].data.metadata && projectPapers[i].data.metadata.screened === config.screening_status.manual) {
+            //if votes's number  is equal to the number of screeners
+            if (votes.length === parseInt(numberScreeners)) {
+
+                //start screened paper
+                positiveNumber = 0;
+                negativeNumber = 0;
+                //for each vote
+                for (let i = 0; i < votes.length; i++) {
+                    //count their negative cases and positive cases
+                    if (votes[i].data.answer === "0") {
+                        negativeNumber++;
+                    } else if (votes[i].data.answer === "1") {
+                        positiveNumber++;
+                    }
+                }
+
+                //create a object for screening
+                //set screening source
+                //set screening result, 0 (false) for default
+                projectPapers[i].data.metadata.screening = {
+                    source: config.screening_source.manual_screening,
+                    result: "0"
+                };
+                //if positive cases is greater or equal than negative cases
+                if (positiveNumber >= negativeNumber) {
+                    projectPapers[i].data.metadata.screening.result = "1";
+                }
+
+                //set the projectPaper screened status of projectPaper as screened
+                projectPapers[i].data.metadata.screened = config.screening_status.screened;
+
+                //update the projectPaper Object
+                await projectPapersDao.update(projectPapers[i].id, projectPapers[i].data);
+
             }
         }
-
-        //create a object for screening
-        //set screening source
-        //set screening result, 0 (false) for default
-        projectPaper.data.metadata.screening = {source: config.screening_source.manual_screening, result: "0"};
-        //if positive cases is greater or equal than negative cases
-        if (positiveNumber >= negativeNumber) {
-            projectPaper.data.metadata.screening.result = "1";
-        }
-
-        //set the projectPaper screened status of projectPaper as screened
-        projectPaper.data.metadata.screened = config.screening_status.screened;
-
     }
-*/
 
 
 }
@@ -214,7 +335,7 @@ async function selectAllByProjectId(user_email, project_id) {
  * internal function to help manage the auto screening service
  * @param {Object[]} projectPapers
  * @param {number} threshold
- * @param {Object} queryData 
+ * @param {Object} queryData
  */
 async function manageAutoScreeningService(projectPapers, threshold, queryData) {
     let response = await conn.post(config.automated_evaluation_server, queryData);
@@ -393,12 +514,12 @@ async function selectById(user_email, screening_id) {
     let screening = await screeningsDao.selectById(screening_id);
 
     //if screening doesn't exists
-    if(screening === undefined){
+    if (screening === undefined) {
         throw errHandler.createNotFoundError("the screening doesn't exists");
     }
 
     //if user is not assigned to the selected screening I throw an error
-    if(user.id !== screening.user_id){
+    if (user.id !== screening.user_id) {
         throw errHandler.createUnauthorizedError("unauthorized operation");
     }
 
@@ -434,7 +555,7 @@ async function selectOneNotVotedByUserIdAndProjectId(user_email, screening_id) {
     let screening = await screeningsDao.selectById(screening_id);
 
     //if user is not assigned to the selected screening I throw an error
-    if(user.id !== screening.user_id){
+    if (user.id !== screening.user_id) {
         throw errHandler.createUnauthorizedError("unauthorized operation");
     }
 
@@ -459,6 +580,7 @@ async function selectOneNotVotedByUserIdAndProjectId(user_email, screening_id) {
 
 module.exports = {
     insertByArray,
+    insert,
     deletes,
     selectById,
     selectAllByProjectId,

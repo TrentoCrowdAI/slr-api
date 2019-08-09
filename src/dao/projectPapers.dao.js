@@ -406,6 +406,22 @@ async function selectOneNotVotedByUserIdAndProjectId(user_id, project_id) {
 
 
 /**
+ * select all paper of a specific project
+ * @param {int} project_id
+ * @returns {Object[]} array of paper object
+ */
+async function selectAllByProjectId(project_id){
+
+    let res = await db.query(
+        'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1',
+        [project_id]
+    );
+
+    return res.rows;
+}
+
+
+/**
  * internal function==========================================================
  *
  * check existence of papers in tables
@@ -448,10 +464,10 @@ module.exports = {
     selectManualByProject,
     selectScreenedByProject,
     selectOneNotVotedByUserIdAndProjectId,
-    countAutoScreenedOutOfTotalPapers,
 
-    //selectByIdAndProjectId,
-    searchPaperByProject,
+    selectAllByProjectId,
     checkExistenceByEids,
 
+    countAutoScreenedOutOfTotalPapers,
+    searchPaperByProject,
 };
