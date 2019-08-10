@@ -854,29 +854,6 @@ paths:
 
 
 
-  '/screenings/addScreeners':
-    post:
-      summary: add the screening after starting
-      description: add the screening after starting manual screening
-      tags:
-        - Screenings
-      security:
-        - basicAuth: []
-
-      parameters:
-        - $ref: '#/parameters/Project_id'
-        - $ref: '#/parameters/User_id'
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Screening'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
 
   '/screenings/{screening_id}':
 
@@ -931,6 +908,32 @@ paths:
           $ref: '#/responses/401_unauthorized'
         '404':
           $ref: '#/responses/404_not_found'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+
+  '/screenings/{screening_id}/addScreeners':
+    post:
+      summary: add the screening after starting
+      description: add the screening after starting manual screening
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Screening_id_in_path'
+        - $ref: '#/parameters/Project_id'
+        - $ref: '#/parameters/User_id'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Screening'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
         '500':
           $ref: '#/responses/500_internal_server_error'
 

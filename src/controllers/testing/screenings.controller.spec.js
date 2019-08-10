@@ -80,9 +80,9 @@ describe('good cases on screenings', () => {
         expect(response.status).toBe(200);
     });
 
-    test('POST /screenings/addScreeners should return 200', async () => {
+    test('POST /screenings/:screening_id/addScreeners should return 200', async () => {
         jest.setTimeout(timeOut);
-        response = await request(app).post('/screenings/addScreeners').send(validExample2).set('Authorization', validTokenId);
+        response = await request(app).post('/screenings/1/addScreeners').send(validExample2).set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 
@@ -330,31 +330,31 @@ describe('bad cases on screenings', () => {
 
     });
 
-    describe('bad cases on POST /screenings/addScreeners', () => {
+    describe('bad cases on POST /screenings/:screening_id/addScreeners', () => {
 
-        test('POST /screenings/addScreeners should return 400 if parameters aren\'t valid', async () => {
+        test('POST /screenings/:screening_id/addScreeners should return 400 if parameters aren\'t valid', async () => {
 
             jest.setTimeout(timeOut);
 
             //the project id is not exist
-            let response = await request(app).post('/screenings/addScreeners').send({"user_id": index3}).set('Authorization', validTokenId);
+            let response = await request(app).post('/screenings/1/addScreeners').send({"user_id": index3}).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
             //the project id is not a number
-            response = await request(app).post('/screenings/addScreeners').send({"project_id": "abc", "user_id": index3}).set('Authorization', validTokenId);
+            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": "abc", "user_id": index3}).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
             //the project id is not a integer
-            response = await request(app).post('/screenings/addScreeners').send({"project_id": "1.8", "user_id": index3}).set('Authorization', validTokenId);
+            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": "1.8", "user_id": index3}).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the user ids is not exist
-            response = await request(app).post('/screenings/addScreeners').send({"project_id": index}).set('Authorization', validTokenId);
+            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index}).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the  user id is not number
-            response = await request(app).post('/screenings/addScreeners').send({"project_id": index, "user_id": "abc"}).set('Authorization', validTokenId);
+            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index, "user_id": "abc"}).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the user id is not integer
-            response = await request(app).post('/screenings/addScreeners').send({"project_id": index, "user_id": "1.5"}).set('Authorization', validTokenId);
+            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index, "user_id": "1.5"}).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
 
@@ -363,42 +363,42 @@ describe('bad cases on screenings', () => {
 
 
 
-        test('POST /screenings/addScreeners should return 401 if it finds nothing', async () => {
+        test('POST /screenings/:screening_id/addScreeners should return 401 if it finds nothing', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings/addScreeners').send({"project_id": 9999, "user_id": index3}).set('Authorization', validTokenId);
+            let response = await request(app).post('/screenings/1/addScreeners').send({"project_id": 9999, "user_id": index3}).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
 
-        test('POST /screenings/addScreeners should return 401 if user hasn\'t permission', async () => {
+        test('POST /screenings/:screening_id/addScreeners should return 401 if user hasn\'t permission', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings/addScreeners').send({"project_id": index3, "user_id": index}).set('Authorization', validTokenId);
+            let response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index3, "user_id": index}).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
-        test('POST /screenings/addScreeners should return 400 if user isn\'t exist', async () => {
+        test('POST /screenings/:screening_id/addScreeners should return 400 if user isn\'t exist', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings/addScreeners').send({"project_id": index, "user_id": 9999}).set('Authorization', validTokenId);
+            let response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index, "user_id": 9999}).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
         });
 
-        test('POST /screenings/addScreeners should return 400 if the project is not yet initialized for manual screening', async () => {
+        test('POST /screenings/:screening_id/addScreeners should return 400 if the project is not yet initialized for manual screening', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings/addScreeners').send({"project_id": index3, "user_id": index3+1}).set('Authorization', validTokenId3);
-          
+            let response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index3, "user_id": index3+1}).set('Authorization', validTokenId3);
+
             expect(response.status).toBe(400);
         });
 
-        test('POST /screenings/addScreeners should return 400 if user isn\'t collaborator', async () => {
+        test('POST /screenings/:screening_id/addScreeners should return 400 if user isn\'t collaborator', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings/addScreeners').send({"project_id": index, "user_id": index3+2}).set('Authorization', validTokenId);
+            let response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index, "user_id": index3+2}).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
         });
 
 
-        test('POST /screenings/addScreeners should return 400 if the shared user is already present in this project', async () => {
+        test('POST /screenings/:screening_id/addScreeners should return 400 if the shared user is already present in this project', async () => {
             jest.setTimeout(timeOut);
-            response = await request(app).post('/screenings/addScreeners').send({"project_id": index, "user_id": index}).set('Authorization', validTokenId);
+            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index, "user_id": index}).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
         });
 

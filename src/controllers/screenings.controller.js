@@ -133,7 +133,7 @@ router.get('/screenings/:screening_id/next', async (req, res, next) => {
 
 
 /*add the new screener after starting the manual screening*/
-router.post('/screenings/addScreeners', async (req, res, next) => {
+router.post('/screenings/:screening_id/addScreeners', async (req, res, next) => {
 
     try {
 
