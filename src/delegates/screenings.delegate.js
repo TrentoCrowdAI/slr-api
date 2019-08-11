@@ -528,8 +528,11 @@ async function selectById(user_email, screening_id) {
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
+    //if project's tags isn't defined, it will replace by empty string
+    let projectTags = project.data.tags || "";
     //I also add the title of the screening to be the same as the project title
-    let screeningData = {...screening, data: {...(screening.data), name: project.data.name}};
+    //the old data filed will be replace by new data filed with property "name" and property "tags"
+    let screeningData = {...screening, data: {...(screening.data), "name": project.data.name, "tags": projectTags}};
 
     return screeningData;
 }

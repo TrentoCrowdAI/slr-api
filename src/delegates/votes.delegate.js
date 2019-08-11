@@ -98,10 +98,16 @@ async function insert(user_email, voteData, project_paper_id) {
     //insert the vote into DB
     let newVote = await votesDao.insert(voteData, user.id, project_paper_id, project_id);
 
-    //copy the vote tags to tags of screenings table
-    screeningsRecord.data.tags = _array.union([...(screeningsRecord.data.tags),...(voteData.metadata.tags)]);
-    //update screenings record
-    await screeningsDao.update(screeningsRecord.id, screeningsRecord.data);
+
+    //if the project hasn't tags filed
+    if(!project.data.tags){
+        //create a new array
+        project.data.tags =[];
+    }
+    //union the tags from vote object to project
+    project.data.tags = _array.union([...(project.data.tags),...(voteData.metadata.tags)]);
+    //update project
+    await projectsDao.update(project_id, project.data);
 
     /*
 
