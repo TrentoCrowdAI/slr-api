@@ -738,7 +738,7 @@ paths:
         '200':
           description: OK
           schema:
-            $ref: '#/definitions/Result_projects'
+            $ref: '#/definitions/Result_screenings'
         '204':
           $ref: '#/responses/204_no_content'
         '400':
@@ -1522,12 +1522,21 @@ definitions:
     type: array
     items:
       $ref: '#/definitions/Project'
+      
 
   Result_projects:
     type: object
     properties:
       results:
         $ref : '#/definitions/Projects'
+      totalResults:
+        type: integer
+      
+  Result_screenings:
+    type: object
+    properties:
+      results:
+        $ref : '#/definitions/Screenings'
       totalResults:
         type: integer
 
@@ -1671,6 +1680,15 @@ definitions:
         type: integer
       data:
         $ref: '#/definitions/Screening_data'
+      progress:
+        type: object
+        properties:
+          totalPapers:
+            type: number
+            description: "total papers in the project"
+          screenedPapers:
+            type: number
+            description: "number of papers already screened by the user"
 
 
   Screenings:
@@ -1681,13 +1699,6 @@ definitions:
   Vote_data:
     type: object
     properties:
-      answer:
-        type: integer
-        enum:
-          - 0
-          - 1
-          - 2
-        description: "0 = no, 1 = yes, 2 = undecided"
       metadata:
         type: object
         properties:
@@ -1700,7 +1711,25 @@ definitions:
             type: array
             items:
               type: object
-              description: "there's no standard format for the highlights"
+              properties:
+                filter_id:
+                  type: number
+                  description: "it will be present in case of multi-predicate screening"
+                filter_predicate:
+                  type: string
+                  description: "it will be present in case of multi-predicate screening"
+                filterHighlights:
+                  type: array
+                  items:
+                    type: object
+                    description: "there is no standard format for the highlights yet"
+                outcome:
+                  type: number
+                  enum:
+                    - 0
+                    - 1
+                    - 2
+                  description: "0 = no, 1 = yes, 2 = undecided"
           tags:
             type: array
             items:
