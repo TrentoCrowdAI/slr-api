@@ -219,10 +219,6 @@ describe('bad cases on votes', () => {
             response = await request(app).post('/votes').send(notValidExampleForVoteDataNotValid).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
-            //the vote answer is not valid
-            response = await request(app).post('/votes').send(notValidExampleForVoteAnswerNotValid).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-
         });
 
 

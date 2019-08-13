@@ -59,8 +59,30 @@ async function insert(user_email, voteData, project_paper_id) {
     }
 
     //check validation of answer
-    if (voteData.answer !== "0" && voteData.answer !== "1" && voteData.answer !== "2") {
+    /*if (voteData.answer !== "0" && voteData.answer !== "1" && voteData.answer !== "2") {
         throw errHandler.createBadRequestError("the answer isn't valid!");
+    }*/
+
+    //count the partial positive and negative votes, the partial votes are stored in the highlights array
+    let pNumber = 0;
+    let nNumber = 0;
+    //for each vote
+    for (let i = 0; i < voteData.metadata.highlights.length; i++) {
+        //count their negative cases and positive cases
+        if (voteData.metadata.highlights[i].outcome === "0") {
+            nNumber++;
+        } else if (voteData.metadata.highlights[i].outcome === "1"){
+            pNumber++;
+        }
+    }
+
+    //I check the majority(taking into consideration the 'undecided' votes that I did not count)
+    if (pNumber > nNumber && pNumber > (voteData.metadata.highlights.length - nNumber - pNumber)) {
+        voteData.answer = "1";
+    }else if(nNumber > (voteData.metadata.highlights.length - nNumber - pNumber)){
+        voteData.answer = "0";
+    }else{
+        voteData.answer = "2";
     }
 
     //get projectPaper object by projectPaper id
@@ -122,18 +144,9 @@ async function insert(user_email, voteData, project_paper_id) {
         projectPaper.data.metadata = {};
     }
 
+    
     //get all votes
     let allVotes = await votesDao.selectByProjectPaperId(project_paper_id);
-           
-    //update paper metadata in order to include the vote
-    if(!projectPaper.data.metadata.votes){
-        projectPaper.data.metadata.votes = [
-            {user: {name: user.data.name, picture: user.data.picture}, answer: voteData.answer}
-        ];
-    }else{
-        projectPaper.data.metadata.votes.push({user: {name: user.data.name, picture: user.data.picture}, answer: voteData.answer});
-    }
-
 
     //get number of screeners
     let numberScreeners = await screeningsDao.countByProject(project_id);

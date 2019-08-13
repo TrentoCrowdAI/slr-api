@@ -174,17 +174,17 @@ const vote={
     "type": "object",
     "properties": {
 
-        "answer": {
+        /*"answer": {
             "type": "string",
             "isNotEmpty": true
-        },
+        },*/
         "metadata": {
             "type": "object",
             "isNotEmpty": true
         }
 
     },
-    "required": ["answer","metadata"]
+    "required": [/*"answer",*/"metadata"]
 };
 
 //scheme metadata of vote
@@ -197,7 +197,8 @@ const vote_metadata={
             "isNotEmpty": true
         },
         "highlights": {
-            "type": "array"
+            "type": "array",
+            "minProperties": 1
         },
         "tags": {
             "type": "array"
