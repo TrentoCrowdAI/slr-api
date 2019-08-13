@@ -404,6 +404,34 @@ async function selectOneNotVotedByUserIdAndProjectId(user_id, project_id) {
     return res.rows[0];
 }
 
+/**
+ * it returns the number of screened papers out of the total number of papers in the project
+ * @param {int} user_id
+ * @param {int} project_id
+ * @returns {Object} progress
+ */
+async function manualScreeningProgress(user_id, project_id) {
+
+    //query to get total number of result
+    let resForTotalNumber = await db.query(
+        'SELECT COUNT(*)  FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1  ',
+        [project_id]
+    );
+
+    let resForTotalScreened = await db.query(
+        "SELECT COUNT(*) FROM public." + db.TABLES.projectPapers + " P  WHERE  project_id= $2" + " AND " +
+        "( ( NOT(P.data ? 'metadata') ) " + " OR " +
+        "(P.data ? 'metadata' AND (NOT(P.data->'metadata' ? 'screened') ) )  OR" +
+        "((P.data->'metadata'?'screened') AND (P.data->'metadata'->>'screened' <> $3))  )" +
+        "AND P.id NOT IN( SELECT project_paper_id FROM public." + db.TABLES.votes + " WHERE user_id = $1 AND project_id = $2 )",
+        [user_id, project_id, config.screening_status.screened]
+    );
+
+    return {
+        "totalPapers": parseInt(resForTotalNumber.rows[0].count),
+        "screenedPapers": parseInt(resForTotalNumber.rows[0].count) - parseInt(resForTotalScreened.rows[0].count)
+    };
+}
 
 /**
  * select all paper of a specific project
@@ -464,6 +492,7 @@ module.exports = {
     selectManualByProject,
     selectScreenedByProject,
     selectOneNotVotedByUserIdAndProjectId,
+    manualScreeningProgress,
 
     selectAllByProjectId,
     checkExistenceByEids,

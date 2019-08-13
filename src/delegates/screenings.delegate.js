@@ -484,6 +484,10 @@ async function selectByScreeningUser(user_email, orderBy, sort, start, count) {
     let user = await usersDao.getUserByEmail(user_email);
 
     let res = await projectsDao.selectByScreeningUser(user.id, orderBy, sort, start, count);
+    for(let i = 0; i < res.results.length; i++){
+        let progress = await projectPapersDao.manualScreeningProgress(user.id, res.results[i].project_id);
+        res.results[i].progress = progress;
+    }
 
     //error check
     if (res.results.length === 0) {
