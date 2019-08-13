@@ -365,6 +365,15 @@ function fakeAutomatedEvaluationService(arrayPaper, arrayFilter, project_id){
 
     }
 
+    //I set status flag
+    global["project_"+project_id] = true;
+
+    //timeout of 3 seconds
+    setTimeout(() => {
+        //set true
+        global["project_"+project_id] = false;
+    }, 3000);
+
     return response;
 
 }
@@ -387,12 +396,6 @@ async function fakeGetAutomatedScreeningStatus(project_id) {
         //set false
         global["project_"+project_id] = false;
     }
-
-    //timeout of 3 seconds
-    setTimeout(() => {
-        //set true
-        global["project_"+project_id] = true;
-    }, 3000);
 
 
     return global["project_"+project_id];
