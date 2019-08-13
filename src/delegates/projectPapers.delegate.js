@@ -5,6 +5,7 @@
 const projectPapersDao = require(__base + 'dao/projectPapers.dao');
 const projectsDao = require(__base + 'dao/projects.dao');
 const usersDao = require(__base + 'dao/users.dao');
+const votesDao = require(__base + 'dao/votes.dao');
 
 //error handler
 const errHandler = require(__base + 'utils/errors');
@@ -259,7 +260,22 @@ async function selectByProject(user_email, project_id, type, orderBy, sort, star
             res = await projectPapersDao.selectNotScreenedByProject(project_id, orderBy, sort, start, count, min_confidence, max_confidence );
             break;
         case config.screening_status.manual:
+
+
             res = await projectPapersDao.selectManualByProject(project_id, orderBy, sort, start, count);
+            for(let i = 0; i < res.results.length; i++){
+
+                let allVotes = await votesDao.selectByProjectPaperId(res.results[i].id);
+
+                res.results[i].data.metadata.votes = [];
+                for(let j = 0; j < allVotes.length; j++){
+
+                    let userx = await usersDao.getUserById(allVotes[j].user_id);
+                    res.results[i].data.metadata.votes.push({user: {name: userx.data.name, picture: userx.data.picture}, answer: allVotes[j].data.answer});
+                
+                }
+
+            }
             break;
         case config.screening_status.screened:
             res = await projectPapersDao.selectScreenedByProject(project_id, orderBy, sort, start, count);
