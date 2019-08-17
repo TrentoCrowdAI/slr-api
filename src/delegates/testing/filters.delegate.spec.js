@@ -12,11 +12,15 @@ const errorNames = {
     
 };
 
-/* range of usable data n° 1 ~ 3 */
-const index = 1;
+/* *
+* range of usable data n° 1 ~ 15
+* 5~10 for delegate layer
+* */
+
+const index = 5;
 const index2 = index + 1;
 const index3 = index + 2;
-const validTokenId = "test";
+const validTokenId = "test"+index;
 const validTokenId3 = "test" + index3;
 
 /* good cases=====================================================================================================*/

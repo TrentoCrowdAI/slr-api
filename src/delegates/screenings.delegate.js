@@ -57,8 +57,14 @@ async function insertByArray(user_email, array_screener_id, manual_screening_typ
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
+    //if the manual screening precess is already start
+    if(project.data.manual_screening_type){
+        throw errHandler.createBadRequestError("the project is already initialized for manual screening!");
+    }
+
     //final response array
     let finalRes = [];
+    let localRes;
     //for each screener id and screening data
     for (let i = 0; i < array_screener_id.length; i++) {
 
@@ -74,26 +80,24 @@ async function insertByArray(user_email, array_screener_id, manual_screening_typ
         //check existence of screener in screenings table
         let screeningsRecord = await screeningsDao.selectByUserIdAndProjectId(array_screener_id[i], project_id);
         //if the selected user is already present in the screenings table
-
         if (screeningsRecord) {
             throw errHandler.createBadRequestError("the selected user for screening is already present in this project!");
         }
 
         //insert the screener in the screenings table
-        let res = await screeningsDao.insert({
+        let localRes = await screeningsDao.insert({
 
             "manual_screening_type": manual_screening_type
         }, array_screener_id[i], project_id);
         //save the res of current element
-        finalRes.push(res);
+        finalRes.push(localRes);
     }
 
-    //if screening type of project is not defined yet
-    if (!project.data.manual_screening_type) {
-        //set screening type of project
-        project.data.manual_screening_type = manual_screening_type;
-        await projectsDao.update(project.id, project.data);
-    }
+
+    //set screening type of project
+    project.data.manual_screening_type = manual_screening_type;
+    await projectsDao.update(project.id, project.data);
+
 
     return finalRes;
 
@@ -103,17 +107,17 @@ async function insertByArray(user_email, array_screener_id, manual_screening_typ
 /**
  * insert screener after starting manual screening
  * @param {string} user_email of user
- * @param {string} screeners_id
+ * @param {int[]} array_screener_id
  * @param {string} project_id
 
  * @returns {Object[]} list of screenings created
  */
-async function insert(user_email, screeners_id, project_id,) {
+async function insertByArrayAfterStarting(user_email, array_screener_id, project_id,) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
-    //check validation of screener's id and transform the value in integer
-    screeners_id = errorCheck.setAndCheckValidScreenersId(screeners_id);
+    //check validation of array_screener_id
+    errorCheck.isValidArrayInteger(array_screener_id);
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
@@ -125,33 +129,42 @@ async function insert(user_email, screeners_id, project_id,) {
     let project = await projectsDao.selectByIdAndUserId(project_id, user.id);
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
+
     //if the manual screening precess isn't not start yet
     if(!project.data.manual_screening_type){
         throw errHandler.createBadRequestError("the project is not yet initialized for manual screening!");
     }
 
 
-    //check existence of selected user
-    let screenersUser = await usersDao.getUserById(screeners_id);
-    if (!screenersUser) {
-        throw errHandler.createBadRequestError("the selected user for screening isn't exist!");
-    }
-    if (!project.data.user_id.includes(screeners_id.toString())) {
-        throw errHandler.createBadRequestError("the selected user for screening must be a collaborator of this project!");
-    }
+    //final response array
+    let finalRes = [];
+    let localRes;
+    //for each screener id and screening data
+    for (let i = 0; i < array_screener_id.length; i++) {
 
-    //check existence of screener in screenings table
-    let screeningsRecord = await screeningsDao.selectByUserIdAndProjectId(screeners_id, project_id);
-    //if the selected user is already present in the screenings table
-    if (screeningsRecord) {
-        throw errHandler.createBadRequestError("the selected user for screening is already present in this project!");
+            //check existence of selected user
+            let screenersUser = await usersDao.getUserById(array_screener_id[i]);
+            if (!screenersUser) {
+                throw errHandler.createBadRequestError("the selected user for screening isn't exist!");
+            }
+            if (!project.data.user_id.includes(array_screener_id[i].toString())) {
+                throw errHandler.createBadRequestError("the selected user for screening must be a collaborator of this project!");
+            }
+
+            //check existence of screener in screenings table
+            let screeningsRecord = await screeningsDao.selectByUserIdAndProjectId(array_screener_id[i], project_id);
+            //if the selected user is already present in the screenings table
+            if (screeningsRecord) {
+                throw errHandler.createBadRequestError("the selected user for screening is already present in this project!");
+        }
+
+            //insert the screener in the screenings table
+            localRes = await screeningsDao.insert({
+                "manual_screening_type": project.data.manual_screening_type
+            }, array_screener_id[i], project_id);
+            //save the res of current element
+            finalRes.push(localRes);
     }
-
-    //insert the screener in the screenings table
-    let res = await screeningsDao.insert({
-
-        "manual_screening_type": project.data.manual_screening_type
-    }, screeners_id, project_id);
 
     /* ==================================================
      update the paper screening status after adding this screener
@@ -189,7 +202,7 @@ async function insert(user_email, screeners_id, project_id,) {
         }
     }
 
-    return res;
+    return finalRes;
 
 }
 
@@ -560,6 +573,10 @@ async function selectOneNotVotedByUserIdAndProjectId(user_email, screening_id) {
 
     //get screening info
     let screening = await screeningsDao.selectById(screening_id);
+    //if screening doesn't exists
+    if (screening === undefined) {
+        throw errHandler.createNotFoundError("the screening doesn't exists");
+    }
 
     //if user is not assigned to the selected screening I throw an error
     if (user.id !== screening.user_id) {
@@ -568,7 +585,6 @@ async function selectOneNotVotedByUserIdAndProjectId(user_email, screening_id) {
 
     //I get the project in order to check if the user is still a collaborator
     let project = await projectsDao.selectByIdAndUserId(screening.project_id, user.id);
-
     //if the user isn't project's owner
     errorCheck.isValidProjectOwner(project);
 
@@ -587,7 +603,7 @@ async function selectOneNotVotedByUserIdAndProjectId(user_email, screening_id) {
 
 module.exports = {
     insertByArray,
-    insert,
+    insertByArrayAfterStarting,
     deletes,
     selectById,
     selectAllByProjectId,

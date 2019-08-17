@@ -4,6 +4,7 @@
 const express = require('express');
 const projectsDelegate = require(__base + 'delegates/projects.delegate');
 const usersDelegate = require(__base + 'delegates/users.delegate');
+const screeningsDelegate = require(__base + 'delegates/screenings.delegate');
 
 const router = express.Router();
 
@@ -153,6 +154,40 @@ router.get('/projects/:project_id/screeners', async (req, res, next) => {
         let users = await usersDelegate.getScreenersByProjectId(user_email, project_id);
         res.status(200).json(users);
     } catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+//add the screening in the table
+router.post('/projects/:project_id/screeners', async (req, res, next) => {
+    try {
+        let user_email = res.locals.user_email;
+        let project_id = req.params.project_id;
+        let array_screener_id = req.body.array_user_ids;
+        let manual_screening_type = req.body.manual_screening_type;
+        let screenings = await screeningsDelegate.insertByArray(user_email, array_screener_id, manual_screening_type, project_id);
+        res.status(201).json(screenings);
+    } catch (e) {
+        // catch the error threw from delegate and we delegate to the error-handling middleware
+        next(e);
+    }
+});
+
+
+/*add the new screener after starting the manual screening*/
+router.put('/projects/:project_id/screeners', async (req, res, next) => {
+
+    try {
+
+        let user_email = res.locals.user_email;
+        let project_id = req.params.project_id;
+        let array_screener_id = req.body.array_user_ids;
+
+        let projectPaper = await screeningsDelegate.insertByArrayAfterStarting(user_email, array_screener_id, project_id);
+        res.status(201).json(projectPaper);
+    } catch (e) {
+
         // catch the error threw from delegate and we delegate to the error-handling middleware
         next(e);
     }

@@ -68,9 +68,12 @@ async function createDB() {
 
     //execute test data sql
     for(let i=0; i<dataSql.length; i++){
+
         await db.queryNotParameter(dataSql[i]).catch(function (error) {
             console.error(error);
+
         });
+
     }
 
 

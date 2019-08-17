@@ -2,12 +2,23 @@ const request = require('supertest');
 const app = require(__base + 'app');
 const timeOut = 20 * 1000;
 
+/* *
+* range of usable data n° 16~ 30
+* 16~20 for controller layer
+* */
 
-/* range of usable data n° 4 ~ 6 */
-const index = 4;
+
+const index = 16;
 const index2 = index + 1;
 const index3 = index + 2;
+const index4 = index + 3;
+const index5 = index + 4;
 const validTokenId = "test" + index;
+const validTokenId2 = "test" + index2;
+const validTokenId3 = "test" + index3;
+const validTokenId4 = "test" + index4;
+const validTokenId5 = "test" + index5;
+
 
 /* good cases=====================================================================================================*/
 
@@ -248,15 +259,6 @@ describe('bad cases on papers', () => {
 
     });
 
-    /*
-     test('POST /search/similar should return 404 if it finds nothing', async () => {
-
-     jest.setTimeout(timeOut);
-
-     let response = await request(app).post('/search/similar').send({"paperData" : {"title" : "abcdefghthdtgdfgf"}}).set('Authorization', validTokenId).set('Content-Type', "application/json");
-     expect(response.status).toBe(404);
-
-     });*/
 
 
 });

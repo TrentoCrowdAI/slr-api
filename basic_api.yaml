@@ -360,6 +360,53 @@ paths:
         '500':
           $ref: '#/responses/500_internal_server_error'
 
+    post:
+      summary: add the screening by array
+      description: add the screening in the table by array
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/Screenings_post_body'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Screenings'
+        '204':
+          $ref: '#/responses/204_no_content'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
+
+    put:
+      summary: add the screening after starting
+      description: add the screening after starting manual screening
+      tags:
+        - Screenings
+      security:
+        - basicAuth: []
+
+      parameters:
+        - $ref: '#/parameters/Project_id_in_path'
+        - $ref: '#/parameters/Screenings_put_body'
+      responses:
+        '200':
+          description: OK
+          schema:
+            $ref: '#/definitions/Screenings'
+        '400':
+          $ref: '#/responses/400_bad_request'
+        '401':
+          $ref: '#/responses/401_unauthorized'
+        '500':
+          $ref: '#/responses/500_internal_server_error'
 
 
 
@@ -751,51 +798,8 @@ paths:
           $ref: '#/responses/500_internal_server_error'
 
 
-    post:
-      summary: add the screening by array
-      description: add the screening in the table by array
-      tags:
-        - Screenings
-      security:
-        - basicAuth: []
-
-      parameters:
-        - $ref: '#/parameters/Screenings_post_body'
-      responses:
-        '200':
-            description: OK
-            schema:
-              $ref: '#/definitions/Screenings'
-        '204':
-          $ref: '#/responses/204_no_content'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
 
 
-    delete:
-      summary: delete the screening
-      description: delete the screeners from a specific project
-      tags:
-        - Screenings
-      security:
-        - basicAuth: []
-
-      parameters:
-        - $ref: '#/parameters/Project_id'
-        - $ref: '#/parameters/User_id'
-      responses:
-        '204':
-          $ref: '#/responses/204_no_content'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
 
 
   '/screenings/automated':
@@ -912,30 +916,7 @@ paths:
           $ref: '#/responses/500_internal_server_error'
 
 
-  '/screenings/{screening_id}/addScreeners':
-    post:
-      summary: add the screening after starting
-      description: add the screening after starting manual screening
-      tags:
-        - Screenings
-      security:
-        - basicAuth: []
 
-      parameters:
-        - $ref: '#/parameters/Screening_id_in_path'
-        - $ref: '#/parameters/Project_id'
-        - $ref: '#/parameters/User_id'
-      responses:
-        '200':
-          description: OK
-          schema:
-            $ref: '#/definitions/Screening'
-        '400':
-          $ref: '#/responses/400_bad_request'
-        '401':
-          $ref: '#/responses/401_unauthorized'
-        '500':
-          $ref: '#/responses/500_internal_server_error'
 
 
   '/votes':
@@ -2163,8 +2144,6 @@ parameters:
     schema:
       type: object
       properties:
-        project_id:
-          type: integer
         array_user_ids:
           type: array
           items:
@@ -2178,11 +2157,26 @@ parameters:
             - multi-predicate
 
       required:
-        - project_id
         - array_user_ids
         - manual_screening_type
     required: true
 
+
+  Screenings_put_body:
+    in: body
+    name: body
+
+    schema:
+      type: object
+      properties:
+        array_user_ids:
+          type: array
+          items:
+            type: integer
+          example: [1,2,3]
+      required:
+        - array_user_ids
+    required: true
 
   Screening_id_in_path:
     in: path

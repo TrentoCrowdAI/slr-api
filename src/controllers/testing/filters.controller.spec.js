@@ -2,13 +2,22 @@ const request = require('supertest');
 const app = require(__base + 'app');
 const timeOut = 20 * 1000;
 
+/* *
+* range of usable data n° 1 ~ 15
+* 1~5 for controller layer
+* */
 
-/* range of usable data n° 1 ~ 3 */
+
 const index = 1;
 const index2 = index + 1;
 const index3 = index + 2;
-const validTokenId = "test";
-const validTokenId3 = "test" + index3;
+const index4 = index + 3;
+const index5 =  index + 4;
+const validTokenId = "test"+index;
+const validTokenId2 = "test"+index2;
+const validTokenId3 = "test"+index3;
+const validTokenId4 = "test"+index4;
+const validTokenId5 = "test"+index5;
 
 /* good cases=====================================================================================================*/
 
@@ -41,7 +50,6 @@ describe('good cases on filters ', () => {
         jest.setTimeout(timeOut);
         let response = await request(app).post('/filters').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
 
-
         expect(response.status).toBe(201);
 
     });
@@ -61,7 +69,7 @@ describe('good cases on filters ', () => {
 
     test('DELETE /filters/:id should return 204', async () => {
         jest.setTimeout(timeOut);
-        let response = await request(app).delete('/filters/' + index3).set('Authorization', validTokenId3);
+        let response = await request(app).delete('/filters/' + index5).set('Authorization', validTokenId5);
         expect(response.status).toBe(204);
     });
 
@@ -71,55 +79,14 @@ describe('good cases on filters ', () => {
 /* bad cases==============================================================================================================*/
 
 
-//not valid examples
-let notValidExampleForProjectId = {
-    "filter": {
-        "predicate": "aaa",
-        "inclusion_description": "bbb",
-        "exclusion_description": "ccc",
-    }
-};
-let notValidExampleForProjectIdNotNumber = {
-    "project_id": "abc",
-    "filter": {
-        "predicate": "aaa",
-        "inclusion_description": "bbb",
-        "exclusion_description": "ccc",
-    }
-};
-let notValidExampleForProjectIdNotInteger = {
-    "project_id": "1.5",
-    "filter": {
-        "predicate": "aaa",
-        "inclusion_description": "bbb",
-        "exclusion_description": "ccc",
-    }
-};
-let notValidExampleForExclusionDescription = {
-    "project_id": index + "",
-    "filter": {
-        "predicate": "aaa",
-        "inclusion_description": "bbb",
-    }
-};
 
 
-let notValidExampleForProjectIdNotExist = {
-    "project_id": "9999",
-    "filter": {
-        "predicate": "aaa",
-        "inclusion_description": "bbb",
-        "exclusion_description": "ccc",
-    }
-};
-let notValidExampleForProjectIdNotPermission = {
-    "project_id": index3 + "",
-    "filter": {
-        "predicate": "aaa",
-        "inclusion_description": "bbb",
-        "exclusion_description": "ccc",
-    }
-};
+
+
+
+
+
+
 
 
 /*bad cases*/
@@ -171,7 +138,7 @@ describe('bad cases on filters ', () => {
 
         test('GET /filters should return 404 if the result is empty', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).get('/filters?project_id=' + index3).set('Authorization', validTokenId3);
+            let response = await request(app).get('/filters?project_id=' + index5).set('Authorization', validTokenId5);
             expect(response.status).toBe(404)
         });
 
@@ -183,18 +150,49 @@ describe('bad cases on filters ', () => {
             jest.setTimeout(timeOut);
 
             //the project id is missing
+            let notValidExampleForProjectId = {
+                "filter": {
+                    "predicate": "aaa",
+                    "inclusion_description": "bbb",
+                    "exclusion_description": "ccc",
+                }
+            };
             let response = await request(app).post('/filters').send(notValidExampleForProjectId).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
             //the project id is not a number
+            let notValidExampleForProjectIdNotNumber = {
+                "project_id": "abc",
+                "filter": {
+                    "predicate": "aaa",
+                    "inclusion_description": "bbb",
+                    "exclusion_description": "ccc",
+                }
+            };
             response = await request(app).post('/filters').send(notValidExampleForProjectIdNotNumber).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
+
             //the project id is not a integer
+            let notValidExampleForProjectIdNotInteger = {
+                "project_id": "1.5",
+                "filter": {
+                    "predicate": "aaa",
+                    "inclusion_description": "bbb",
+                    "exclusion_description": "ccc",
+                }
+            };
             response = await request(app).post('/filters').send(notValidExampleForProjectIdNotInteger).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
-            //the mandatory field is missing
+            //the mandatory field  "exclusion_description" is missing
+            let notValidExampleForExclusionDescription = {
+                "project_id": index + "",
+                "filter": {
+                    "predicate": "aaa",
+                    "inclusion_description": "bbb",
+                }
+            };
             response = await request(app).post('/filters').send(notValidExampleForExclusionDescription).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
@@ -204,6 +202,15 @@ describe('bad cases on filters ', () => {
         test('POST /filters should return 401 if the project doesn\'t exist', async () => {
             jest.setTimeout(timeOut);
 
+            let notValidExampleForProjectIdNotExist = {
+                "project_id": "9999",
+                "filter": {
+                    "predicate": "aaa",
+                    "inclusion_description": "bbb",
+                    "exclusion_description": "ccc",
+                }
+            };
+
             let response = await request(app).post('/filters').send(notValidExampleForProjectIdNotExist).set('Authorization', validTokenId);
 
             expect(response.status).toBe(401);
@@ -211,6 +218,16 @@ describe('bad cases on filters ', () => {
 
         test('POST /filters should return 401 if user hasn\'t permission', async () => {
             jest.setTimeout(timeOut);
+
+            let notValidExampleForProjectIdNotPermission = {
+                "project_id": index2 + "",
+                "filter": {
+                    "predicate": "aaa",
+                    "inclusion_description": "bbb",
+                    "exclusion_description": "ccc",
+                }
+            };
+
             let response = await request(app).post('/filters').send(notValidExampleForProjectIdNotPermission).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
 
@@ -230,8 +247,11 @@ describe('bad cases on filters ', () => {
             response = await request(app).put('/filters/' + index + '.5').send(validExampleUpdate).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
-
-
+            //the mandatory field  "exclusion_description" is missing
+            let notValidExampleForExclusionDescription = {
+                    "predicate": "aaa",
+                    "inclusion_description": "bbb",
+            };
             response = await request(app).put('/filters/' + index).send(notValidExampleForExclusionDescription).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
@@ -248,8 +268,6 @@ describe('bad cases on filters ', () => {
         test('PUT /filters/:id should return 401 if user hasn\'t permission', async () => {
             jest.setTimeout(timeOut);
             let response = await request(app).put('/filters/' + index2).send(validExampleUpdate).set('Authorization', validTokenId);
-
-
 
             expect(response.status).toBe(401)
         });

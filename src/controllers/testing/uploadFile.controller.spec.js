@@ -3,12 +3,21 @@ const app = require(__base + 'app');
 const timeOut = 20 * 1000;
 
 
-/* range of usable data n° 13 ~ 15 */
-const index = 13;
+/* *
+* range of usable data n° 61~ 75
+* 61~65 for controller layer
+* */
+
+const index = 61;
 const index2 = index + 1;
 const index3 = index + 2;
-const validTokenId = "test" + index;
-const validTokenId3 = "test" + index3;
+const index4 = index + 3;
+const index5 =  index + 4;
+const validTokenId = "test"+index;
+const validTokenId2 = "test"+index2;
+const validTokenId3 = "test"+index3;
+const validTokenId4 = "test"+index4;
+const validTokenId5 = "test"+index5;
 
 /* good cases=====================================================================================================*/
 

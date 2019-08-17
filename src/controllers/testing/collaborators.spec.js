@@ -2,16 +2,26 @@ const request = require('supertest');
 const app = require(__base + 'app');
 const timeOut = 20 * 1000;
 
+/* *
+* range of usable data n° 91 ~ 105
+* 91~95 for controller layer
+* */
 
-/* range of usable data n° 19 ~ 21 */
-const index = 19;
+const index = 91;
 const index2 = index + 1;
 const index3 = index + 2;
+const index4 = index + 3;
+const index5 =  index + 4;
 const validTokenId = "test"+index;
+const validTokenId2 = "test"+index2;
+const validTokenId3 = "test"+index3;
+const validTokenId4 = "test"+index4;
+const validTokenId5 = "test"+index5;
+
 
 /* good cases=====================================================================================================*/
 
-const validExample = {"email": "test" + index3 + "@gmail.com"};
+const validExample = {"email": "test" + index2 + "@gmail.com"};
 
 
 describe('good cases on collaborators', () => {
@@ -43,7 +53,7 @@ describe('good cases on collaborators', () => {
 
 
 const notValidEmail = {"email": "notValid@com"};
-const notValidExampleForJustPresent = {"email": "test" + index + "@gmail.com"};
+
 
 /*bad cases*/
 describe('bad cases on collaborators', () => {
@@ -79,18 +89,23 @@ describe('bad cases on collaborators', () => {
         test('POST /projects/:id/collaborators should return 401 if user hasn\'t permission', async () => {
             jest.setTimeout(timeOut);
 
-            let response = await request(app).post('/projects/' + index2 + '/collaborators').send(validExample).set('Authorization', validTokenId);
+            let response = await request(app).post('/projects/' + index3 + '/collaborators').send(validExample).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
 
         test('POST /projects/:id/collaborators should return 400 if the shared user is already present in this project', async () => {
             jest.setTimeout(timeOut);
-            response = await request(app).post('/projects/' + index + '/collaborators').send(notValidExampleForJustPresent).set('Authorization', validTokenId);
+
+            //test data
+            let notValidExampleForJustPresent = {"email": "test" + index + "@gmail.com"};
+
+            let response = await request(app).post('/projects/' + index + '/collaborators').send(notValidExampleForJustPresent).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
         });
 
     });
+
 
     describe('bad cases on DELETE /projects/:id/collaborators/:user_id', () => {
 
@@ -102,11 +117,11 @@ describe('bad cases on collaborators', () => {
             expect(response.status).toBe(400);
 
             //project id is not integer
-            response = await request(app).delete('/projects/1.5/collaborators/'+index).set('Authorization', validTokenId);
+            response = await request(app).delete('/projects/'+index+'.5/collaborators/'+index).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
             //user id is not number
-            response = await request(app).delete('/projects/1/collaborators/abc').set('Authorization', validTokenId);
+            response = await request(app).delete('/projects/'+index+'/collaborators/abc').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
             //user id is not integer
@@ -132,6 +147,7 @@ describe('bad cases on collaborators', () => {
         test('DELETE /projects/:id/collaborators/:user_id should return 400 if the user_id isn\'t among the collaborators', async () => {
             jest.setTimeout(timeOut);
             response = await request(app).delete('/projects/'+index+'/collaborators/'+index2).set('Authorization', validTokenId);
+            
             expect(response.status).toBe(400);
         });
 

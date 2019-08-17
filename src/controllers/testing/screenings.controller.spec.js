@@ -5,53 +5,50 @@ const config = require(__base + 'config');
 const timeOut = 20 * 1000;
 
 
-/* range of usable data n° 22 ~ 24 */
-const index = 22;
+/* *
+* range of usable data n° 106~ 120
+* 106~110 for controller layer
+* */
+
+
+const index = 106;
 const index2 = index + 1;
 const index3 = index + 2;
-const validTokenId = "test" + index;
-const validTokenId3 = "test" + index3;
+const index4 = index + 3;
+const index5 =  index + 4;
+const validTokenId = "test"+index;
+const validTokenId2 = "test"+index2;
+const validTokenId3 = "test"+index3;
+const validTokenId4 = "test"+index4;
+const validTokenId5 = "test"+index5;
+
 
 
 /* good cases=====================================================================================================*/
 
-const validExample = {
-    "project_id": index,
-    "array_user_ids": [index2],
-    "manual_screening_type": config.manual_screening_type.single_predicate,
-};
 
-const validExample2 = {
-    "project_id": index,
-    "user_id": index3+1,
-};
 
-const validExampleForAutomatedScreening = {
-    "project_id": index,
-    "threshold": "0.50",
-};
+
+
+
 
 
 describe('good cases on screenings', () => {
 
-
-
-
-    test('POST /screenings should return 201', async () => {
+    test('GET /screenings should return 200', async () => {
         jest.setTimeout(timeOut);
-        response = await request(app).post('/screenings').send(validExample).set('Authorization', validTokenId);
-        expect(response.status).toBe(201);
+        response = await request(app).get('/screenings').set('Authorization', validTokenId);
+        expect(response.status).toBe(200);
     });
 
-
-    test('DELETE /screenings should return 204', async () => {
-        jest.setTimeout(timeOut);
-        response = await request(app).delete('/screenings?user_id=' + index2 + '&project_id=' + index).set('Authorization', validTokenId);
-        expect(response.status).toBe(204);
-    });
 
     test('POST /screenings/automated should return 204', async () => {
         jest.setTimeout(timeOut);
+
+        const validExampleForAutomatedScreening = {
+            "project_id": index,
+            "threshold": "0.50",
+        };
         response = await request(app).post('/screenings/automated').send(validExampleForAutomatedScreening).set('Authorization', validTokenId);
         expect(response.status).toBe(204);
     });
@@ -62,11 +59,7 @@ describe('good cases on screenings', () => {
         expect(response.status).toBe(200);
     });
 
-    test('GET /screenings should return 200', async () => {
-        jest.setTimeout(timeOut);
-        response = await request(app).get('/screenings').set('Authorization', validTokenId);
-        expect(response.status).toBe(200);
-    });
+
 
     test('GET /screenings/:screening_id should return 200', async () => {
         jest.setTimeout(timeOut);
@@ -76,15 +69,11 @@ describe('good cases on screenings', () => {
 
     test('GET /screenings/:screening_id/next should return 200', async () => {
         jest.setTimeout(timeOut);
-        response = await request(app).get('/screenings/' + index+'/next').set('Authorization', validTokenId);
+        response = await request(app).get('/screenings/' + index2+'/next').set('Authorization', validTokenId2);
         expect(response.status).toBe(200);
     });
 
-    test('POST /screenings/:screening_id/addScreeners should return 200', async () => {
-        jest.setTimeout(timeOut);
-        response = await request(app).post('/screenings/1/addScreeners').send(validExample2).set('Authorization', validTokenId);
-        expect(response.status).toBe(200);
-    });
+
 
 
 });
@@ -92,194 +81,51 @@ describe('good cases on screenings', () => {
 
 /* bad cases==============================================================================================================*/
 
-const notValidExampleForProjectIdNotExist = {
-    "array_user_ids": [index3],
-    "manual_screening_type": config.manual_screening_type.single_predicate,
 
-};
-const notValidExampleForProjectIdNotNumber = {
-    "project_id": "abc",
-    "array_user_ids": [index3],
-    "manual_screening_type": config.manual_screening_type.single_predicate,
-
-};
-const notValidExampleForProjectIdNotInteger = {
-    "project_id": index + ".5",
-    "array_user_ids": [index3],
-    "manual_screening_type": config.manual_screening_type.single_predicate,
-
-};
-const notValidExampleForArrayNotExist = {
-    "project_id": index,
-    "manual_screening_type": config.manual_screening_type.single_predicate,
-
-};
-const notValidExampleForArrayEmpty = {
-    "project_id": index,
-    "array_user_ids": [],
-    "manual_screening_type": config.manual_screening_type.single_predicate,
-
-};
-const notValidExampleForArrayNotInteger = {
-    "project_id": index,
-    "array_user_ids": ["abc", "dfv"],
-    "manual_screening_type": config.manual_screening_type.single_predicate,
-
-};
-
-const notValidExampleForManualTypeNotValid = {
-    "project_id": index,
-    "array_user_ids": [index3],
-    "manual_screening_type": "abc"
-
-};
-
-const notValidExampleForNothingFound = {
-    "project_id": "9999",
-    "array_user_ids": [index3],
-    "manual_screening_type": config.manual_screening_type.single_predicate,
-
-};
-const notValidExampleForNotPermission = {
-    "project_id": index3,
-    "array_user_ids": [index],
-    "manual_screening_type": config.manual_screening_type.single_predicate,
-
-};
-
-const notValidExampleForUserNotExist = {
-    "project_id": index,
-    "array_user_ids": ["9999"],
-    "manual_screening_type": config.manual_screening_type.single_predicate,
-
-};
-
-const notValidExampleForNotCollaborator = {
-    "project_id": index3,
-    "array_user_ids": [index],
-    "manual_screening_type": config.manual_screening_type.single_predicate,
-
-};
-
-const notValidExampleForAlreadyExist = {
-    "project_id": index,
-    "array_user_ids": [index],
-    "manual_screening_type": config.manual_screening_type.single_predicate,
-
-};
 
 describe('bad cases on screenings', () => {
 
+    describe('bad cases on GET /screenings', () => {
 
-
-
-
-    describe('bad cases on POST /screenings', () => {
-
-        test('POST /screenings should return 400 if parameters aren\'t valid', async () => {
+        test('GET /screenings should return 400 if parameters are not valid', async () => {
             jest.setTimeout(timeOut);
 
-            //the project id is not exist
-            let response = await request(app).post('/screenings').send(notValidExampleForProjectIdNotExist).set('Authorization', validTokenId);
+            //the orderBy is not valid
+            response = await request(app).get('/screenings?orderBy=abcde').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
-
-            //the project id is not a number
-            response = await request(app).post('/screenings').send(notValidExampleForProjectIdNotNumber).set('Authorization', validTokenId);
+            //the sort is not valid
+            response = await request(app).get('/screenings?sort=abcde').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
-
-            //the project id is not a integer
-            response = await request(app).post('/screenings').send(notValidExampleForProjectIdNotInteger).set('Authorization', validTokenId);
+            //the start is not a number
+            response = await request(app).get('/screenings?start=abcde').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
-            //the array user ids is not exist
-            response = await request(app).post('/screenings').send(notValidExampleForArrayNotExist).set('Authorization', validTokenId);
+            //the start is less than 0
+            response = await request(app).get('/screenings?start=-1').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
-            //the array user ids is empty
-            response = await request(app).post('/screenings').send(notValidExampleForArrayEmpty).set('Authorization', validTokenId);
+            //the count is not a number
+            response = await request(app).get('/screenings?count=abcde').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
-            //the array user ids contains the element not integer
-            response = await request(app).post('/screenings').send(notValidExampleForArrayNotInteger).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-            //the manual screening type is not valid
-            response = await request(app).post('/screenings').send(notValidExampleForManualTypeNotValid).set('Authorization', validTokenId);
+            //the count is less than 1
+            response = await request(app).get('/screenings?count=0').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
         });
 
 
-        test('POST /screenings should return 401 if it finds nothing', async () => {
+        test('GET /screenings should return 404 if it finds nothing after the given offset', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings').send(notValidExampleForNothingFound).set('Authorization', validTokenId);
-            expect(response.status).toBe(401);
+            let response = await request(app).get('/screenings?start=99999').set('Authorization', validTokenId);
+            expect(response.status).toBe(404);
+        });
+
+        test('GET /screenings should return 404 if user hasn\'t any project', async () => {
+            jest.setTimeout(timeOut);
+            let response = await request(app).get('/screenings').set('Authorization', validTokenId5);
+            expect(response.status).toBe(404);
         });
 
 
-        test('POST /screenings should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings').send(notValidExampleForNotPermission).set('Authorization', validTokenId);
-            expect(response.status).toBe(401);
-        });
 
-        test('POST /screenings should return 400 if user isn\'t exist', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings').send(notValidExampleForUserNotExist).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-        });
-
-        test('POST /screenings should return 400 if user isn\'t collaborator', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings').send(notValidExampleForNotCollaborator).set('Authorization', validTokenId3);
-            expect(response.status).toBe(400);
-        });
-
-
-        test('POST /screenings should return 400 if the shared user is already present in this project', async () => {
-            jest.setTimeout(timeOut);
-            response = await request(app).post('/screenings').send(notValidExampleForAlreadyExist).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-        });
-
-    });
-
-    describe('bad cases on DELETE /screenings', () => {
-
-        test('DELETE /screenings should return 400 if parameters aren\'t valid', async () => {
-            jest.setTimeout(timeOut);
-
-            //the project id is not a number
-            let response = await request(app).delete('/screenings?project_id=abc&user_id='+index).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-            //the project id is not a integer
-            response = await request(app).delete('/screenings?project_id='+index+'.5&user_id='+index).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-            //the user id is not a number
-            response = await request(app).delete('/screenings?project_id='+index+'&user_id=abc').set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-            //the user id is not a integer
-            response = await request(app).delete('/screenings?project_id='+index+'&user_id='+index+'.5').set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-
-        });
-
-
-        test('DELETE /screenings should return 401 if it finds nothing', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).delete('/screenings?project_id=9999&user_id='+index).set('Authorization', validTokenId);
-            expect(response.status).toBe(401);
-
-        });
-
-        test('DELETE /screenings should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).delete('/screenings?project_id='+index3+'&user_id='+index3).set('Authorization', validTokenId);
-            expect(response.status).toBe(401);
-        });
-
-
-        test('DELETE /projects/:id/screeners/:user_id should return 400 if the user_id isn\'t among the screeners', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).delete('/screenings?project_id='+index+'&user_id='+index3).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-        });
 
     });
 
@@ -322,7 +168,7 @@ describe('bad cases on screenings', () => {
 
         test('POST /screenings/automated should return 401 if user hasn\'t permission', async () => {
             jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings/automated').send({"project_id": index3, "threshold": "0.5"}).set('Authorization', validTokenId);
+            let response = await request(app).post('/screenings/automated').send({"project_id": index2, "threshold": "0.5"}).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
@@ -330,79 +176,92 @@ describe('bad cases on screenings', () => {
 
     });
 
-    describe('bad cases on POST /screenings/:screening_id/addScreeners', () => {
+    describe('bad cases on GET /screenings/automated', () => {
 
-        test('POST /screenings/:screening_id/addScreeners should return 400 if parameters aren\'t valid', async () => {
-
+        test('GET /papers should return 400 if parameters have not valid value', async () => {
             jest.setTimeout(timeOut);
 
-            //the project id is not exist
-            let response = await request(app).post('/screenings/1/addScreeners').send({"user_id": index3}).set('Authorization', validTokenId);
+            //the project id is missing
+            let response = await request(app).get('/screenings/automated').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
-
             //the project id is not a number
-            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": "abc", "user_id": index3}).set('Authorization', validTokenId);
+            response = await request(app).get('/screenings/automated?project_id=abc').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
-
             //the project id is not a integer
-            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": "1.8", "user_id": index3}).set('Authorization', validTokenId);
+            response = await request(app).get('/screenings/automated?project_id=' + index + '.5').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
-            //the user ids is not exist
-            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index}).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-            //the  user id is not number
-            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index, "user_id": "abc"}).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-            //the user id is not integer
-            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index, "user_id": "1.5"}).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-
 
         });
 
-
-
-
-        test('POST /screenings/:screening_id/addScreeners should return 401 if it finds nothing', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings/1/addScreeners').send({"project_id": 9999, "user_id": index3}).set('Authorization', validTokenId);
-            expect(response.status).toBe(401);
-        });
-
-
-        test('POST /screenings/:screening_id/addScreeners should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index3, "user_id": index}).set('Authorization', validTokenId);
-            expect(response.status).toBe(401);
-        });
-
-        test('POST /screenings/:screening_id/addScreeners should return 400 if user isn\'t exist', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index, "user_id": 9999}).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-        });
-
-        test('POST /screenings/:screening_id/addScreeners should return 400 if the project is not yet initialized for manual screening', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index3, "user_id": index3+1}).set('Authorization', validTokenId3);
-
-            expect(response.status).toBe(400);
-        });
-
-        test('POST /screenings/:screening_id/addScreeners should return 400 if user isn\'t collaborator', async () => {
-            jest.setTimeout(timeOut);
-            let response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index, "user_id": index3+2}).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-        });
-
-
-        test('POST /screenings/:screening_id/addScreeners should return 400 if the shared user is already present in this project', async () => {
-            jest.setTimeout(timeOut);
-            response = await request(app).post('/screenings/1/addScreeners').send({"project_id": index, "user_id": index}).set('Authorization', validTokenId);
-            expect(response.status).toBe(400);
-        });
 
     });
 
+    describe('bad cases on GET /screenings/:screening_id', () => {
+
+        test('GET /screenings/:screening_id should return 400 if parameters are not valid', async () => {
+            jest.setTimeout(timeOut);
+
+            //screening id is not number
+            let response = await request(app).get('/screenings/abc').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+            //screening id is not integer
+            response = await request(app).get('/screenings/'+index+'.55').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+
+        });
+
+        test('GET /screenings/:screening_id should return 404 if screenings is not present', async () => {
+            jest.setTimeout(timeOut);
+            let response = await request(app).get('/screenings/9999').set('Authorization', validTokenId);
+            expect(response.status).toBe(404);
+        });
+
+        test('GET /screenings/:screening_id should return 401 if user isn\'t owner of screenings', async () => {
+            jest.setTimeout(timeOut);
+            let response = await request(app).get('/screenings/'+index2).set('Authorization', validTokenId);
+            expect(response.status).toBe(401);
+        });
+
+
+
+
+    });
+
+
+    describe('bad cases on GET /screenings/:screening_id/next', () => {
+
+        test('GET /screenings/:screening_id/next should return 400 if parameters are not valid', async () => {
+            jest.setTimeout(timeOut);
+
+            //screening id is not number
+            let response = await request(app).get('/screenings/abc/next').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+            //screening id is not integer
+            response = await request(app).get('/screenings/'+index+'.55/next').set('Authorization', validTokenId);
+            expect(response.status).toBe(400);
+
+        });
+
+        test('GET /screenings/:screening_id/next should return 404 if screenings is not present', async () => {
+            jest.setTimeout(timeOut);
+            let response = await request(app).get('/screenings/9999/next').set('Authorization', validTokenId);
+            expect(response.status).toBe(404);
+        });
+
+        test('GET /screenings/:screening_id/next should return 401 if user isn\'t owner of screenings', async () => {
+            jest.setTimeout(timeOut);
+            let response = await request(app).get('/screenings/'+index2+'/next').set('Authorization', validTokenId);
+            expect(response.status).toBe(401);
+        });
+
+        test('GET /screenings/:screening_id should return 404 if there isn\'t the projectPaper to vote in this screening', async () => {
+            jest.setTimeout(timeOut);
+            let response = await request(app).get('/screenings/'+index+'/next').set('Authorization', validTokenId);
+            expect(response.status).toBe(404);
+        });
+
+
+
+    });
 
 });

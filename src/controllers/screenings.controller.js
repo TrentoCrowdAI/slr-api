@@ -11,15 +11,19 @@ const router = express.Router();
 
 
 
-//add the screening in the table
-router.post('/screenings', async (req, res, next) => {
+/*get list of project associated with user by screening table*/
+router.get('/screenings', async (req, res, next) => {
+
     try {
+
         let user_email = res.locals.user_email;
-        let project_id = req.body.project_id;
-        let array_screener_id = req.body.array_user_ids;
-        let manual_screening_type = req.body.manual_screening_type;
-        let screenings = await screeningsDelegate.insertByArray(user_email, array_screener_id, manual_screening_type, project_id);
-        res.status(201).json(screenings);
+        let orderBy = req.query.orderBy;
+        let sort = req.query.sort;
+        let start = req.query.start;
+        let count = req.query.count;
+
+        let result = await screeningsDelegate.selectByScreeningUser(user_email, orderBy, sort, start, count);
+        res.status(200).json(result);
     } catch (e) {
         // catch the error threw from delegate and we delegate to the error-handling middleware
         next(e);
@@ -27,7 +31,8 @@ router.post('/screenings', async (req, res, next) => {
 });
 
 
-//delete a screening from the table
+
+/*delete a screening from the table
 router.delete('/screenings', async (req, res, next) => {
     try {
         let user_email = res.locals.user_email;
@@ -43,6 +48,7 @@ router.delete('/screenings', async (req, res, next) => {
         next(e);
     }
 });
+*/
 
 
 /*automated screening*/
@@ -80,24 +86,6 @@ router.get('/screenings/automated', async (req, res, next) => {
 });
 
 
-/*get list of project associated with user by screening table*/
-router.get('/screenings', async (req, res, next) => {
-
-    try {
-
-        let user_email = res.locals.user_email;
-        let orderBy = req.query.orderBy;
-        let sort = req.query.sort;
-        let start = req.query.start;
-        let count = req.query.count;
-
-        let result = await screeningsDelegate.selectByScreeningUser(user_email, orderBy, sort, start, count);
-        res.status(200).json(result);
-    } catch (e) {
-        // catch the error threw from delegate and we delegate to the error-handling middleware
-        next(e);
-    }
-});
 
 /*get screening information*/
 router.get('/screenings/:screening_id', async (req, res, next) => {
@@ -132,23 +120,7 @@ router.get('/screenings/:screening_id/next', async (req, res, next) => {
 });
 
 
-/*add the new screener after starting the manual screening*/
-router.post('/screenings/:screening_id/addScreeners', async (req, res, next) => {
 
-    try {
-
-        let user_email = res.locals.user_email;
-        let project_id = req.body.project_id;
-        let  screeners_id = req.body.user_id;
-
-        let projectPaper = await screeningsDelegate.insert(user_email, screeners_id, project_id);
-        res.status(200).json(projectPaper);
-    } catch (e) {
-
-        // catch the error threw from delegate and we delegate to the error-handling middleware
-        next(e);
-    }
-});
 
 
 module.exports = router;

@@ -370,8 +370,10 @@ function fakeAutomatedEvaluationService(arrayPaper, arrayFilter, project_id){
 
     //timeout of 3 seconds
     setTimeout(() => {
-        //set true
-        global["project_"+project_id] = false;
+
+        //delete the global variable
+        delete global["project_" + project_id];
+
     }, 3000);
 
     return response;
@@ -391,14 +393,15 @@ async function fakeGetAutomatedScreeningStatus(project_id) {
     //check validation of project id and transform the value in integer
     project_id = errorCheck.setAndCheckValidProjectId(project_id);
 
-    //if is the first request for this project id
-    if(!global["project_"+project_id]){
-        //set false
-        global["project_"+project_id] = false;
+    //if is set the global variable
+    if (global["project_" + project_id]) {
+
+        return true;
     }
-
-
-    return global["project_"+project_id];
+    //if the global variable isn't exist
+    else {
+        return false;
+    }
 
 }
 
