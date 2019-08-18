@@ -6,6 +6,7 @@ const timeOut = 20 * 1000;
 
 
 /* *
+* screenings
 * range of usable data n° 106~ 120
 * 106~110 for controller layer
 * */

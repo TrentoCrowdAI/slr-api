@@ -4,6 +4,7 @@ const timeOut = 20 * 1000;
 
 
 /* *
+* upload file
 * range of usable data n° 61~ 75
 * 61~65 for controller layer
 * */

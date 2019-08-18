@@ -3,6 +3,7 @@ const app = require(__base + 'app');
 const timeOut = 20 * 1000;
 
 /* *
+* collaborators
 * range of usable data n° 91 ~ 105
 * 91~95 for controller layer
 * */

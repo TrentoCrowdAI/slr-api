@@ -3,6 +3,7 @@ const app = require(__base + 'app');
 const timeOut = 20 * 1000;
 
 /* *
+* filters
 * range of usable data n° 1 ~ 15
 * 1~5 for controller layer
 * */

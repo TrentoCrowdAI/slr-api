@@ -4,30 +4,38 @@ const timeOut = 20 * 1000;
 
 const searchesDelegate = require(__base + 'delegates/searches.delegate');
 
-//object that contains all the error names
-const errorNames = {
-    badRequest : "badRequest",
-    notFound : "notFound",
-    badImplementation: "badImplementation",
-    unauthorized: "unauthorized",
-     //to add the other error names
-    
-};
 
 /* *
+* search paper
 * range of usable data n° 16 ~ 30
 * 21~25 for delegate layer
 * */
 const index = 21;
 const index2 = index + 1;
 const index3 = index + 2;
-const validTokenId = "test" + index;
+const index4 = index + 3;
+const index5 =  index + 4;
+const validUserEmail = "test"+index+"@gmail.com";
+const validUserEmail2 = "test"+index2+"@gmail.com";
+const validUserEmail3 = "test"+index3+"@gmail.com";
+const validUserEmail4 = "test"+index4+"@gmail.com";
+const validUserEmail5 = "test"+index5+"@gmail.com";
 
-let query,searchBy, year, orderBy, sort, start, count, scopus, arXiv, papers;
+//object that contains all the error names
+const errorNames = {
+    badRequest : "badRequest",
+    notFound : "notFound",
+    badImplementation: "badImplementation",
+    unauthorized: "unauthorized",
+    //to add the other error names
+
+};
+
+
 
 /* good cases=====================================================================================================*/
-//valid user_email
-const valid_user_email = "test@gmail.com";
+
+let query,searchBy, year, orderBy, sort, start, count, scopus, arXiv, papers;
 
 describe('good cases on search.delegate', () => {
 
@@ -183,9 +191,9 @@ describe('bad cases on search.delegate', () => {
 
         });
 
-        test('it should return error \'badRequest\' if count is lower than 0', async () => {
+        test('it should return error \'badRequest\' if count is lower than 1', async () => {
 
-            scopus = "true"; count = -1;
+            scopus = "true"; count = 0;
 
             try{
                 papers = await searchesDelegate.search(query, searchBy, year, orderBy, sort, start, count, scopus, arXiv);
@@ -210,7 +218,7 @@ describe('bad cases on search.delegate', () => {
                 papers = await searchesDelegate.similarSearch({}, 0, 10);
             }catch(e){
                 papers = e;
-                console.log(e.message);
+
             }
             expect(papers.name).toBe(errorNames.badImplementation);
 
@@ -226,7 +234,7 @@ describe('bad cases on search.delegate', () => {
 
             //project id not a number
             try{
-                papers = await searchesDelegate.automatedSearch(valid_user_email, "abc", 0.0, 1.0, 0, 10);
+                papers = await searchesDelegate.automatedSearch(validUserEmail, "abc", 0.0, 1.0, 0, 10);
             }catch(e){
                 papers = e;
             }
@@ -234,7 +242,7 @@ describe('bad cases on search.delegate', () => {
 
             //min confidence not a number
             try{
-                papers = await searchesDelegate.automatedSearch(valid_user_email, 1, "abc", 1.0, 0, 10);
+                papers = await searchesDelegate.automatedSearch(validUserEmail, 1, "abc", 1.0, 0, 10);
             }catch(e){
                 papers = e;
             }
@@ -242,7 +250,7 @@ describe('bad cases on search.delegate', () => {
 
             //min confidence lower than 0
             try{
-                papers = await searchesDelegate.automatedSearch(valid_user_email, 1, -0.1, 1.0, 0, 10);
+                papers = await searchesDelegate.automatedSearch(validUserEmail, 1, -0.1, 1.0, 0, 10);
             }catch(e){
                 papers = e;
             }
@@ -250,7 +258,7 @@ describe('bad cases on search.delegate', () => {
 
             //max confidence not a number
             try{
-                papers = await searchesDelegate.automatedSearch(valid_user_email, 1, 0.0, "abc", 0, 10);
+                papers = await searchesDelegate.automatedSearch(validUserEmail, 1, 0.0, "abc", 0, 10);
             }catch(e){
                 papers = e;
             }
@@ -258,7 +266,7 @@ describe('bad cases on search.delegate', () => {
 
             //max confidence lower than 0
             try{
-                papers = await searchesDelegate.automatedSearch(valid_user_email, 1, 0.0, -0.1, 0, 10);
+                papers = await searchesDelegate.automatedSearch(validUserEmail, 1, 0.0, -0.1, 0, 10);
             }catch(e){
                 papers = e;
             }
@@ -266,7 +274,7 @@ describe('bad cases on search.delegate', () => {
 
             //max confidence lower than min confidence
             try{
-                papers = await searchesDelegate.automatedSearch(valid_user_email, 1, 0.6, 0.1, 0, 10);
+                papers = await searchesDelegate.automatedSearch(validUserEmail, 1, 0.6, 0.1, 0, 10);
             }catch(e){
                 papers = e;
             }
@@ -275,7 +283,7 @@ describe('bad cases on search.delegate', () => {
         });
         test('it should return \'unauthorized\' if project does not exist', async () => {
             try{
-                papers = await searchesDelegate.automatedSearch(valid_user_email, 99999999, 0.0, 1.0, 0, 10);
+                papers = await searchesDelegate.automatedSearch(validUserEmail, 99999999, 0.0, 1.0, 0, 10);
             }catch(e){
                 papers = e;
             }

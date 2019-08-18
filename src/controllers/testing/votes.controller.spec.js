@@ -6,6 +6,7 @@ const timeOut = 20 * 1000;
 
 
 /* *
+* votes
 * range of usable data n° 121~ 135
 * 121~125 for controller layer
 * */
