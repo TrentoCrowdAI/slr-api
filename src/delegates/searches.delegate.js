@@ -29,7 +29,7 @@ const validationSchemes = require(__base + 'utils/validation.schemes');
  * insert a paper
  * @param {Object} newPaperData
  * @returns {Object} paper created
- */
+ *//*
 async function insert(newPaperData) {
     //check input format
     let valid = ajv.validate(validationSchemes.paper, newPaperData);
@@ -42,13 +42,13 @@ async function insert(newPaperData) {
 
     return res;
 }
-
+*/
 
 /**
  *  * update a paper
  * @param {string}  paper_id
  * @param {Object} newPaperData
- */
+ *//*
 async function update(paper_id, newPaperData) {
 
     //check validation of paper_id and transform the value in integer
@@ -69,12 +69,12 @@ async function update(paper_id, newPaperData) {
     }
 
 }
-
+*/
 
 /**
  *  * delete a paper
  * @param {string} paper_id
- */
+
 async function deletes(paper_id) {
 
 
@@ -88,14 +88,14 @@ async function deletes(paper_id) {
     if (numberRow === 0) {
         throw errHandler.createNotFoundError('Paper does not exist!');
     }
-}
+}*/
 
 
 /**
  * select a paper
  * @param {string} paper_id
  * @returns {Object} paper found
- */
+ *//*
 async function selectById(paper_id) {
 
     //check validation of paper_id and transform the value in integer
@@ -110,7 +110,7 @@ async function selectById(paper_id) {
     }
 
     return res;
-}
+}*/
 
 /**
  * wrapper function for searching
@@ -660,103 +660,11 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
 
 
 
-
-
-/**
- * deprecated function selectBySingleKeyword and selectAll
- *==========================================================================
- *
- * select all paper
- * @param {string} number number of papers
- * @param {string} offset position where we begin to get
- * @param {string} orderBy order of record in table, {id or date_created or date_last_modified or date_deleted}
- * @param {string} sort {ASC or DESC}
- * @returns {Object[]} array of papers
- *//*
- async function selectAll(number, offset, orderBy, sort) {
-
- //cast number to integer type
- number = Number(number);
- //cast offset to integer type
- offset = Number(offset);
-
- //will return not empty string if they are not valid
- let errorMessage = errorCheck.areValidListParameters(number, 1, orderBy, sort);//temporary fix for pagination
- if (errorMessage !== "")
- {
- throw errHandler.createBadRequestError(errorMessage);
- }
-
- //call DAO layer
- let res = await searchesDao.selectAll(number, offset, orderBy, sort);
- //error check
- if (res.length === 0)
- {
- throw errHandler.createNotFoundError('the list is empty!');
- }
- return res;
- }
-
-
- /**
- *
- * select paper by a single keyword
- * @param {string} keyword to search
- * @param {string} number number of papers
- * @param {string} after id where we begin to get
- * @param {string} before id where we begin to get backwards
- * @param {string} orderBy
- * @param {string} sort {ASC or DESC}
- * @returns {Object[]} array of papers
- *//*
- async function selectBySingleKeyword(keyword, number, offset, orderBy, sort) {
-
- //set orderBy
- orderBy = orderBy || "id";
- //cast number to integer type
- number = Number(number || 10);
- if(after === undefined && before === undefined){//if 'before' and 'after' elements are not defined I set 'after' to 0 as default value
- after = 0;
- }else{
- //cast 'after' to integer type
- after = Number(after);
- //cast 'before' to integer type
- before = Number(before);
- }
- //error check
- if (keyword === undefined || keyword === null)
- {
- throw errHandler.createBadRequestError('the keyword is not defined!');
- }
- //error check
- if (keyword === "")
- {
- throw errHandler.createBadRequestError('the keyword is empty!');
- }
- //error check
- let errorMessage = errorCheck.areValidPaginationParameters(number, after, before, "id", "ASC");//the last ones are not used yet
- if (errorMessage !== "")
- {
- throw errHandler.createBadRequestError(errorMessage);
- }
- //call DAO layer
- let res = await searchesDao.selectBySingleKeyword(keyword, number, after, before, orderBy, sort);
- //error check
- if (res.results.length === 0)
- {
- throw errHandler.createNotFoundError('the list is empty!');
- }
-
- return res;
- }
- ==========================================================================*/
-
-
 module.exports = {
-    insert,
-    update,
-    deletes,
-    selectById,
+    //insert,
+    //update,
+    //deletes,
+    //selectById,
     //selectAll,
     //selectBySingleKeyword,
     search,

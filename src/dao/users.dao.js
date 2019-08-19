@@ -26,6 +26,8 @@ async function update(newUserData) {
     );
     return res.rowCount;
 }
+
+
 /**
  *  * update a user by Google Id
  * @param {int}  project_id
@@ -55,20 +57,6 @@ async function logoutByTokenId(tokenId) {
 }*/
 
 
-
-/**
- * get user by Google Id
- * @param {string} google_id
- * @returns {Object} user found
- */
-async function getUserByGoogleId(google_id) {
-    let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.users + ' WHERE data->>\'google_id\' = $1',
-        [google_id]
-    );
-
-    return res.rows[0];
-}
 
 /**
  * get user by email
@@ -144,7 +132,7 @@ async function getUserByTokenId(token_id) {
 module.exports = {
     insert,
     update,
-    getUserByGoogleId,
+
     getUserByEmail,
     getUserByArrayIds,
     getUserById,

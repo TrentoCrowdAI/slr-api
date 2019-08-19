@@ -339,7 +339,7 @@ async function selectScreenedByProject(project_id, orderBy, sort, start, count) 
  * @param {int} start offset position where we begin to get
  * @param {int} count number of papers
  * @returns {Object} array of projectPapers and total number of result
- */
+ *//*
 async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count) {
 
     //set first sql condition by searchBy value
@@ -377,7 +377,7 @@ async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy
 
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
 }
-
+*/
 
 /**
  * select a not voted projectPaper by UserId and projectId
@@ -498,5 +498,5 @@ module.exports = {
     checkExistenceByEids,
 
     countAutoScreenedOutOfTotalPapers,
-    searchPaperByProject,
+    //searchPaperByProject,
 };

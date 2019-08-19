@@ -2,6 +2,7 @@ const db = require(__base + "db/index");
 //supply the auxiliary function
 const support = require(__base + 'utils/support');
 
+
 /**
  * insert a paper
  * @param {Object} newPaperData
@@ -40,18 +41,7 @@ async function insertByList(arrayPaperData) {
 }
 
 
-/**
- * select a paper
- * @param {int} paper_id
- * @returns {Object} paper found
- */
-async function selectById(paper_id) {
-    let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.searches + ' WHERE id = $1',
-        [paper_id]
-    );
-    return res.rows[0];
-}
+
 
 
 /**
@@ -82,6 +72,18 @@ async function deletes(paper_id) {
     return res.rowCount;
 }
 
+/**
+ * select a paper
+ * @param {int} paper_id
+ * @returns {Object} paper found
+ */
+async function selectById(paper_id) {
+    let res = await db.query(
+        'SELECT * FROM public.' + db.TABLES.searches + ' WHERE id = $1',
+        [paper_id]
+    );
+    return res.rows[0];
+}
 
 /**
  *  internal function==========================================================

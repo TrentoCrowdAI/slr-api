@@ -13,7 +13,7 @@ const support = require(__base + 'utils/support');
  */
 
 
-async function insert(newVoteData, user_id, project_paper_id, project_id,) {
+async function insert(newVoteData, user_id, project_paper_id, project_id) {
     let res = await db.query(
         'INSERT INTO public.' + db.TABLES.votes + '("date_created", "date_last_modified", "date_deleted", "data", "user_id", "project_paper_id", "project_id") VALUES($1,$2,$3, $4, $5, $6, $7) RETURNING *',
         [new Date(), new Date(), null, newVoteData, user_id, project_paper_id, project_id]
