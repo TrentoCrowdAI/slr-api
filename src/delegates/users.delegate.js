@@ -254,9 +254,12 @@ async function getScreenersByProjectId(user_email, project_id) {
     //extract user_id and create a new array of ids
     let users = support.arrayElementFieldToArray(screenings, "user_id");
 
-
+    
     //call DAO layer
-    let res = await usersDao.getUserByArrayIds(users);
+    let res = [];
+    if(users && users.length > 0){ //first I check if there are any users
+        res = await usersDao.getUserByArrayIds(users);
+    }
 
     return res;
 
