@@ -305,7 +305,7 @@ async function deleteShareProject(user_email, project_id, collaborator_id) {
     errorCheck.isValidProjectOwner(project);
 
     //if the shared user isn't present in this project
-    if (!project.data.user_id.includes(collaborator_id)) {
+    if (!project.data.user_id.includes(collaborator_id.toString())) {
         throw errHandler.createBadRequestError("the user isn't present in this project!");
     }
 

@@ -125,7 +125,6 @@ describe('test cases on filters.dao ', () => {
     test('selectAllByProject()', async () => {
         jest.setTimeout(timeOut);
 
-
         let project_id=index2;
 
         let res = await filtersDao.selectAllByProject(project_id);

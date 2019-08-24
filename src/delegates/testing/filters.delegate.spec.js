@@ -3,7 +3,6 @@ const timeOut = 20 * 1000;
 const filtersDelegate = require(__base + 'delegates/filters.delegate');
 
 
-
 /* *
 * filters
 * range of usable data n° 1 ~ 15
@@ -14,17 +13,17 @@ const index = 6;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
-const index5 =  index + 4;
-const validUserEmail = "test"+index+"@gmail.com";
-const validUserEmail2 = "test"+index2+"@gmail.com";
-const validUserEmail3 = "test"+index3+"@gmail.com";
-const validUserEmail4 = "test"+index4+"@gmail.com";
-const validUserEmail5 = "test"+index5+"@gmail.com";
+const index5 = index + 4;
+const validUserEmail = "test" + index + "@gmail.com";
+const validUserEmail2 = "test" + index2 + "@gmail.com";
+const validUserEmail3 = "test" + index3 + "@gmail.com";
+const validUserEmail4 = "test" + index4 + "@gmail.com";
+const validUserEmail5 = "test" + index5 + "@gmail.com";
 
 //object that contains all the error names
 const errorNames = {
-    badRequest : "badRequest",
-    notFound : "notFound",
+    badRequest: "badRequest",
+    notFound: "notFound",
     badImplementation: "badImplementation",
     unauthorized: "unauthorized",
     //to add the other error names
@@ -36,14 +35,11 @@ const errorNames = {
 
 
 
-
-
 describe('good cases on filters.delegate ', () => {
 
-    test('filters.delegate.insert() adds a new filter to the db', async () => {
+    test('insert() adds a new filter to the db', async () => {
         jest.setTimeout(timeOut);
 
-        // valid examples
         let validExample = {
             "project_id": index,
             "filter": {
@@ -52,24 +48,73 @@ describe('good cases on filters.delegate ', () => {
                 "exclusion_description": "ccc",
             }
         };
+
         let filter = await filtersDelegate.insert(validUserEmail, validExample.filter, validExample.project_id);
         expect(parseInt(filter.project_id)).toBe(validExample.project_id);
         expect(filter.data).toMatchObject(validExample.filter)
     });
 
+    test('update()', async () => {
+        jest.setTimeout(timeOut);
+
+
+        let filter_id = index;
+        let newFilterData = {
+            "predicate": "aaa",
+                "inclusion_description": "bbb",
+                "exclusion_description": "ccc",
+        };
+        let res = await filtersDelegate.update(validUserEmail, filter_id,  newFilterData);
+
+        //expect(parseInt(res)).toBeDefined();
+
+    });
+
+
+    test('deletes()', async () => {
+        jest.setTimeout(timeOut);
+
+
+        let filter_id = index5;
+        let res = await filtersDelegate.deletes(validUserEmail5, filter_id);
+
+
+    });
+
+
+    test('selectById()', async () => {
+        jest.setTimeout(timeOut);
+
+        let filter_id = index;
+        let filter = await filtersDelegate.selectById(validUserEmail, filter_id);
+        expect(parseInt(filter.id)).toBe(filter_id);
+        expect(filter.data).toBeDefined()
+
+    });
+
+    test('selectByProject()', async () => {
+        jest.setTimeout(timeOut);
+
+
+        let project_id=index2;
+        let orderBy="id";
+        let sort="ASC";
+        let start=0;
+        let count=10;
+
+        let res = await filtersDelegate.selectByProject(validUserEmail2, project_id, orderBy, sort, start, count);
+
+        expect(parseInt(res.results.length)).toBe(1);
+        expect(parseInt(res.totalResults)).toBe(1);
+
+    });
+
+
+
 });
 
+
 /* bad cases==============================================================================================================*/
-
-
-
-
-
-
-
-
-
-
 
 
 /*bad cases*/
@@ -77,7 +122,7 @@ describe('bad cases on filters.delegate ', () => {
 
     describe('bad cases filters.delegate.insert()', () => {
 
-        test('it should return error \'badRequest\' if parameters are not valid', async () => {
+        test('insert() it should return error \'badRequest\' if parameters are not valid', async () => {
             jest.setTimeout(timeOut);
             let filter = undefined;
 
@@ -90,9 +135,9 @@ describe('bad cases on filters.delegate ', () => {
                     "exclusion_description": "ccc",
                 }
             };
-            try{
+            try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForProjectId.filter, notValidExampleForProjectId.project_id);
-            }catch(e){
+            } catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.badRequest);
@@ -106,25 +151,25 @@ describe('bad cases on filters.delegate ', () => {
                     "exclusion_description": "ccc",
                 }
             };
-            try{
+            try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForProjectIdNotNumber.filter, notValidExampleForProjectIdNotNumber.project_id);
-            }catch(e){
+            } catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.badRequest);
 
             //project Id is not an integer
             let notValidExampleForProjectIdNotInteger = {
-                "project_id": index+".5",
+                "project_id": index + ".5",
                 "filter": {
                     "predicate": "aaa",
                     "inclusion_description": "bbb",
                     "exclusion_description": "ccc",
                 }
             };
-            try{
+            try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForProjectIdNotInteger.filter, notValidExampleForProjectIdNotInteger.project_id);
-            }catch(e){
+            } catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.badRequest);
@@ -137,16 +182,16 @@ describe('bad cases on filters.delegate ', () => {
                     "inclusion_description": "bbb",
                 }
             };
-            try{
+            try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForExclusionDescription.filter, notValidExampleForExclusionDescription.project_id);
-            }catch(e){
+            } catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.badRequest);
 
         });
 
-        test('it should return \'unauthorized\' if the project doesn\'t exist', async () => {
+        test('insert() it should return \'unauthorized\' if the project doesn\'t exist', async () => {
             jest.setTimeout(timeOut);
 
             let notValidExampleForProjectIdNotExist = {
@@ -157,16 +202,16 @@ describe('bad cases on filters.delegate ', () => {
                     "exclusion_description": "ccc",
                 }
             };
-            try{
+            try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForProjectIdNotExist.filter, notValidExampleForProjectIdNotExist.project_id);
-            }catch(e){
+            } catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.unauthorized);
 
         });
 
-        test('it should return \'unauthorized\' if the user does not have access', async () => {
+        test('insert() it should return \'unauthorized\' if the user does not have access', async () => {
             jest.setTimeout(timeOut);
 
             let notValidExampleForProjectIdNotPermission = {
@@ -177,9 +222,9 @@ describe('bad cases on filters.delegate ', () => {
                     "exclusion_description": "ccc",
                 }
             };
-            try{
+            try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForProjectIdNotPermission.filter, notValidExampleForProjectIdNotPermission.project_id);
-            }catch(e){
+            } catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.unauthorized);

@@ -13,7 +13,7 @@ const index = 36;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
-const index5 =  index + 4;
+const index5 = index + 4;
 const validUserEmail = "test"+index+"@gmail.com";
 const validUserEmail2 = "test"+index2+"@gmail.com";
 const validUserEmail3 = "test"+index3+"@gmail.com";
@@ -32,21 +32,101 @@ const errorNames = {
 
 
 /* good cases=====================================================================================================*/
-
+let newProjectData ={
+    "name": "aa",
+    "description": "aaa"
+}
 
 describe('good cases on projects.delegate', () => {
 
-    test('projects.delegate.insert() adds a new project to the db', async () => {
+    test('insert() adds a new project to the db', async () => {
         jest.setTimeout(timeOut);
 
-        // valid examples
-        const validExample = {
-            "name": "aa",
-            "description": "aaa"
-        };
 
-        let project = await projectsDelegate.insert(validUserEmail, validExample);
-        expect(project.data).toMatchObject(validExample);
+        let project = await projectsDelegate.insert(validUserEmail, newProjectData);
+        expect(project.data).toMatchObject(newProjectData);
+    });
+
+    test('updateNameAndDescription()', async () => {
+        jest.setTimeout(timeOut);
+
+        let project_id = index;
+
+        let res = await projectsDelegate.updateNameAndDescription(validUserEmail, project_id, newProjectData);
+
+
+    });
+
+
+    test('deletes()', async () => {
+        jest.setTimeout(timeOut);
+
+        let project_id = index5;
+
+        let res = await projectsDelegate.deletes(validUserEmail5, project_id);
+
+
+    });
+
+
+    test('selectById()', async () => {
+        jest.setTimeout(timeOut);
+
+
+        let project_id = index;
+
+        let res = await projectsDelegate.selectById(validUserEmail, project_id);
+
+        expect(parseInt(res.id)).toBe(project_id);
+        expect(res.data).toMatchObject(newProjectData);
+
+    });
+
+
+
+    test('selectByUserId()', async () => {
+        jest.setTimeout(timeOut);
+
+
+        let orderBy = "id";
+        let sort = "ASC";
+        let start = 0;
+        let count = 10;
+
+
+        let res = await projectsDelegate.selectByUserId(validUserEmail2, orderBy, sort, start, count);
+
+        expect(parseInt(res.results.length)).toBe(1);
+        expect(parseInt(res.totalResults)).toBe(1);
+
+    });
+
+
+    test('shareProject()', async () => {
+        jest.setTimeout(timeOut);
+
+
+        let project_id = index;
+        let collaborator_email = validUserEmail2;
+
+
+        let res = await projectsDelegate.shareProject(validUserEmail, project_id, collaborator_email);
+
+        expect(res.data.email).toBe(collaborator_email);
+
+    });
+
+    test('deleteShareProject()', async () => {
+        jest.setTimeout(timeOut);
+
+
+        let project_id = index4;
+        let collaborator_id = index4;
+
+
+        let res = await projectsDelegate.deleteShareProject(validUserEmail4, project_id, collaborator_id);
+
+
     });
 
 
@@ -60,7 +140,7 @@ describe('bad cases on projects.delegate', () => {
 
     describe('bad cases on projects.delegate.insert()', () => {
 
-        test('it should return error \'badRequest\' if parameters are not valid', async () => {
+        test('insert() it should return error \'badRequest\' if parameters are not valid', async () => {
             jest.setTimeout(timeOut);
 
             let project = undefined;

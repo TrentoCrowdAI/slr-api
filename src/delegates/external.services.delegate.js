@@ -211,7 +211,9 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
 }
 
 /**
- *
+ * ===========================================================================
+ *internal function only for fakeAutomatedSearchService
+ * ===========================================================================
  * find papers by searching with the Scopus APIs
  * @param {string} keyword to search
  * @param {string} searchBy [all, author, content, advanced] "content" means abstracts+keywords+titles.
@@ -396,11 +398,11 @@ async function fakeGetAutomatedScreeningStatus(project_id) {
     //if is set the global variable
     if (global["project_" + project_id]) {
 
-        return true;
+        return false;
     }
     //if the global variable isn't exist
     else {
-        return false;
+        return true;
     }
 
 }

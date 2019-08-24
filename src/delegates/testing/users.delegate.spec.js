@@ -39,13 +39,36 @@ const errorNames = {
 
 describe('good cases on users.delegate', () => {
 
-    test('it should return user email if token is valid', async () => {
+    test('verifyToken() it should return user email if token is valid', async () => {
         jest.setTimeout(timeOut);
 
         let user = await usersDelegate.verifyToken(validTokenId);
         expect(user).toBe(validUserEmail);
 
     });
+
+    test('getCollaboratorByProjectId()', async () => {
+        jest.setTimeout(timeOut);
+
+        let project_id = index;
+
+        let res = await usersDelegate.getCollaboratorByProjectId(validUserEmail, project_id);
+        expect(res.length).toBe(1);
+        expect(parseInt(res[0].id)).toBe(index);
+        expect(res[0].data.email).toBeDefined();
+    });
+
+    test('getScreenersByProjectId()', async () => {
+        jest.setTimeout(timeOut);
+
+        let project_id = index;
+
+        let res = await usersDelegate.getScreenersByProjectId(validUserEmail, project_id);
+        expect(res.length).toBe(1);
+        expect(parseInt(res[0].id)).toBe(index);
+        expect(res[0].data.email).toBeDefined();
+    });
+
 
 });
 
@@ -56,7 +79,7 @@ describe('good cases on users.delegate', () => {
 
 describe('bad cases on users.delegate', () => {
 
-    test('it should return error \'badRequest\' if there\'s no token', async () => {
+    test('verifyToken() it should return error \'badRequest\' if there\'s no token', async () => {
         jest.setTimeout(timeOut);
 
         let user = undefined;
@@ -70,7 +93,7 @@ describe('bad cases on users.delegate', () => {
 
     });
 
-    test('it should return error \'unauthorized\' if token is not valid', async () => {
+    test('verifyToken() it should return error \'unauthorized\' if token is not valid', async () => {
         jest.setTimeout(timeOut);
 
         let user = undefined;

@@ -43,7 +43,7 @@ describe('good cases on search.delegate', () => {
         query = '2010'; searchBy = undefined; year = undefined; orderBy = undefined; sort = undefined; start = undefined; count = undefined; scopus = undefined; arXiv = undefined;
     });
 
-    test('search.delegate.search() should return 10 scopus results', async () => {
+    test('search() should return 10 scopus results', async () => {
         jest.setTimeout(15000);
 
         scopus = "true";
@@ -53,7 +53,7 @@ describe('good cases on search.delegate', () => {
         expect(papers.results.length).toBe(10);
     });
 
-    test('search.delegate.search() should return 10 arXiv results', async () => {
+    test('search() should return 10 arXiv results', async () => {
         jest.setTimeout(15000);
 
         arXiv = "true";
@@ -70,13 +70,13 @@ describe('good cases on search.delegate', () => {
 
 describe('bad cases on search.delegate', () => {
 
-    describe('bad cases on search.delegate.search()', () => {
+    describe('search()', () => {
 
         beforeEach(() => {
             query = '2010'; searchBy = undefined; year = undefined; orderBy = undefined; sort = undefined; start = undefined; count = undefined; scopus = undefined; arXiv = undefined;
         });
 
-        test('it should return error \'badRequest\' if source is not specified', async () => {
+        test('search() it should return error \'badRequest\' if source is not specified', async () => {
 
             try{
                 papers = await searchesDelegate.search(query, searchBy, year, orderBy, sort, start, count, scopus, arXiv);
@@ -87,7 +87,7 @@ describe('bad cases on search.delegate', () => {
 
         });
 
-        test('it should return error \'badRequest\' if query is empty', async () => {
+        test('search() it should return error \'badRequest\' if query is empty', async () => {
 
             query = undefined;
 
@@ -100,7 +100,7 @@ describe('bad cases on search.delegate', () => {
 
         });
 
-        test('it should return error \'badRequest\' if searchBy is not valid', async () => {
+        test('search() it should return error \'badRequest\' if searchBy is not valid', async () => {
 
             scopus = "true"; searchBy = "abc";
 
@@ -113,7 +113,7 @@ describe('bad cases on search.delegate', () => {
 
         });
 
-        test('it should return error \'badRequest\' if year is not valid', async () => {
+        test('search() it should return error \'badRequest\' if year is not valid', async () => {
 
             scopus = "true"; year = "abc";
 
@@ -126,7 +126,7 @@ describe('bad cases on search.delegate', () => {
 
         });
 
-        test('it should return error \'badRequest\' if orderBy is not valid', async () => {
+        test('search() it should return error \'badRequest\' if orderBy is not valid', async () => {
 
             scopus = "true"; orderBy = "abc";
 
@@ -139,7 +139,7 @@ describe('bad cases on search.delegate', () => {
 
         });
 
-        test('it should return error \'badRequest\' if sort is not valid', async () => {
+        test('search() it should return error \'badRequest\' if sort is not valid', async () => {
 
             scopus = "true"; sort = "abc";
 
@@ -152,7 +152,7 @@ describe('bad cases on search.delegate', () => {
 
         });
 
-        test('it should return error \'badRequest\' if start is not a number', async () => {
+        test('search() it should return error \'badRequest\' if start is not a number', async () => {
 
             scopus = "true"; start = "abc";
 
@@ -165,7 +165,7 @@ describe('bad cases on search.delegate', () => {
 
         });
 
-        test('it should return error \'badRequest\' if start is lower than 0', async () => {
+        test('search() it should return error \'badRequest\' if start is lower than 0', async () => {
 
             scopus = "true"; start = -1;
 
@@ -178,7 +178,7 @@ describe('bad cases on search.delegate', () => {
 
         });
 
-        test('it should return error \'badRequest\' if count is not a number', async () => {
+        test('search() it should return error \'badRequest\' if count is not a number', async () => {
 
             scopus = "true"; count = "abc";
 
@@ -191,7 +191,7 @@ describe('bad cases on search.delegate', () => {
 
         });
 
-        test('it should return error \'badRequest\' if count is lower than 1', async () => {
+        test('search() it should return error \'badRequest\' if count is lower than 1', async () => {
 
             scopus = "true"; count = 0;
 
@@ -210,7 +210,7 @@ describe('bad cases on search.delegate', () => {
     /*similar search==============================================================================================*/
     describe('bad cases on search.delegate.searchSimilar()', () => {
 
-        test('it should return error \'badImplementation\' if the parameters are not valid', async () => {
+        test('similarSearch() it should return error \'badImplementation\' if the parameters are not valid', async () => {
             jest.setTimeout(timeOut);
 
             //paperData is empty
@@ -229,7 +229,7 @@ describe('bad cases on search.delegate', () => {
     /*automated search==============================================================================================*/
     describe('bad cases on search.delegate.searchAutomated()', () => {
 
-        test('it should return error \'badRequest\' if illegal values', async () => {
+        test('automatedSearch() it should return error \'badRequest\' if illegal values', async () => {
             jest.setTimeout(timeOut);
 
             //project id not a number
@@ -281,7 +281,7 @@ describe('bad cases on search.delegate', () => {
             expect(papers.name).toBe(errorNames.badRequest);
 
         });
-        test('it should return \'unauthorized\' if project does not exist', async () => {
+        test('automatedSearch() it should return \'unauthorized\' if project does not exist', async () => {
             try{
                 papers = await searchesDelegate.automatedSearch(validUserEmail, 99999999, 0.0, 1.0, 0, 10);
             }catch(e){

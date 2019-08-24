@@ -3,7 +3,7 @@
 
 const express = require('express');
 
-const usersDelegate = require(__base + 'delegates/users.delegate');
+
 const screeningsDelegate = require(__base + 'delegates/screenings.delegate');
 
 

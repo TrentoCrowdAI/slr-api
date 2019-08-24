@@ -34,7 +34,7 @@ const conn = require(__base + 'utils/conn');
 
  * @returns {Object[]} list of screenings created
  */
-async function insertByArray(user_email, array_screener_id, manual_screening_type, project_id,) {
+async function insertByArray(user_email, array_screener_id, manual_screening_type, project_id) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
@@ -112,7 +112,7 @@ async function insertByArray(user_email, array_screener_id, manual_screening_typ
 
  * @returns {Object[]} list of screenings created
  */
-async function insertByArrayAfterStarting(user_email, array_screener_id, project_id,) {
+async function insertByArrayAfterStarting(user_email, array_screener_id, project_id) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
