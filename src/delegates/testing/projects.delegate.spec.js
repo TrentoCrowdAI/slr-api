@@ -1,4 +1,5 @@
-const timeOut = 20 * 1000;
+const timeOut = 60 * 1000;
+const delayTime = timeOut/2;
 
 const projectsDelegate = require(__base + 'delegates/projects.delegate');
 
@@ -31,16 +32,31 @@ const errorNames = {
 };
 
 
+beforeAll(async () => {
+
+    //waiting to avoid exceeding the limit of 20 connections on heroku postgres
+    jest.setTimeout(timeOut);
+    await new Promise(res => setTimeout(() => {
+        res();
+    }, delayTime));
+});
+
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
+
+
+
 /* good cases=====================================================================================================*/
 let newProjectData ={
     "name": "aa",
     "description": "aaa"
-}
+};
 
 describe('good cases on projects.delegate', () => {
 
     test('insert() adds a new project to the db', async () => {
-        jest.setTimeout(timeOut);
+        
 
 
         let project = await projectsDelegate.insert(validUserEmail, newProjectData);
@@ -48,7 +64,7 @@ describe('good cases on projects.delegate', () => {
     });
 
     test('updateNameAndDescription()', async () => {
-        jest.setTimeout(timeOut);
+        
 
         let project_id = index;
 
@@ -59,7 +75,7 @@ describe('good cases on projects.delegate', () => {
 
 
     test('deletes()', async () => {
-        jest.setTimeout(timeOut);
+        
 
         let project_id = index5;
 
@@ -70,7 +86,7 @@ describe('good cases on projects.delegate', () => {
 
 
     test('selectById()', async () => {
-        jest.setTimeout(timeOut);
+        
 
 
         let project_id = index;
@@ -85,7 +101,7 @@ describe('good cases on projects.delegate', () => {
 
 
     test('selectByUserId()', async () => {
-        jest.setTimeout(timeOut);
+        
 
 
         let orderBy = "id";
@@ -103,7 +119,7 @@ describe('good cases on projects.delegate', () => {
 
 
     test('shareProject()', async () => {
-        jest.setTimeout(timeOut);
+        
 
 
         let project_id = index;
@@ -117,7 +133,7 @@ describe('good cases on projects.delegate', () => {
     });
 
     test('deleteShareProject()', async () => {
-        jest.setTimeout(timeOut);
+        
 
 
         let project_id = index4;
@@ -141,7 +157,7 @@ describe('bad cases on projects.delegate', () => {
     describe('bad cases on projects.delegate.insert()', () => {
 
         test('insert() it should return error \'badRequest\' if parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+            
 
             let project = undefined;
 

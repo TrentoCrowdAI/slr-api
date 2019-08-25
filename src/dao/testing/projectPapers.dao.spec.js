@@ -1,8 +1,9 @@
-const request = require('supertest');
-const app = require(__base + 'app');
-const timeOut = 20 * 1000;
+
+const timeOut = 30 * 1000;
 
 const projectPapersDao = require(__base + 'dao/projectPapers.dao');
+
+const db = require(__base + "db/index");
 
 /* *
 * projectPapers
@@ -38,10 +39,19 @@ let newProjectPaperData = {
     "doi": "abcdefg"
 };
 
+beforeEach(async () => {
+    jest.setTimeout(timeOut)
+});
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
+
 describe('test cases on projectPapers.dao ', () => {
 
     test('insert()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
 
@@ -55,7 +65,7 @@ describe('test cases on projectPapers.dao ', () => {
     });
 
     test('insertByList()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let arrayProjectPaperData = [
@@ -106,7 +116,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
     test('insertFromPaper()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let arrayEid = ["e001", "e002"];
         let project_id = index;
@@ -120,7 +130,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
     test('update()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let projectPaper_id = index;
@@ -133,7 +143,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
     test('deletes()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let projectPaper_id = index5;
@@ -146,7 +156,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
     test('selectById()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let projectPaper_id = index;
@@ -161,7 +171,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
     test('selectByProject()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id=index2;
@@ -179,7 +189,7 @@ describe('test cases on projectPapers.dao ', () => {
     });
 
     test('selectAllNotEvaluatedAndScreened()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id=index2;
@@ -193,7 +203,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
     test('selectNotScreenedByProject()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id=index2;
@@ -212,7 +222,7 @@ describe('test cases on projectPapers.dao ', () => {
     });
 
     test('selectManualByProject()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id=index3;
@@ -231,7 +241,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
     test('countAutoScreenedOutOfTotalPapers()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id=index2;
@@ -246,7 +256,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
     test('selectScreenedByProject()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id=index4;
@@ -264,7 +274,7 @@ describe('test cases on projectPapers.dao ', () => {
     });
 
     test('selectOneNotVotedByUserIdAndProjectId()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let user_id = index;
         let project_id=index;
@@ -279,7 +289,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
     test('manualScreeningProgress()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let user_id = index2
         let project_id=index2;
@@ -292,7 +302,7 @@ describe('test cases on projectPapers.dao ', () => {
     });
 
     test('selectAllByProject()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id=index2;
@@ -304,7 +314,7 @@ describe('test cases on projectPapers.dao ', () => {
     });
 
     test('checkExistenceByEids()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let arrayEid = ["1", "2"];
         let project_id=index2;

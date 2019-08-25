@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require(__base + 'app');
-const timeOut = 20 * 1000;
-
+const timeOut = 30 * 1000;
+const db = require(__base + "db/index");
 /* *
 * filters
 * range of usable data n° 1 ~ 15
@@ -19,6 +19,17 @@ const validTokenId2 = "test"+index2;
 const validTokenId3 = "test"+index3;
 const validTokenId4 = "test"+index4;
 const validTokenId5 = "test"+index5;
+
+
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
+
 
 /* good cases=====================================================================================================*/
 
@@ -42,13 +53,13 @@ let validExampleUpdate = {
 describe('good cases on filters ', () => {
 
     test('GET /filters should return 200 if it finds something', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).get('/filters?project_id=' + index).set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 
     test('POST /filters should return 201', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).post('/filters').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
 
         expect(response.status).toBe(201);
@@ -56,20 +67,20 @@ describe('good cases on filters ', () => {
     });
 
     test('GET /filters/:id should return 200 if it finds something', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).get('/filters/' + index).set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 
     test('PUT /filters/:id should return 204', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).put('/filters/' + index).send(validExampleUpdate).set('Accept', 'application/json').set('Authorization', validTokenId);
         expect(response.status).toBe(204);
     });
 
 
     test('DELETE /filters/:id should return 204', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).delete('/filters/' + index5).set('Authorization', validTokenId5);
         expect(response.status).toBe(204);
     });
@@ -96,7 +107,7 @@ describe('bad cases on filters ', () => {
     describe('bad cases on GET /filters/', () => {
 
         test('GET /filters should return 400 if parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+
 
             //the project id is missing
             let response = await request(app).get('/filters').set('Authorization', validTokenId);
@@ -126,19 +137,19 @@ describe('bad cases on filters ', () => {
         });
 
         test('GET /filters should return 401 if the project doesn\'t exist', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/filters?project_id=99999').set('Authorization', validTokenId);
             expect(response.status).toBe(401)
         });
 
         test('GET /filters should return 401 if the user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/filters?project_id=' + index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401)
         });
 
         test('GET /filters should return 404 if the result is empty', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/filters?project_id=' + index5).set('Authorization', validTokenId5);
             expect(response.status).toBe(404)
         });
@@ -148,7 +159,7 @@ describe('bad cases on filters ', () => {
     describe('bad cases on POST /filters', () => {
 
         test('POST /filters should return 400 if parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+
 
             //the project id is missing
             let notValidExampleForProjectId = {
@@ -201,7 +212,7 @@ describe('bad cases on filters ', () => {
         });
 
         test('POST /filters should return 401 if the project doesn\'t exist', async () => {
-            jest.setTimeout(timeOut);
+
 
             let notValidExampleForProjectIdNotExist = {
                 "project_id": "9999",
@@ -218,7 +229,7 @@ describe('bad cases on filters ', () => {
         });
 
         test('POST /filters should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
+
 
             let notValidExampleForProjectIdNotPermission = {
                 "project_id": index2 + "",
@@ -239,7 +250,7 @@ describe('bad cases on filters ', () => {
     describe('bad cases on PUT /filters/:id', () => {
 
         test('PUT /filters/:id should return 400 if parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+
 
             //filter id is not number
             let response = await request(app).put('/filters/abc').send(validExampleUpdate).set('Accept', 'application/json').set('Authorization', validTokenId);
@@ -260,14 +271,14 @@ describe('bad cases on filters ', () => {
         });
 
         test('PUT /filters/:id should return 404 if filter is not present', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).put('/filters/99999').send(validExampleUpdate).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(404);
         });
 
 
         test('PUT /filters/:id should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).put('/filters/' + index2).send(validExampleUpdate).set('Authorization', validTokenId);
 
             expect(response.status).toBe(401)
@@ -278,7 +289,7 @@ describe('bad cases on filters ', () => {
     describe('bad cases on DELETE /filters/:id', () => {
 
         test('DELETE /filters/:id should return 400 if parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+
 
             //filter id is not number
             let response = await request(app).delete('/filters/abc').set('Authorization', validTokenId);
@@ -290,13 +301,13 @@ describe('bad cases on filters ', () => {
         });
 
         test('DELETE /filters should return 404 if filter is not present', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).delete('/filters/9999').set('Authorization', validTokenId);
             expect(response.status).toBe(404);
         });
 
         test('DELETE /filters/:id should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).delete('/filters/' + index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401)
         });
@@ -306,7 +317,7 @@ describe('bad cases on filters ', () => {
     describe('bad cases on GET /filters/:id', () => {
 
         test('GET /filters/:id should return 400 if parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+
 
             //filter id is not number
             let response = await request(app).get('/filters/abc').set('Authorization', validTokenId);
@@ -318,14 +329,14 @@ describe('bad cases on filters ', () => {
         });
 
         test('GET /filters/:id should return 404 if filter is not present', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/filters/9999').set('Authorization', validTokenId);
             expect(response.status).toBe(404);
         });
 
 
         test('GET /filters/:id should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/filters/' + index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401)
         });

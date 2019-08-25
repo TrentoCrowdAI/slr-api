@@ -1,8 +1,9 @@
-const request = require('supertest');
-const app = require(__base + 'app');
-const timeOut = 20 * 1000;
+
+const timeOut = 30 * 1000;
 
 const projectsDao = require(__base + 'dao/projects.dao');
+
+const db = require(__base + "db/index");
 
 /* *
 * projects
@@ -24,11 +25,19 @@ const newProjectData = {
     "description": "aaa"
 };
 
+beforeEach(async () => {
+    jest.setTimeout(timeOut)
+});
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
 
 describe('test cases on projects.dao ', () => {
 
     test('insert()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let res = await projectsDao.insert(newProjectData);
 
@@ -37,7 +46,7 @@ describe('test cases on projects.dao ', () => {
     });
 
     test('update()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let project_id = index;
 
@@ -48,7 +57,7 @@ describe('test cases on projects.dao ', () => {
     });
 
     test('updateLastModifiedDate()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let project_id = index;
 
@@ -60,7 +69,7 @@ describe('test cases on projects.dao ', () => {
 
 
     test('deletes()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id = index5;
@@ -73,7 +82,7 @@ describe('test cases on projects.dao ', () => {
 
 
     test('selectById()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id = index;
@@ -86,7 +95,7 @@ describe('test cases on projects.dao ', () => {
     });
 
     test('selectByIdAndUserId()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id = index3;
@@ -101,7 +110,7 @@ describe('test cases on projects.dao ', () => {
 
 
     test('selectByUserId()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let user_id = index2;
@@ -120,7 +129,7 @@ describe('test cases on projects.dao ', () => {
 
 
     test('selectByScreeningUser()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let user_id = index2;

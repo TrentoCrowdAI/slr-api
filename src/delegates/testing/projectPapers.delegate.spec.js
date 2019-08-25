@@ -1,4 +1,5 @@
-const timeOut = 20 * 1000;
+const timeOut = 60 * 1000;
+const delayTime = timeOut/2;
 
 const projectPapersDelegate = require(__base + 'delegates/projectPapers.delegate');
 //the config file
@@ -41,11 +42,23 @@ let newPaper = {
     "doi": "abcdefg"
 };
 
+beforeAll(async () => {
+
+    //waiting to avoid exceeding the limit of 20 connections on heroku postgres
+    jest.setTimeout(timeOut);
+    await new Promise(res => setTimeout(() => {
+        res();
+    }, delayTime));
+});
+
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
 
 describe('test cases on projectPapers.delegate ', () => {
 
     test('insertFromPaper()', async () => {
-        jest.setTimeout(timeOut);
+        
 
         let project_id = index;
         let arrayEid = ["paper001", "paper002"];
@@ -59,7 +72,7 @@ describe('test cases on projectPapers.delegate ', () => {
 
 
     test('insertCustomPaper()', async () => {
-        jest.setTimeout(timeOut);
+        
 
         let project_id = index;
 
@@ -69,7 +82,7 @@ describe('test cases on projectPapers.delegate ', () => {
     });
 
     test('update()', async () => {
-        jest.setTimeout(timeOut);
+        
 
 
         let projectPaper_id = index;
@@ -81,7 +94,7 @@ describe('test cases on projectPapers.delegate ', () => {
 
 
     test('deletes()', async () => {
-        jest.setTimeout(timeOut);
+        
 
 
         let projectPaper_id = index5;
@@ -93,7 +106,7 @@ describe('test cases on projectPapers.delegate ', () => {
 
 
     test('selectByProject()', async () => {
-        jest.setTimeout(timeOut);
+        
 
 
         let project_id = index2;

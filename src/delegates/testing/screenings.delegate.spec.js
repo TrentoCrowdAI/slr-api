@@ -1,6 +1,6 @@
-const request = require('supertest');
-const app = require(__base + 'app');
-const timeOut = 20 * 1000;
+
+const timeOut = 60 * 1000;
+const delayTime = timeOut/2;
 
 const screeningsDelegate = require(__base + 'delegates/screenings.delegate');
 //the config file
@@ -26,12 +26,23 @@ const validUserEmail3 = "test" + index3 + "@gmail.com";
 const validUserEmail4 = "test" + index4 + "@gmail.com";
 const validUserEmail5 = "test" + index5 + "@gmail.com";
 
+beforeAll(async () => {
 
+    //waiting to avoid exceeding the limit of 20 connections on heroku postgres
+    jest.setTimeout(timeOut);
+    await new Promise(res => setTimeout(() => {
+        res();
+    }, delayTime));
+});
+
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
 
 describe('test cases on screenings.delegate ', () => {
 
     test('insertByArray()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let array_screener_id = [index2, index3, index4];
         let manual_screening_type = config.manual_screening_type.single_predicate;
@@ -45,7 +56,7 @@ describe('test cases on screenings.delegate ', () => {
     });
 
     test('insertByArrayAfterStarting()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let array_screener_id = [index5];
         let project_id = index;
@@ -59,7 +70,7 @@ describe('test cases on screenings.delegate ', () => {
 
 
     test('deletes()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let screeners_id = index5;
@@ -73,7 +84,7 @@ describe('test cases on screenings.delegate ', () => {
 
 
     test('selectAllByProjectId()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let project_id = index2;
 
@@ -86,7 +97,7 @@ describe('test cases on screenings.delegate ', () => {
 
 
     test('selectByScreeningUser()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let orderBy="id";
         let sort="ASC";
@@ -101,7 +112,7 @@ describe('test cases on screenings.delegate ', () => {
     });
 
     test('selectById()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let screening_id = index2;
@@ -114,7 +125,7 @@ describe('test cases on screenings.delegate ', () => {
     });
 
     test('selectOneNotVotedByUserIdAndProjectId()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let screening_id = index4;

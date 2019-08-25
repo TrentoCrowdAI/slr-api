@@ -1,6 +1,5 @@
-const request = require('supertest');
-const app = require(__base + 'app');
-const timeOut = 20 * 1000;
+const timeOut = 60 * 1000;
+const delayTime = timeOut/2;
 
 const searchesDelegate = require(__base + 'delegates/searches.delegate');
 
@@ -31,7 +30,18 @@ const errorNames = {
 
 };
 
+beforeAll(async () => {
 
+    //waiting to avoid exceeding the limit of 20 connections on heroku postgres
+    jest.setTimeout(timeOut);
+    await new Promise(res => setTimeout(() => {
+        res();
+    }, delayTime));
+});
+
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
 
 /* good cases=====================================================================================================*/
 
@@ -211,7 +221,7 @@ describe('bad cases on search.delegate', () => {
     describe('bad cases on search.delegate.searchSimilar()', () => {
 
         test('similarSearch() it should return error \'badImplementation\' if the parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+            
 
             //paperData is empty
             try{
@@ -230,7 +240,7 @@ describe('bad cases on search.delegate', () => {
     describe('bad cases on search.delegate.searchAutomated()', () => {
 
         test('automatedSearch() it should return error \'badRequest\' if illegal values', async () => {
-            jest.setTimeout(timeOut);
+            
 
             //project id not a number
             try{

@@ -16,7 +16,7 @@ if (config.db.url)
 {
     credentials = {
         connectionString: config.db.url,
-        ssl: true
+        ssl: true,
     };
 }
 /*create new pool of connections*/

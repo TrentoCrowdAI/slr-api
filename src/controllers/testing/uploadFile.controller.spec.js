@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require(__base + 'app');
-const timeOut = 20 * 1000;
-
+const timeOut = 30 * 1000;
+const db = require(__base + "db/index");
 
 /* *
 * upload file
@@ -42,11 +42,20 @@ const validExampleForCsv = {
 };
 
 
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
+
 /*good cases on uploadFile*/
 describe('good cases on uploadFile', () => {
 
     test('POST /upload/csv should return 201 if OK', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).post('/upload/csv').field("project_id", index).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
         expect(response.status).toBe(201);
 
@@ -60,21 +69,21 @@ describe('good cases on uploadFile', () => {
 describe('bad cases on uploadFile', () => {
 
     test('POST /upload/pdf should return 400 if the file does not exist', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).post('/upload/pdf').set('Authorization', validTokenId);
         expect(response.status).toBe(400);
 
     });
 
     test('POST /upload/pdf should return 400 if the file is not a pdf', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).post('/upload/pdf').attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
 
     });
 
     test('POST /upload/csv should return 400 if parameters have invalid value', async () => {
-        jest.setTimeout(timeOut);
+
 
         //the project_id is missing
         let response = await request(app).post('/upload/csv').field("paper_id", index).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
@@ -99,34 +108,34 @@ describe('bad cases on uploadFile', () => {
     });
 
     test('POST /upload/csv should return 401 if projects is not present', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).post('/upload/csv').field("project_id", 9999).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
         expect(response.status).toBe(401);
     });
 
 
     test('POST /upload/csv should return 401 if user hasn\'t permission', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).post('/upload/csv').field("project_id", index2).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validCsv.csv").set('Authorization', validTokenId);
         expect(response.status).toBe(401);
     });
 
     test('POST /upload/csv should return 400 if the file does not exist', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).post('/upload/csv').field("project_id", index).field("fields", JSON.stringify(validExampleForCsv)).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
 
     });
 
     test('POST /upload/csv should return 400 if the file is not a csv', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).post('/upload/csv').field("project_id", index).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/validPdf.pdf").set('Authorization', validTokenId).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
 
     });
 
     test('POST /upload/csv should return 400 if the file is not a valid csv', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).post('/upload/csv').field("project_id", index).field("fields", JSON.stringify(validExampleForCsv)).attach("file", __base + "db/notValidCsv.csv").set('Authorization', validTokenId).set('Authorization', validTokenId);
         expect(response.status).toBe(400);
 

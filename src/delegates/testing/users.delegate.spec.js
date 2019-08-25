@@ -1,4 +1,5 @@
-const timeOut = 20 * 1000;
+const timeOut = 60 * 1000;
+const delayTime = timeOut/2;
 
 const usersDelegate = require(__base + 'delegates/users.delegate');
 
@@ -35,12 +36,26 @@ const errorNames = {
 
 };
 
+beforeAll(async () => {
+
+    //waiting to avoid exceeding the limit of 20 connections on heroku postgres
+    jest.setTimeout(timeOut);
+    await new Promise(res => setTimeout(() => {
+        res();
+    }, delayTime));
+});
+
+
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
+
 /* good cases==============================================================================================================*/
 
 describe('good cases on users.delegate', () => {
 
     test('verifyToken() it should return user email if token is valid', async () => {
-        jest.setTimeout(timeOut);
+        
 
         let user = await usersDelegate.verifyToken(validTokenId);
         expect(user).toBe(validUserEmail);
@@ -48,7 +63,7 @@ describe('good cases on users.delegate', () => {
     });
 
     test('getCollaboratorByProjectId()', async () => {
-        jest.setTimeout(timeOut);
+        
 
         let project_id = index;
 
@@ -59,7 +74,7 @@ describe('good cases on users.delegate', () => {
     });
 
     test('getScreenersByProjectId()', async () => {
-        jest.setTimeout(timeOut);
+        
 
         let project_id = index;
 
@@ -80,7 +95,7 @@ describe('good cases on users.delegate', () => {
 describe('bad cases on users.delegate', () => {
 
     test('verifyToken() it should return error \'badRequest\' if there\'s no token', async () => {
-        jest.setTimeout(timeOut);
+        
 
         let user = undefined;
 
@@ -94,7 +109,7 @@ describe('bad cases on users.delegate', () => {
     });
 
     test('verifyToken() it should return error \'unauthorized\' if token is not valid', async () => {
-        jest.setTimeout(timeOut);
+        
 
         let user = undefined;
 

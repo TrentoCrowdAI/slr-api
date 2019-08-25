@@ -1,8 +1,10 @@
 const request = require('supertest');
 const app = require(__base + 'app');
+const timeOut = 30 * 1000;
+const db = require(__base + "db/index");
+
 //the config file
 const config = require(__base + 'config');
-const timeOut = 20 * 1000;
 
 
 /* *
@@ -25,6 +27,15 @@ const validTokenId5 = "test"+index5;
 
 
 
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
+
 /* good cases=====================================================================================================*/
 
 // valid examples
@@ -38,13 +49,13 @@ const validExample = {
 describe('good cases on projects', () => {
 
     test('GET /projects should return 200 if it finds something', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).get('/projects').set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 
     test('POST  /projects should return 201', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).post('/projects').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
         expect(response.status).toBe(201);
 
@@ -52,21 +63,21 @@ describe('good cases on projects', () => {
 
 
     test('PUT /projects/:id should return 204 if project exists', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).put('/projects/' + index).send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
         expect(response.status).toBe(204);
     });
 
 
     test('DELETE /projects/:id should return 204 if project exists', async () => {
-        jest.setTimeout(timeOut);
+
         response = await request(app).delete('/projects/' + index5).set('Authorization', validTokenId5);
         expect(response.status).toBe(204);
     });
 
 
     test('GET /projects/:id should return 200 if project exists', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).get('/projects/' + index).set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
@@ -103,7 +114,7 @@ describe('bad cases on projects', () => {
     describe('bad cases on GET /projects', () => {
 
         test('GET /projects should return 400 if parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+
 
             //the orderBy is not valid
             response = await request(app).get('/projects?&orderBy=abcde').set('Authorization', validTokenId);
@@ -128,13 +139,13 @@ describe('bad cases on projects', () => {
 
 
         test('GET /projects should return 404 if it finds nothing after the given offset', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/projects?start=99999').set('Authorization', validTokenId);
             expect(response.status).toBe(404);
         });
 
         test('GET /projects should return 404 if user hasn\'t any project', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/projects').set('Authorization', validTokenId5);
             expect(response.status).toBe(404);
         });
@@ -145,7 +156,7 @@ describe('bad cases on projects', () => {
     describe('bad cases on POST /projects', () => {
 
         test('POST /projects/ should return 400 if parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+
 
             //the name missing
             let response = await request(app).post('/projects').send(notValidExampleForNameMissing).set('Accept', 'application/json').set('Authorization', validTokenId);
@@ -166,7 +177,7 @@ describe('bad cases on projects', () => {
     describe('bad cases on PUT /projects', () => {
 
         test('PUT /projects/:id should return 400 if parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+
 
             //the project id is not a number
             let response = await request(app).put('/projects/abc').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
@@ -192,7 +203,7 @@ describe('bad cases on projects', () => {
         });
 
         test('PUT /projects/:id should return 401 if projects is not present', async () => {
-            jest.setTimeout(timeOut);
+
 
             let response = await request(app).put('/projects/9999').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(401);
@@ -200,7 +211,7 @@ describe('bad cases on projects', () => {
 
 
         test('PUT /projects/:id should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).put('/projects/'+index2).send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
@@ -210,7 +221,7 @@ describe('bad cases on projects', () => {
     describe('bad cases on DELETE /projects', () => {
 
         test('DELETE /projects/:id should return 400 if parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+
 
             //the project id is not a number
             let response = await request(app).delete('/projects/abc').set('Authorization', validTokenId);
@@ -221,14 +232,14 @@ describe('bad cases on projects', () => {
         });
 
         test('DELETE /projects/:id return 401 if projects is not present', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).delete('/projects/9999').set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
 
         test('DELETE /projects/:id should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).delete('/projects/'+index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
@@ -239,7 +250,7 @@ describe('bad cases on projects', () => {
 
         test('GET /projects/:id should return 400 if parameters are not valid', async () => {
 
-            jest.setTimeout(timeOut);
+
 
             //the project id is not a number
             let response = await request(app).get('/projects/abc').set('Authorization', validTokenId);
@@ -252,13 +263,13 @@ describe('bad cases on projects', () => {
 
 
         test('GET /projects/:id should return 401 if it finds nothing', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/projects/9999').set('Authorization', validTokenId);
             expect(response.status).toBe(401)
         });
 
         test('GET /projects/:id should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/projects/'+index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });

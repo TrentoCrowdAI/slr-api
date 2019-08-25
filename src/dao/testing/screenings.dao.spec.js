@@ -1,10 +1,10 @@
-const request = require('supertest');
-const app = require(__base + 'app');
-const timeOut = 20 * 1000;
+
+const timeOut = 30 * 1000;
 
 const screeningsDao = require(__base + 'dao/screenings.dao');
 //the config file
 const config = require(__base + 'config');
+const db = require(__base + "db/index");
 
 
 /* *
@@ -26,11 +26,19 @@ const newScreeningData = {
     "manual_screening_type": config.manual_screening_type.single_predicate
 };
 
+beforeEach(async () => {
+    jest.setTimeout(timeOut)
+});
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
 
 describe('test cases on screenings.dao ', () => {
 
     test('insert()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let user_id = index;
         let project_id = index2;
@@ -41,7 +49,7 @@ describe('test cases on screenings.dao ', () => {
     });
 
     test('update()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let screening_id = index;
 
@@ -53,7 +61,7 @@ describe('test cases on screenings.dao ', () => {
 
 
     test('deletes()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let screening_id = index5;
 
@@ -64,7 +72,7 @@ describe('test cases on screenings.dao ', () => {
     });
 
     test('deleteByUserIdAndProjectId()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let user_id = index;
@@ -78,7 +86,7 @@ describe('test cases on screenings.dao ', () => {
 
 
     test('selectById()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let screening_id = index;
@@ -91,7 +99,7 @@ describe('test cases on screenings.dao ', () => {
     });
 
     test('selectByUserId()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let user_id = index;
 
@@ -103,7 +111,7 @@ describe('test cases on screenings.dao ', () => {
     });
 
     test('selectByProjectId()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let project_id = index;
 
@@ -115,7 +123,7 @@ describe('test cases on screenings.dao ', () => {
     });
 
     test('selectByUserIdAndProjectId()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let user_id = index;
@@ -129,7 +137,7 @@ describe('test cases on screenings.dao ', () => {
 
 
     test('countByProject()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let project_id = index;
 

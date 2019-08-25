@@ -1,9 +1,9 @@
-const request = require('supertest');
-const app = require(__base + 'app');
-const timeOut = 20 * 1000;
+
+const timeOut = 30 * 1000;
 
 const usersDao = require(__base + 'dao/users.dao');
 
+const db = require(__base + "db/index");
 
 
 /* *
@@ -28,11 +28,19 @@ let newUserData = {
     picture: "picture.jpg",
 };
 
+beforeEach(async () => {
+    jest.setTimeout(timeOut)
+});
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
 
 describe('test cases on users.dao ', () => {
 
     test('insert()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let res = await usersDao.insert(newUserData);
 
@@ -43,7 +51,7 @@ describe('test cases on users.dao ', () => {
 
 
     test('update()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let putUserData = {
             email: "test"+index+"@gmail.com",
@@ -59,7 +67,7 @@ describe('test cases on users.dao ', () => {
 
 
     test('getUserByEmail()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let email = "test"+index+"@gmail.com";
@@ -72,7 +80,7 @@ describe('test cases on users.dao ', () => {
     });
 
     test('getUserByArrayIds()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let arrayIds = [index,index2,index3];
@@ -84,7 +92,7 @@ describe('test cases on users.dao ', () => {
     });
 
     test('getUserById()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let id = index;

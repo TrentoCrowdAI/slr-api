@@ -1,10 +1,10 @@
-const request = require('supertest');
-const app = require(__base + 'app');
-const timeOut = 20 * 1000;
+
+const timeOut = 30 * 1000;
 
 const searchesDao = require(__base + 'dao/searches.dao');
 //the config file
 const config = require(__base + 'config');
+const db = require(__base + "db/index");
 
 
 /* *
@@ -43,10 +43,19 @@ let newPaperData = {
 };
 
 
+beforeEach(async () => {
+    jest.setTimeout(timeOut)
+});
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
+
 describe('test cases on searches.dao ', () => {
 
     test('insert()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let res = await searchesDao.insert(newPaperData);
 
@@ -55,7 +64,7 @@ describe('test cases on searches.dao ', () => {
     });
 
     test('insertByList()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let arrayPaperData = [newPaperData,newPaperData];
 
@@ -66,7 +75,7 @@ describe('test cases on searches.dao ', () => {
     });
 
     test('update()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let paper_id = index;
 
@@ -78,7 +87,7 @@ describe('test cases on searches.dao ', () => {
 
 
     test('deletes()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let paper_id = index5;
 
@@ -90,7 +99,7 @@ describe('test cases on searches.dao ', () => {
 
 
     test('selectById()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let paper_id = index;
@@ -103,7 +112,7 @@ describe('test cases on searches.dao ', () => {
     });
 
     test('checkExistenceByEids()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let arrayEid = ["gfa","ggg"];
 

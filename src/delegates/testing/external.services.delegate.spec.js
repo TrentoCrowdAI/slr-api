@@ -1,7 +1,7 @@
-const timeOut = 20 * 1000;
+const timeOut = 60 * 1000;
+const delayTime = timeOut/2;
 
 const externalServicesDelegate = require(__base + 'delegates/external.services.delegate');
-
 
 
 /* *
@@ -15,21 +15,36 @@ const index = 66;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
-const index5 =  index + 4;
-const validUserEmail = "test"+index+"@gmail.com";
-const validUserEmail2 = "test"+index2+"@gmail.com";
-const validUserEmail3 = "test"+index3+"@gmail.com";
-const validUserEmail4 = "test"+index4+"@gmail.com";
-const validUserEmail5 = "test"+index5+"@gmail.com";
+const index5 = index + 4;
+const validUserEmail = "test" + index + "@gmail.com";
+const validUserEmail2 = "test" + index2 + "@gmail.com";
+const validUserEmail3 = "test" + index3 + "@gmail.com";
+const validUserEmail4 = "test" + index4 + "@gmail.com";
+const validUserEmail5 = "test" + index5 + "@gmail.com";
 
 
 
+
+beforeAll(async () => {
+
+    //waiting to avoid exceeding the limit of 20 connections on heroku postgres
+    jest.setTimeout(timeOut);
+    await new Promise(res => setTimeout(() => {
+        res();
+    }, delayTime));
+});
+
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
 
 
 describe('test cases on external.services.delegate ', () => {
 
+
     test('fakeSimilarSearchService()', async () => {
-        jest.setTimeout(timeOut);
+
+        //
 
 
         let paperData = {
@@ -42,17 +57,18 @@ describe('test cases on external.services.delegate ', () => {
         let res = await externalServicesDelegate.fakeSimilarSearchService(paperData, start, count);
         expect(res.results.length).toBe(5);
         expect(res.results[0].title).toBeDefined();
+
+
     });
 
     test('fakeAutomatedSearchService()', async () => {
-        jest.setTimeout(timeOut);
 
 
         let title = "machine learning";
-        let description ="scientific study";
+        let description = "scientific study";
         let arrayFilter = [
             {
-                "id":1,
+                "id": 1,
                 "data": {
                     "name": "C1",
                     "predicate": "avc",
@@ -75,7 +91,6 @@ describe('test cases on external.services.delegate ', () => {
 
 
     test('fakeAutomatedEvaluationService()', async () => {
-        jest.setTimeout(timeOut);
 
 
         let arrayPaper = [
@@ -99,7 +114,7 @@ describe('test cases on external.services.delegate ', () => {
                 "project_id": index,
             },
             {
-                "id":index2,
+                "id": index2,
                 "data": {
                     "name": "C2",
                     "predicate": "avb",
@@ -112,7 +127,6 @@ describe('test cases on external.services.delegate ', () => {
         let project_id = index;
 
 
-
         let res = await externalServicesDelegate.fakeAutomatedEvaluationService(arrayPaper, arrayFilter, project_id);
         expect(res.length).toBe(2);
         expect(res[0].value).toBeDefined();
@@ -120,18 +134,14 @@ describe('test cases on external.services.delegate ', () => {
     });
 
 
-
-
     test('fakeGetAutomatedScreeningStatus()', async () => {
-        jest.setTimeout(timeOut);
 
 
         let project_id = index2;
         let res = await externalServicesDelegate.fakeGetAutomatedScreeningStatus(project_id);
         expect(res).toBe(true);
 
+
     });
-
-
 
 });

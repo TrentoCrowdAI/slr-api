@@ -1,6 +1,5 @@
-const request = require('supertest');
-const app = require(__base + 'app');
-const timeOut = 20 * 1000;
+const timeOut = 60 * 1000;
+const delayTime = timeOut/2;
 
 const votesDelegate = require(__base + 'delegates/votes.delegate');
 //the config file
@@ -26,26 +25,40 @@ const validUserEmail4 = "test"+index4+"@gmail.com";
 const validUserEmail5 = "test"+index5+"@gmail.com";
 
 
-// valid examples
+
+
+beforeAll(async () => {
+
+    //waiting to avoid exceeding the limit of 20 connections on heroku postgres
+    jest.setTimeout(timeOut);
+    await new Promise(res => setTimeout(() => {
+        res();
+    }, delayTime));
+});
+
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
+
+
+
 const voteData = {
-        "metadata": {
-            "type": "multi-predicate",
-            "highlights": [
-                {
-                    "outcome": "0"
-                }
-            ],
-            "tags": []
-        }
+    "metadata": {
+        "type": "multi-predicate",
+        "highlights": [
+            {
+                "outcome": "0"
+            }
+        ],
+        "tags": []
+    }
 };
-
-
 
 
 describe('test cases on votes.dao ', () => {
 
     test('insert()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let project_paper_id = index;
 
@@ -59,7 +72,7 @@ describe('test cases on votes.dao ', () => {
 
 
     test('selectByProjectId()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let project_id = index;
 

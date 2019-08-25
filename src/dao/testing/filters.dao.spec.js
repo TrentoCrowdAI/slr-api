@@ -1,8 +1,9 @@
-const request = require('supertest');
-const app = require(__base + 'app');
-const timeOut = 20 * 1000;
+
+const timeOut = 30 * 1000;
 
 const filtersDao = require(__base + 'dao/filters.dao');
+
+const db = require(__base + "db/index");
 
 /* *
 * filters
@@ -17,13 +18,21 @@ const index3 = index + 2;
 const index4 = index + 3;
 const index5 =  index + 4;
 
+beforeEach(async () => {
+    jest.setTimeout(timeOut)
+});
 
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
 
 
 describe('test cases on filters.dao ', () => {
 
     test('insert()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let newFilterData = {
@@ -42,7 +51,7 @@ describe('test cases on filters.dao ', () => {
     });
 
     test('update()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let newFilterData = {
@@ -61,7 +70,7 @@ describe('test cases on filters.dao ', () => {
 
 
     test('deletes()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let filter_id = index5;
@@ -74,7 +83,7 @@ describe('test cases on filters.dao ', () => {
 
 
     test('selectById()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let filter_id = index;
@@ -93,7 +102,7 @@ describe('test cases on filters.dao ', () => {
     });
 
     test('selectByArrayId()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let arrayFilterId = [index,index2];
@@ -105,7 +114,7 @@ describe('test cases on filters.dao ', () => {
     });
 
     test('selectByProject()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id=index2;
@@ -123,7 +132,7 @@ describe('test cases on filters.dao ', () => {
     });
 
     test('selectAllByProject()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let project_id=index2;
 
@@ -134,7 +143,7 @@ describe('test cases on filters.dao ', () => {
     });
 
     test('countByProject()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let project_id=index2;

@@ -1,11 +1,10 @@
-const request = require('supertest');
-const app = require(__base + 'app');
-const timeOut = 20 * 1000;
+
+const timeOut = 30 * 1000;
 
 const votesDao = require(__base + 'dao/votes.dao');
 //the config file
 const config = require(__base + 'config');
-
+const db = require(__base + "db/index");
 
 /* *
 * votes
@@ -34,11 +33,19 @@ const newVoteData = {
         }
 };
 
+beforeEach(async () => {
+    jest.setTimeout(timeOut)
+});
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
 
 describe('test cases on votes.dao ', () => {
 
     test('insert()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let user_id = index;
         let project_paper_id = index2;
@@ -51,7 +58,7 @@ describe('test cases on votes.dao ', () => {
     });
 
     test('update()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let vote_id = index;
 
@@ -63,7 +70,7 @@ describe('test cases on votes.dao ', () => {
 
 
     test('deletes()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let vote_id = index5;
 
@@ -74,7 +81,7 @@ describe('test cases on votes.dao ', () => {
     });
 
     test('deleteByProjectIdAndUserId()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let user_id = index;
@@ -88,7 +95,7 @@ describe('test cases on votes.dao ', () => {
 
 
     test('selectById()', async () => {
-        jest.setTimeout(timeOut);
+
 
 
         let vote_id = index;
@@ -101,7 +108,7 @@ describe('test cases on votes.dao ', () => {
     });
 
     test('selectByUserId()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let user_id = index;
 
@@ -113,7 +120,7 @@ describe('test cases on votes.dao ', () => {
     });
 
     test('selectByProjectPaperId()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let projectPaper_id = index;
 
@@ -125,7 +132,7 @@ describe('test cases on votes.dao ', () => {
     });
 
     test('selectByProjectId()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let project_id = index;
 
@@ -139,7 +146,7 @@ describe('test cases on votes.dao ', () => {
 
 
     test('selectByProjectPaperIdAndUserId()', async () => {
-        jest.setTimeout(timeOut);
+
 
         let projectPaper_id = index;
         let user_id = index;

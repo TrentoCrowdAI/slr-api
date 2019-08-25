@@ -1,8 +1,10 @@
 const request = require('supertest');
 const app = require(__base + 'app');
+const timeOut = 30 * 1000;
+const db = require(__base + "db/index");
+
 //the config file
 const config = require(__base + 'config');
-const timeOut = 20 * 1000;
 
 
 /* *
@@ -24,6 +26,16 @@ const validTokenId4 = "test" + index4;
 const validTokenId5 = "test" + index5;
 
 
+
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
+
 /* good cases=====================================================================================================*/
 
 
@@ -31,13 +43,13 @@ describe('good cases on projects', () => {
 
 
     test('GET /projects/:project_id/screeners should return 200', async () => {
-        jest.setTimeout(timeOut);
+
         let response = await request(app).get('/projects/' + index + '/screeners').set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
 
     test('POST /projects/:project_id/screeners should return 201', async () => {
-        jest.setTimeout(timeOut);
+
 
         let validExample = {
             "array_user_ids": [index2],
@@ -49,7 +61,7 @@ describe('good cases on projects', () => {
     });
 
     test('PUT /projects/:project_id/screeners should return 201', async () => {
-        jest.setTimeout(timeOut);
+
 
         let validExample = {
             "array_user_ids": [index3],
@@ -79,7 +91,7 @@ describe('bad cases on projects', () => {
     describe('bad cases on GET /projects/:project_id/screeners', () => {
 
         test('GET /projects/:project_id/screeners should return 400 if parameters aren\'t valid', async () => {
-            jest.setTimeout(timeOut);
+
             //if the project id is not a number
             let response = await request(app).get('/projects/abc/screeners').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
@@ -90,13 +102,13 @@ describe('bad cases on projects', () => {
 
 
         test('GET /projects/:project_id/screeners should return 401 if it finds nothing', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/projects/9999/screeners').set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
         test('GET /projects/:project_id/screeners should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/projects/' + index + '/screeners').set('Authorization', validTokenId5);
             expect(response.status).toBe(401);
         });
@@ -108,7 +120,7 @@ describe('bad cases on projects', () => {
 
 
         test('POST /projects/:project_id/screeners should return 400 if parameters aren\'t valid', async () => {
-            jest.setTimeout(timeOut);
+
 
             //the project id is not a number
             let response = await request(app).post('/projects/abc/screeners').send(validExampleForPost).set('Authorization', validTokenId2);
@@ -153,7 +165,7 @@ describe('bad cases on projects', () => {
 
 
         test('POST /projects/:project_id/screeners should return 401 if it finds nothing', async () => {
-            jest.setTimeout(timeOut);
+
 
             let response = await request(app).post('/projects/9999/screeners').send(validExampleForPost).set('Authorization', validTokenId2);
             expect(response.status).toBe(401);
@@ -161,7 +173,7 @@ describe('bad cases on projects', () => {
 
 
         test('POST /projects/:project_id/screeners should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
+
 
             let response = await request(app).post('/projects/' + index2 + '/screeners').send(validExampleForPost).set('Authorization', validTokenId5);
             
@@ -169,7 +181,7 @@ describe('bad cases on projects', () => {
         });
 
         test('POST /projects/:project_id/screeners should return 400 if user isn\'t exist', async () => {
-            jest.setTimeout(timeOut);
+
 
             let notValidExampleForUserNotExist = {
                 "array_user_ids": ["9999"],
@@ -180,7 +192,7 @@ describe('bad cases on projects', () => {
         });
 
         test('POST /projects/:project_id/screeners should return 400 if user isn\'t collaborator', async () => {
-            jest.setTimeout(timeOut);
+
 
             let notValidExampleForNotCollaborator = {
                 "array_user_ids": [index3],
@@ -192,7 +204,7 @@ describe('bad cases on projects', () => {
 
 
         test('POST /projects/:project_id/screeners should return 400 if the shared user is already present in this project', async () => {
-            jest.setTimeout(timeOut);
+
 
             let notValidExampleForAlreadyExist = {
                 "array_user_ids": [index2],
@@ -208,7 +220,7 @@ describe('bad cases on projects', () => {
 
         test('PUT /projects/:project_id/screeners should return 400 if parameters aren\'t valid', async () => {
 
-            jest.setTimeout(timeOut);
+
 
 
             //the project id is not a number
@@ -242,20 +254,20 @@ describe('bad cases on projects', () => {
 
 
         test('PUT /projects/:project_id/screeners should return 401 if it finds nothing', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).put('/projects/9999/screeners').send(validExampleForPut).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
 
         test('PUT /projects/:project_id/screeners should return 401 if user hasn\'t permission', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).put('/projects/' + index + '/screeners').send(validExampleForPut).set('Authorization', validTokenId5);
             expect(response.status).toBe(401);
         });
 
         test('PUT /projects/:project_id/screeners should return 400 if user isn\'t exist', async () => {
-            jest.setTimeout(timeOut);
+
 
             let notValidExample = {
                 "array_user_ids": [9999],
@@ -265,7 +277,7 @@ describe('bad cases on projects', () => {
         });
 
         test('PUT /projects/:project_id/screeners should return 400 if the project is not yet initialized for manual screening', async () => {
-            jest.setTimeout(timeOut);
+
 
             let validExample = {
                 "array_user_ids": [index],
@@ -276,7 +288,7 @@ describe('bad cases on projects', () => {
         });
 
         test('PUT /projects/:project_id/screeners should return 400 if user isn\'t collaborator', async () => {
-            jest.setTimeout(timeOut);
+
 
             let notValidExample = {
                 "array_user_ids": [index5],
@@ -287,7 +299,7 @@ describe('bad cases on projects', () => {
 
 
         test('PUT /projects/:project_id/screeners should return 400 if the shared user is already present in this project', async () => {
-            jest.setTimeout(timeOut);
+
 
             let notValidExample = {
                 "array_user_ids": [index2],

@@ -1,7 +1,7 @@
 const request = require('supertest');
 const app = require(__base + 'app');
-const timeOut = 20 * 1000;
-
+const timeOut = 30 * 1000;
+const db = require(__base + "db/index");
 /* *
 * search papers
 * range of usable data n° 16~ 30
@@ -20,6 +20,15 @@ const validTokenId3 = "test" + index3;
 const validTokenId4 = "test" + index4;
 const validTokenId5 = "test" + index5;
 
+
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
+});
 
 /* good cases=====================================================================================================*/
 
@@ -44,7 +53,7 @@ describe('good cases on papers', () => {
      expect(response.status).toBe(200);
      });
      test('POST /search/similar should return 200 if find any papers', async () => {
-     jest.setTimeout(timeOut);
+
      let response = await request(app).post('/search/similar').send({"paperData" : {"title" : "Crowdsourcing developement"}}).set('Authorization', validTokenId).set('Content-Type', "application/json");
      expect(response.status).toBe(200);
      });*/
@@ -66,13 +75,13 @@ describe('bad cases on papers', () => {
         });
 
         test('GET /search should return 400 if query field is not present', async () => {
-            jest.setTimeout(timeOut);
+
             let response = await request(app).get('/search?scopus=true').set('Authorization', validTokenId);
             expect(response.status).toBe(400)
         });
 
         test('GET /search should return 400 if parameters have illegal value', async () => {
-            jest.setTimeout(timeOut);
+
 
             //cases on scopus
             //the searchBy is not valid
@@ -146,7 +155,7 @@ describe('bad cases on papers', () => {
     describe('bad cases on POST /search/similar', () => {
 
         test('POST /search/similar should return 400 if parameters have not valid value', async () => {
-            jest.setTimeout(timeOut);
+
 
             //the post body is empty
             let response = await request(app).post('/search/similar').send({}).set('Authorization', validTokenId);
@@ -181,7 +190,7 @@ describe('bad cases on papers', () => {
     describe('bad cases on POST /search/automated', () => {
 
         test('POST /search/automated should return 400 if parameters have illegal value', async () => {
-            jest.setTimeout(timeOut);
+
 
             //the project id is not number
             let response = await request(app).post('/search/automated').send({"project_id": "abc"}).set('Authorization', validTokenId);

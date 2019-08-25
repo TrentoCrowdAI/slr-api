@@ -1,4 +1,5 @@
-const timeOut = 20 * 1000;
+const timeOut = 60 * 1000;
+const delayTime = timeOut/2;
 
 const filtersDelegate = require(__base + 'delegates/filters.delegate');
 
@@ -30,15 +31,27 @@ const errorNames = {
 
 };
 
+beforeAll(async () => {
+
+    //waiting to avoid exceeding the limit of 20 connections on heroku postgres
+    jest.setTimeout(timeOut);
+    await new Promise(res => setTimeout(() => {
+        res();
+    }, delayTime));
+});
+
+beforeEach(() => {
+    jest.setTimeout(timeOut);
+});
+
 /* good cases=====================================================================================================*/
-
-
 
 
 describe('good cases on filters.delegate ', () => {
 
+
     test('insert() adds a new filter to the db', async () => {
-        jest.setTimeout(timeOut);
+        
 
         let validExample = {
             "project_id": index,
@@ -55,7 +68,7 @@ describe('good cases on filters.delegate ', () => {
     });
 
     test('update()', async () => {
-        jest.setTimeout(timeOut);
+        
 
 
         let filter_id = index;
@@ -72,7 +85,7 @@ describe('good cases on filters.delegate ', () => {
 
 
     test('deletes()', async () => {
-        jest.setTimeout(timeOut);
+        
 
 
         let filter_id = index5;
@@ -83,7 +96,7 @@ describe('good cases on filters.delegate ', () => {
 
 
     test('selectById()', async () => {
-        jest.setTimeout(timeOut);
+        
 
         let filter_id = index;
         let filter = await filtersDelegate.selectById(validUserEmail, filter_id);
@@ -93,7 +106,7 @@ describe('good cases on filters.delegate ', () => {
     });
 
     test('selectByProject()', async () => {
-        jest.setTimeout(timeOut);
+        
 
 
         let project_id=index2;
@@ -123,7 +136,7 @@ describe('bad cases on filters.delegate ', () => {
     describe('bad cases filters.delegate.insert()', () => {
 
         test('insert() it should return error \'badRequest\' if parameters are not valid', async () => {
-            jest.setTimeout(timeOut);
+            
             let filter = undefined;
 
             //project Id is not defined
@@ -192,7 +205,7 @@ describe('bad cases on filters.delegate ', () => {
         });
 
         test('insert() it should return \'unauthorized\' if the project doesn\'t exist', async () => {
-            jest.setTimeout(timeOut);
+            
 
             let notValidExampleForProjectIdNotExist = {
                 "project_id": "9999",
@@ -212,7 +225,7 @@ describe('bad cases on filters.delegate ', () => {
         });
 
         test('insert() it should return \'unauthorized\' if the user does not have access', async () => {
-            jest.setTimeout(timeOut);
+            
 
             let notValidExampleForProjectIdNotPermission = {
                 "project_id": index2 + "",
