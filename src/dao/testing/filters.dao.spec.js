@@ -8,11 +8,11 @@ const db = require(__base + "db/index");
 /* *
 * filters
 * range of usable data n° 1 ~ 15
-* 10~15 for dao layer
+* 11~15 for dao layer
 * */
 
 
-const index = 10;
+const index = 11;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
