@@ -1,6 +1,6 @@
 const timeOut = 60 * 1000;
 const delayTime = timeOut/2;
-
+const db = require(__base + "db/index");
 const filtersDelegate = require(__base + 'delegates/filters.delegate');
 
 
@@ -31,13 +31,10 @@ const errorNames = {
 
 };
 
-beforeAll(async () => {
-
-    //waiting to avoid exceeding the limit of 20 connections on heroku postgres
-    jest.setTimeout(timeOut);
-    await new Promise(res => setTimeout(() => {
-        res();
-    }, delayTime));
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
 });
 
 beforeEach(() => {

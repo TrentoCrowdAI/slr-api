@@ -1,6 +1,6 @@
 const timeOut = 60 * 1000;
 const delayTime = timeOut/2;
-
+const db = require(__base + "db/index");
 const externalServicesDelegate = require(__base + 'delegates/external.services.delegate');
 
 
@@ -25,13 +25,10 @@ const validUserEmail5 = "test" + index5 + "@gmail.com";
 
 
 
-beforeAll(async () => {
-
-    //waiting to avoid exceeding the limit of 20 connections on heroku postgres
-    jest.setTimeout(timeOut);
-    await new Promise(res => setTimeout(() => {
-        res();
-    }, delayTime));
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
 });
 
 beforeEach(() => {

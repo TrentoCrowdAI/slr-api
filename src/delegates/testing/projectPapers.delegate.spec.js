@@ -1,5 +1,6 @@
 const timeOut = 60 * 1000;
 const delayTime = timeOut/2;
+const db = require(__base + "db/index");
 
 const projectPapersDelegate = require(__base + 'delegates/projectPapers.delegate');
 //the config file
@@ -8,11 +9,11 @@ const config = require(__base + 'config');
 /* *
 * projectPapers
 * range of usable data n° 46~ 60
-* 51~55 for dao layer
+* 51~55 for delegate layer
 * */
 
 
-const index = 6;
+const index = 51;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
@@ -42,13 +43,10 @@ let newPaper = {
     "doi": "abcdefg"
 };
 
-beforeAll(async () => {
-
-    //waiting to avoid exceeding the limit of 20 connections on heroku postgres
-    jest.setTimeout(timeOut);
-    await new Promise(res => setTimeout(() => {
-        res();
-    }, delayTime));
+//after all test case
+afterAll(() => {
+    //close the db pool to reduce the number of connections
+    db.end();
 });
 
 beforeEach(() => {
