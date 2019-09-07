@@ -50,10 +50,142 @@ async function fakeSimilarSearchService(paperData, start, count) {
     }
 
     //fake service
-    let response = await searchesDelegate.scopusSearch(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
-
+    let response = await scopusSearchWithoutSave(relevantQuery, undefined, undefined, undefined, "ASC", start, count);
 
     return response;
+}
+
+
+
+
+/**
+ *internal function for fake similar search service without save the paper in the DB
+ * find papers by searching with the Scopus APIs
+ * @param {string} keyword to search
+ * @param {string} searchBy [all, author, content, advanced] "content" means abstracts+keywords+titles.
+ * @param {string} year specific year to search
+ * @param {string} orderBy [date, title]
+ * @param {string} sort {ASC or DESC}
+ * @param {string} start offset position where we begin to get
+ * @param {string} count number of papers
+ * @returns {Object} array of papers and total number of result
+ */
+async function scopusSearchWithoutSave(keyword, searchBy, year, orderBy, sort, start, count) {
+
+    //check the validation of parameters
+    errorCheck.isValidKeyword(keyword);
+    searchBy = errorCheck.setAndCheckValidSearchByForScopus(searchBy);
+    year = errorCheck.setAndCheckValidYearForScopus(year);
+    orderBy = errorCheck.setAndCheckValidOrderByForScopus(orderBy);
+    sort = errorCheck.setAndCheckValidSort(sort);
+    start = errorCheck.setAndCheckValidStart(start);
+    count = errorCheck.setAndCheckValidCount(count);
+
+
+    //prepare the query object
+    let queryData = {};
+    queryData.apiKey = config.scopus.apiKey;
+
+    //searchBy condition
+    switch (searchBy) {
+        case config.validSearchBy[0]:
+            queryData.query = "ALL(\"" + keyword + "\")";
+            break;
+        case config.validSearchBy[1]:
+            queryData.query = "AUTHOR-NAME(\"" + keyword + "\")";
+            break;
+        case config.validSearchBy[2]:
+            queryData.query = "TITLE-ABS-KEY(\"" + keyword + "\")";
+            break;
+        case config.validSearchBy[3]:
+            queryData.query = keyword;
+            break;
+    }
+
+
+    //date range condition
+    if (year !== "") {
+        queryData.date = year;
+    }
+
+    //sort condition
+    if (orderBy === "date") {
+        orderBy = "coverDate";
+    }
+    else {
+        orderBy = "publicationName";
+    }
+
+    if (sort === "ASC") {
+        sort = "+";
+    }
+    else {
+        sort = "-";
+    }
+    queryData.sort = sort + orderBy;
+
+    //number of papers and offset
+    queryData.start = start;
+    queryData.count = count;
+
+    //send request get to scopus service
+    let response = await conn.get(config.scopus.url, queryData);
+
+    //if there is the error from fetch
+    if (response.message) {
+        throw errHandler.createBadImplementationError(response.message);
+    }
+
+    //get total number of results
+    let totalResults = response['search-results']['opensearch:totalResults'];
+
+    //if results if 0, return the 404 error
+    if (totalResults === "0") {
+        throw errHandler.createNotFoundError('the result is empty!');
+    }
+
+    //get paper array
+    let arrayResults = response['search-results']['entry'];
+
+    //store a new paper array
+    let arrayPapers = [];
+    //a eids array for our new paper array
+    let arrayEid = [];
+
+    //create a new paper array with our format
+    for (let i = 0; i < arrayResults.length; i++) {
+
+        let paper = {};
+        paper.authors = arrayResults[i]["dc:creator"] || ""; //authors can be empty
+        paper.title = arrayResults[i]["dc:title"] || "";
+        paper.year = arrayResults[i]["prism:coverDate"].slice(0, 4) || ""; //slice only the part of year
+        paper.date = arrayResults[i]["prism:coverDate"] || "";
+        paper.source_title = arrayResults[i]["prism:publicationName"] || "";
+        paper.link = arrayResults[i].link || "";
+        paper.doi = arrayResults[i]["prism:doi"] || "";
+        //to be defined in future
+        paper.abstract = "I am a no-subscriber, so I can't get the abstract from scopus. I am a no-subscriber, so I can't get the abstract from scopus.";
+
+        paper.document_type = arrayResults[i].subtypeDescription || "";
+        paper.source = "Scopus";
+        paper.eid = arrayResults[i].eid || "";
+
+        paper.abstract_structured = "";
+        paper.filter_oa_include = "";
+        paper.filter_study_include = "";
+        paper.notes = "";
+        paper.manual = "0";
+
+        //push element in array
+        arrayPapers.push(paper);
+        arrayEid.push(arrayResults[i].eid);
+    }
+
+
+
+    //return the array of papers get from scopus and total number of results
+    return {"results": arrayPapers, "totalResults": totalResults};
+
 }
 
 /**
