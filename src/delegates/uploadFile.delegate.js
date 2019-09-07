@@ -147,7 +147,7 @@ async function parseCsv(user_email, project_id, fields, file) {
         paper["link"] = csvBody[i][fields.link] || "";
         paper["abstract"] = csvBody[i][fields.abstract] || "";
         paper["document_type"] = csvBody[i][fields.document_type] || "";
-        paper["source"] = csvBody[i][fields.source] || "";
+        paper["source"] = "manual";
         paper["eid"] = csvBody[i][fields.eid] || "";
         paper["abstract_structured"] = csvBody[i][fields.abstract_structured] || "";
         paper["filter_oa_include"] = csvBody[i][fields.filter_oa_include] || "";

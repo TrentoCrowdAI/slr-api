@@ -88,6 +88,9 @@ async function insertCustomPaper(user_email, project_id, newPaper) {
         throw errHandler.createBadRequestError('the new paper data is not valid! (' + ajv.errorsText() + ')');
     }
 
+    //fix the source of new paper
+    newPaper.source = "manual";
+
     //get user info
     let user = await usersDao.getUserByEmail(user_email);
     //check relationship between the project and user

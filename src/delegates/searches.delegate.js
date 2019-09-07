@@ -509,6 +509,9 @@ async function similarSearch(paperData, start, count) {
     for (let i = 0; i < arrayResults.length; i++) {
 
         let paper = arrayResults[i];
+        //fix the source of paper
+        paper.source = "similar-search service";
+
         //push element in array
         arrayPapers.push(paper);
         arrayEid.push(arrayResults[i].eid);
@@ -627,11 +630,17 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
     let arrayEid = [];
 
     //create a new paper array with our format(this will change a lot based on the service used)
+    //for each paper
     for (let i = 0; i < arrayResults.length; i++) {
 
+        //get paper
         let paper = arrayResults[i];
-        //push element in array
+        //fix the source of paper
+        paper.source = "automatic-search service";
+
+        //push paper in new array
         arrayPapers.push(paper);
+        //save paper's eid
         arrayEid.push(arrayResults[i].eid);
     }
 
