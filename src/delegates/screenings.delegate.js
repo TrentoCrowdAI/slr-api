@@ -11,17 +11,10 @@ const votesDao = require(__base + 'dao/votes.dao');
 
 //error handler
 const errHandler = require(__base + 'utils/errors');
-//supply the auxiliary function
-const support = require(__base + 'utils/support');
 //error check function
 const errorCheck = require(__base + 'utils/errorCheck');
 //the config file
 const config = require(__base + 'config');
-//the packaged for input validation
-const ajv = require(__base + 'utils/ajv');
-const validationSchemes = require(__base + 'utils/validation.schemes');
-//the function to send email to notify the sharing
-const shareProjectMail = require(__base + 'utils/email/shareProjectMail');
 const conn = require(__base + 'utils/conn');
 
 
@@ -58,7 +51,7 @@ async function insertByArray(user_email, array_screener_id, manual_screening_typ
     errorCheck.isValidProjectOwner(project);
 
     //if the manual screening precess is already start
-    if(project.data.manual_screening_type){
+    if (project.data.manual_screening_type) {
         throw errHandler.createBadRequestError("the project is already initialized for manual screening!");
     }
 
@@ -86,18 +79,16 @@ async function insertByArray(user_email, array_screener_id, manual_screening_typ
 
         //insert the screener in the screenings table
         let localRes = await screeningsDao.insert({
-
             "manual_screening_type": manual_screening_type
         }, array_screener_id[i], project_id);
+
         //save the res of current element
         finalRes.push(localRes);
     }
 
-
     //set screening type of project
     project.data.manual_screening_type = manual_screening_type;
     await projectsDao.update(project.id, project.data);
-
 
     return finalRes;
 
@@ -109,9 +100,9 @@ async function insertByArray(user_email, array_screener_id, manual_screening_typ
  * @param {string} user_email of user
  * @param {int[]} array_screener_id
  * @param {string} project_id
-
  * @returns {Object[]} list of screenings created
  */
+
 async function insertByArrayAfterStarting(user_email, array_screener_id, project_id) {
 
     //error check for user_email
@@ -131,7 +122,7 @@ async function insertByArrayAfterStarting(user_email, array_screener_id, project
     errorCheck.isValidProjectOwner(project);
 
     //if the manual screening precess isn't not start yet
-    if(!project.data.manual_screening_type){
+    if (!project.data.manual_screening_type) {
         throw errHandler.createBadRequestError("the project is not yet initialized for manual screening!");
     }
 
@@ -142,28 +133,28 @@ async function insertByArrayAfterStarting(user_email, array_screener_id, project
     //for each screener id and screening data
     for (let i = 0; i < array_screener_id.length; i++) {
 
-            //check existence of selected user
-            let screenersUser = await usersDao.getUserById(array_screener_id[i]);
-            if (!screenersUser) {
-                throw errHandler.createBadRequestError("the selected user for screening isn't exist!");
-            }
-            if (!project.data.user_id.includes(array_screener_id[i].toString())) {
-                throw errHandler.createBadRequestError("the selected user for screening must be a collaborator of this project!");
-            }
-
-            //check existence of screener in screenings table
-            let screeningsRecord = await screeningsDao.selectByUserIdAndProjectId(array_screener_id[i], project_id);
-            //if the selected user is already present in the screenings table
-            if (screeningsRecord) {
-                throw errHandler.createBadRequestError("the selected user for screening is already present in this project!");
+        //check existence of selected user
+        let screenersUser = await usersDao.getUserById(array_screener_id[i]);
+        if (!screenersUser) {
+            throw errHandler.createBadRequestError("the selected user for screening isn't exist!");
+        }
+        if (!project.data.user_id.includes(array_screener_id[i].toString())) {
+            throw errHandler.createBadRequestError("the selected user for screening must be a collaborator of this project!");
         }
 
-            //insert the screener in the screenings table
-            localRes = await screeningsDao.insert({
-                "manual_screening_type": project.data.manual_screening_type
-            }, array_screener_id[i], project_id);
-            //save the res of current element
-            finalRes.push(localRes);
+        //check existence of screener in screenings table
+        let screeningsRecord = await screeningsDao.selectByUserIdAndProjectId(array_screener_id[i], project_id);
+        //if the selected user is already present in the screenings table
+        if (screeningsRecord) {
+            throw errHandler.createBadRequestError("the selected user for screening is already present in this project!");
+        }
+
+        //insert the screener in the screenings table
+        localRes = await screeningsDao.insert({
+            "manual_screening_type": project.data.manual_screening_type
+        }, array_screener_id[i], project_id);
+        //save the res of current element
+        finalRes.push(localRes);
     }
 
     /* ==================================================
@@ -187,7 +178,7 @@ async function insertByArrayAfterStarting(user_email, array_screener_id, project
         //if is a paper is screened
         if (projectPapers[i].data.metadata && projectPapers[i].data.metadata.screened === config.screening_status.screened) {
             //if votes's number  is equal to (the number of screeners -1 )
-            if (votes.length === (parseInt(numberScreeners)-1) ) {
+            if (votes.length === (parseInt(numberScreeners) - 1)) {
 
                 //delete screening property
                 delete projectPapers[i].data.metadata.screening;
@@ -278,7 +269,8 @@ async function deletes(user_email, screeners_id, project_id) {
                     //count their negative cases and positive cases
                     if (votes[i].data.answer === "0") {
                         negativeNumber++;
-                    } else if (votes[i].data.answer === "1") {
+                    }
+                    else if (votes[i].data.answer === "1") {
                         positiveNumber++;
                     }
                 }
@@ -497,7 +489,7 @@ async function selectByScreeningUser(user_email, orderBy, sort, start, count) {
     let user = await usersDao.getUserByEmail(user_email);
 
     let res = await projectsDao.selectByScreeningUser(user.id, orderBy, sort, start, count);
-    for(let i = 0; i < res.results.length; i++){
+    for (let i = 0; i < res.results.length; i++) {
         let progress = await projectPapersDao.manualScreeningProgress(user.id, res.results[i].project_id);
         res.results[i].progress = progress;
     }

@@ -2,11 +2,15 @@
 // any of the supported platforms. Also to implement any other 
 // functionality related to HITs.
 
+
+const projectPapersDao = require(__base + 'dao/projectPapers.dao');
+const projectsDao = require(__base + 'dao/projects.dao');
+const usersDao = require(__base + 'dao/users.dao');
+
 //file system
 const fs = require('fs');
 //csv parser
 const csv = require('async-csv');
-
 
 //the config file
 const config = require(__base + 'config');
@@ -21,11 +25,6 @@ const errorCheck = require(__base + 'utils/errorCheck');
 //the packaged for input validation
 const ajv = require(__base + 'utils/ajv');
 const validationSchemes = require(__base + 'utils/validation.schemes');
-
-
-const projectPapersDao = require(__base + 'dao/projectPapers.dao');
-const projectsDao = require(__base + 'dao/projects.dao');
-const usersDao = require(__base + 'dao/users.dao');
 
 
 /**

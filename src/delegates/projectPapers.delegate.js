@@ -184,29 +184,6 @@ async function deletes(user_email, projectPaper_id) {
 
 
 /**
- * select a projectPaper
- * @param {string} projectPaper_id
- * @returns {Object} projectPaper found
- *//*
- async function selectById(projectPaper_id)  {
-
- //check validation of projectPaper_id and transform the value in integer
- projectPaper_id = errorCheck.setAndCheckValidProjectPaperId(projectPaper_id);
-
- //call DAO layer
- let res = await projectPapersDao.selectById(projectPaper_id);
-
- //error check
- if (res === undefined)
- {
- throw errHandler.createNotFoundError('ProjectPaper does not exist!');
- }
-
- return res;
- }
- */
-
-/**
  * select all projectPaper associated with a project
  * @param {string} user_email of user
  * @param {string} project_id
@@ -260,22 +237,24 @@ async function selectByProject(user_email, project_id, type, orderBy, sort, star
             res = await projectPapersDao.selectByProject(project_id, orderBy, sort, start, count);
             break;
         case config.screening_status.backlog:
-            res = await projectPapersDao.selectNotScreenedByProject(project_id, orderBy, sort, start, count, min_confidence, max_confidence );
+            res = await projectPapersDao.selectNotScreenedByProject(project_id, orderBy, sort, start, count, min_confidence, max_confidence);
             break;
         case config.screening_status.manual:
 
 
             res = await projectPapersDao.selectManualByProject(project_id, orderBy, sort, start, count);
-            for(let i = 0; i < res.results.length; i++){
+            for (let i = 0; i < res.results.length; i++) {
 
                 let allVotes = await votesDao.selectByProjectPaperId(res.results[i].id);
 
                 res.results[i].data.metadata.votes = [];
-                for(let j = 0; j < allVotes.length; j++){
+                for (let j = 0; j < allVotes.length; j++) {
 
                     let userx = await usersDao.getUserById(allVotes[j].user_id);
-                    res.results[i].data.metadata.votes.push({user: {name: userx.data.name, picture: userx.data.picture}, answer: allVotes[j].data.answer});
-                
+                    res.results[i].data.metadata.votes.push({
+                        user: {name: userx.data.name, picture: userx.data.picture}, answer: allVotes[j].data.answer
+                    });
+
                 }
 
             }
@@ -300,7 +279,6 @@ module.exports = {
     insertFromPaper,
     update,
     deletes,
-    //selectById,
     selectByProject,
 
 };

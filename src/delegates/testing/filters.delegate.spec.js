@@ -1,14 +1,13 @@
 const timeOut = 60 * 1000;
-const delayTime = timeOut/2;
 const db = require(__base + "db/index");
 const filtersDelegate = require(__base + 'delegates/filters.delegate');
 
 
 /* *
-* filters
-* range of usable data n° 1 ~ 15
-* 6~10 for delegate layer
-* */
+ * filters
+ * range of usable data n° 1 ~ 15
+ * 6~10 for delegate layer
+ * */
 
 const index = 6;
 const index2 = index + 1;
@@ -48,7 +47,7 @@ describe('good cases on filters.delegate ', () => {
 
 
     test('insert() adds a new filter to the db', async () => {
-        
+
 
         let validExample = {
             "project_id": index,
@@ -65,16 +64,15 @@ describe('good cases on filters.delegate ', () => {
     });
 
     test('update()', async () => {
-        
 
 
         let filter_id = index;
         let newFilterData = {
             "predicate": "aaa",
-                "inclusion_description": "bbb",
-                "exclusion_description": "ccc",
+            "inclusion_description": "bbb",
+            "exclusion_description": "ccc",
         };
-        let res = await filtersDelegate.update(validUserEmail, filter_id,  newFilterData);
+        let res = await filtersDelegate.update(validUserEmail, filter_id, newFilterData);
 
         //expect(parseInt(res)).toBeDefined();
 
@@ -82,7 +80,6 @@ describe('good cases on filters.delegate ', () => {
 
 
     test('deletes()', async () => {
-        
 
 
         let filter_id = index5;
@@ -93,7 +90,7 @@ describe('good cases on filters.delegate ', () => {
 
 
     test('selectById()', async () => {
-        
+
 
         let filter_id = index;
         let filter = await filtersDelegate.selectById(validUserEmail, filter_id);
@@ -103,14 +100,13 @@ describe('good cases on filters.delegate ', () => {
     });
 
     test('selectByProject()', async () => {
-        
 
 
-        let project_id=index2;
-        let orderBy="id";
-        let sort="ASC";
-        let start=0;
-        let count=10;
+        let project_id = index2;
+        let orderBy = "id";
+        let sort = "ASC";
+        let start = 0;
+        let count = 10;
 
         let res = await filtersDelegate.selectByProject(validUserEmail2, project_id, orderBy, sort, start, count);
 
@@ -118,7 +114,6 @@ describe('good cases on filters.delegate ', () => {
         expect(parseInt(res.totalResults)).toBe(1);
 
     });
-
 
 
 });
@@ -133,7 +128,7 @@ describe('bad cases on filters.delegate ', () => {
     describe('bad cases filters.delegate.insert()', () => {
 
         test('insert() it should return error \'badRequest\' if parameters are not valid', async () => {
-            
+
             let filter = undefined;
 
             //project Id is not defined
@@ -147,7 +142,8 @@ describe('bad cases on filters.delegate ', () => {
             };
             try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForProjectId.filter, notValidExampleForProjectId.project_id);
-            } catch (e) {
+            }
+            catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.badRequest);
@@ -163,7 +159,8 @@ describe('bad cases on filters.delegate ', () => {
             };
             try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForProjectIdNotNumber.filter, notValidExampleForProjectIdNotNumber.project_id);
-            } catch (e) {
+            }
+            catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.badRequest);
@@ -179,7 +176,8 @@ describe('bad cases on filters.delegate ', () => {
             };
             try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForProjectIdNotInteger.filter, notValidExampleForProjectIdNotInteger.project_id);
-            } catch (e) {
+            }
+            catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.badRequest);
@@ -194,7 +192,8 @@ describe('bad cases on filters.delegate ', () => {
             };
             try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForExclusionDescription.filter, notValidExampleForExclusionDescription.project_id);
-            } catch (e) {
+            }
+            catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.badRequest);
@@ -202,7 +201,7 @@ describe('bad cases on filters.delegate ', () => {
         });
 
         test('insert() it should return \'unauthorized\' if the project doesn\'t exist', async () => {
-            
+
 
             let notValidExampleForProjectIdNotExist = {
                 "project_id": "9999",
@@ -214,7 +213,8 @@ describe('bad cases on filters.delegate ', () => {
             };
             try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForProjectIdNotExist.filter, notValidExampleForProjectIdNotExist.project_id);
-            } catch (e) {
+            }
+            catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.unauthorized);
@@ -222,7 +222,7 @@ describe('bad cases on filters.delegate ', () => {
         });
 
         test('insert() it should return \'unauthorized\' if the user does not have access', async () => {
-            
+
 
             let notValidExampleForProjectIdNotPermission = {
                 "project_id": index2 + "",
@@ -234,7 +234,8 @@ describe('bad cases on filters.delegate ', () => {
             };
             try {
                 filter = await filtersDelegate.insert(validUserEmail, notValidExampleForProjectIdNotPermission.filter, notValidExampleForProjectIdNotPermission.project_id);
-            } catch (e) {
+            }
+            catch (e) {
                 filter = e;
             }
             expect(filter.name).toBe(errorNames.unauthorized);

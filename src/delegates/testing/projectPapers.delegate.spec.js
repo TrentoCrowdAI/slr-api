@@ -1,5 +1,4 @@
 const timeOut = 60 * 1000;
-const delayTime = timeOut/2;
 const db = require(__base + "db/index");
 
 const projectPapersDelegate = require(__base + 'delegates/projectPapers.delegate');
@@ -7,10 +6,10 @@ const projectPapersDelegate = require(__base + 'delegates/projectPapers.delegate
 const config = require(__base + 'config');
 
 /* *
-* projectPapers
-* range of usable data n° 46~ 60
-* 51~55 for delegate layer
-* */
+ * projectPapers
+ * range of usable data n° 46~ 60
+ * 51~55 for delegate layer
+ * */
 
 
 const index = 51;
@@ -56,7 +55,6 @@ beforeEach(() => {
 describe('test cases on projectPapers.delegate ', () => {
 
     test('insertFromPaper()', async () => {
-        
 
         let project_id = index;
         let arrayEid = ["paper001", "paper002"];
@@ -70,7 +68,7 @@ describe('test cases on projectPapers.delegate ', () => {
 
 
     test('insertCustomPaper()', async () => {
-        
+
 
         let project_id = index;
 
@@ -80,19 +78,16 @@ describe('test cases on projectPapers.delegate ', () => {
     });
 
     test('update()', async () => {
-        
 
 
         let projectPaper_id = index;
-        let res = await projectPapersDelegate.update(validUserEmail, projectPaper_id,  newPaper);
-
+        let res = await projectPapersDelegate.update(validUserEmail, projectPaper_id, newPaper);
         //expect(parseInt(res)).toBeDefined();
 
     });
 
 
     test('deletes()', async () => {
-        
 
 
         let projectPaper_id = index5;
@@ -102,13 +97,11 @@ describe('test cases on projectPapers.delegate ', () => {
     });
 
 
-
     test('selectByProject()', async () => {
-        
 
 
         let project_id = index2;
-        let  type = config.screening_status.all;
+        let type = config.screening_status.all;
         let orderBy = "date_created";
         let sort = "ASC";
         let start = 0;

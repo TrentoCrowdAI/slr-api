@@ -1,18 +1,15 @@
-
 const timeOut = 60 * 1000;
-const delayTime = timeOut/2;
 const db = require(__base + "db/index");
 const screeningsDelegate = require(__base + 'delegates/screenings.delegate');
 //the config file
 const config = require(__base + 'config');
 
 
-
 /* *
-* screenings
-* range of usable data n° 106~ 120
-* 111~115 for delegate layer
-* */
+ * screenings
+ * range of usable data n° 106~ 120
+ * 111~115 for delegate layer
+ * */
 
 
 const index = 111;
@@ -69,12 +66,10 @@ describe('test cases on screenings.delegate ', () => {
     test('deletes()', async () => {
 
 
-
         let screeners_id = index5;
         let project_id = index5
 
         let res = await screeningsDelegate.deletes(validUserEmail5, screeners_id, project_id);
-
 
 
     });
@@ -96,10 +91,10 @@ describe('test cases on screenings.delegate ', () => {
     test('selectByScreeningUser()', async () => {
 
 
-        let orderBy="id";
-        let sort="ASC";
-        let start=0;
-        let count=10;
+        let orderBy = "id";
+        let sort = "ASC";
+        let start = 0;
+        let count = 10;
 
         let res = await screeningsDelegate.selectByScreeningUser(validUserEmail2, orderBy, sort, start, count);
 
@@ -109,7 +104,6 @@ describe('test cases on screenings.delegate ', () => {
     });
 
     test('selectById()', async () => {
-
 
 
         let screening_id = index2;
@@ -122,7 +116,6 @@ describe('test cases on screenings.delegate ', () => {
     });
 
     test('selectOneNotVotedByUserIdAndProjectId()', async () => {
-
 
 
         let screening_id = index4;

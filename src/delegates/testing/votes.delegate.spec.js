@@ -1,16 +1,13 @@
 const timeOut = 60 * 1000;
-const delayTime = timeOut/2;
 const db = require(__base + "db/index");
 const votesDelegate = require(__base + 'delegates/votes.delegate');
-//the config file
-const config = require(__base + 'config');
 
 
 /* *
-* votes
-* range of usable data n° 121~ 135
-* 126~130 for delegate layer
-* */
+ * votes
+ * range of usable data n° 121~ 135
+ * 126~130 for delegate layer
+ * */
 
 
 const index = 126;
@@ -18,13 +15,11 @@ const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
 const index5 = index + 4;
-const validUserEmail = "test"+index+"@gmail.com";
-const validUserEmail2 = "test"+index2+"@gmail.com";
-const validUserEmail3 = "test"+index3+"@gmail.com";
-const validUserEmail4 = "test"+index4+"@gmail.com";
-const validUserEmail5 = "test"+index5+"@gmail.com";
-
-
+const validUserEmail = "test" + index + "@gmail.com";
+const validUserEmail2 = "test" + index2 + "@gmail.com";
+const validUserEmail3 = "test" + index3 + "@gmail.com";
+const validUserEmail4 = "test" + index4 + "@gmail.com";
+const validUserEmail5 = "test" + index5 + "@gmail.com";
 
 
 //after all test case
@@ -36,7 +31,6 @@ afterAll(() => {
 beforeEach(() => {
     jest.setTimeout(timeOut);
 });
-
 
 
 const voteData = {
@@ -67,7 +61,6 @@ describe('test cases on votes.dao ', () => {
     });
 
 
-
     test('selectByProjectId()', async () => {
 
 
@@ -79,7 +72,6 @@ describe('test cases on votes.dao ', () => {
         expect(parseInt(res[0].project_id)).toBe(project_id);
 
     });
-
 
 
 });

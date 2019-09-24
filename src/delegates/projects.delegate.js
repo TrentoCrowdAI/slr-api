@@ -137,33 +137,7 @@ async function selectById(user_email, project_id) {
     return project;
 }
 
-/**
- *
- * select all project
- * @param {string} orderBy [id, date_created, date_last_modified, date_deleted]
- * @param {string} sort [ASC or DESC]
- * @param {string} start offset position where we begin to get
- * @param {string} count number of projects
- * @returns {Object} array of projects and total number of result
- *//*
- async function selectAll(orderBy, sort, start, count) {
 
- //check the validation of parameters
- orderBy = errorCheck.setAndCheckValidProjectOrderBy(orderBy);
- sort = errorCheck.setAndCheckValidSort(sort);
- start = errorCheck.setAndCheckValidStart(start);
- count = errorCheck.setAndCheckValidCount(count);
-
- let res = await projectsDao.selectAll(orderBy, sort, start, count);
-
- //error check
- if (res.results.length === 0)
- {
- throw errHandler.createNotFoundError('the list is empty!');
- }
- return res;
- }
- */
 
 /**
  * select the project of a specific user
@@ -199,35 +173,6 @@ async function selectByUserId(user_email, orderBy, sort, start, count) {
     return res;
 }
 
-
-/**
- * select project by a single keyword
- * @param {string} keyword to search
- * @param {string} orderBy [id, date_created, date_last_modified, date_deleted}
- * @param {string} sort {ASC or DESC}
- * @param {string} start offset position where we begin to get
- * @param {string} count number of projects
- * @returns {Object} array of projects and total number of result
- *//*
- async function selectBySingleKeyword(keyword, orderBy, sort, start, count) {
-
-
- //check the validation of parameters
- errorCheck.isValidKeyword(keyword);
- orderBy = errorCheck.setAndCheckValidProjectOrderBy(orderBy);
- sort = errorCheck.setAndCheckValidSort(sort);
- start = errorCheck.setAndCheckValidStart(start);
- count = errorCheck.setAndCheckValidCount(count);
-
- //call DAO layer
- let res = await projectsDao.selectBySingleKeyword(keyword, orderBy, sort, start, count);
- //error check
- if (res.results.length === 0)
- {
- throw errHandler.createNotFoundError('the list is empty!');
- }
- return res;
- }*/
 
 
 /**
@@ -318,22 +263,14 @@ async function deleteShareProject(user_email, project_id, collaborator_id) {
 }
 
 
-
-
-
-
-
-
 module.exports = {
     insert,
     updateNameAndDescription,
     deletes,
     selectById,
-    //selectAll,
     selectByUserId,
     shareProject,
     deleteShareProject,
-
 
 
 };

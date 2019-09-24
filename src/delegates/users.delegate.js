@@ -1,132 +1,23 @@
-//library to check validity of google token
-const {OAuth2Client} = require('google-auth-library');
+
 
 const usersDao = require(__base + 'dao/users.dao');
 const projectsDao = require(__base + 'dao/projects.dao');
 const screeningsDao = require(__base + 'dao/screenings.dao');
 
-
+//library to check validity of google token
+const {OAuth2Client} = require('google-auth-library');
 //error handler
 const errHandler = require(__base + 'utils/errors');
 //error check function
 const errorCheck = require(__base + 'utils/errorCheck');
 //supply the auxiliary function
 const support = require(__base + 'utils/support');
-//fetch request
-const conn = require(__base + 'utils/conn');
 //the config file
 const config = require(__base + 'config');
 
 
-/**
- * gets the users info and logs him in database
- * @param {string} tokenId
- * @returns {Object} user
- */
-/*
- async function userLogin(tokenId) {
-
- if (!tokenId) {
- throw errHandler.createBadRequestError("empty token id!");
- }
-
- //call Google api
- const oAuth2Client = new OAuth2Client(config.google.google_login_client_id);
- let ticket;
- try {
- ticket = await oAuth2Client.verifyIdToken({
- idToken: tokenId,
- audience: config.google.google_login_client_id,
- });
- }
- catch (e) {
- throw errHandler.createBadRequestError("the token is incorrect: "+e.message);
- }
-
- //get user object from response of google
- let user = ticket.getPayload();
- //set token_id
- user.token_id = tokenId;
-
- //check user's existence
- let existOfUser = await usersDao.checkUserByGoogleId(user.sub);
-
- let res;
- //if is a new user
- if(existOfUser===0){
- res= await usersDao.insert(user);
- }
- else{
- res= await usersDao.updateByGoogleId(user.sub, user);
- }
-
- return {
- "user": {"email": user.email, "name": user.given_name, "surname": user.family_name, "image": user.picture},
- "token": tokenId
- };
- }
- */
-
-/**
- logout the users , delete the specific token from database
- */
-/*
- async function userLogout(tokenId) {
-
- //error check for tokenId
- errorCheck.isValidTokenId(tokenId);
-
- let res = await usersDao.logoutByTokenId(tokenId);
- if(res===0){
- throw errHandler.createBadRequestError("the token does not match any user or user has already logged!");
- }
- }*/
-
-/**
- * check user's existence by token Id
- * @param {string} tokenId
- * @returns {boolean} true if found, false if not found
- */
-/*
- async function checkUserByTokenId(tokenId) {
-
- //error check for tokenId
- errorCheck.isValidTokenId(tokenId);
-
- //check user's existence in database
- let res =  await usersDao.checkUserByTokenId(tokenId);
- //if do not exist
- if(res===0){
- throw errHandler.createBadRequestError("the token does not match any user!");
- }
-
- }*/
-
-/**
- * get user data by token Id
- * @param {string} tokenId
- * @returns {Object} user found
- */
-
-/*
- async function getUserByTokenId(tokenId) {
-
- //error check for tokenId
- errorCheck.isValidTokenId(tokenId);
-
- //check user's existence in database
- let res =  await usersDao.getUserByTokenId(tokenId);
- //if do not exist
- if(!res){
- throw errHandler.createBadRequestError("the token does not match any user!");
- }
 
 
- return {
- "user": {"email": res.data.email, "name": res.data.given_name, "surname": res.data.family_name, "image": res.data.picture},
- };
- }
- */
 
 /**
  * verify the validity of token and return google email
@@ -142,7 +33,7 @@ async function verifyToken(tokenId) {
 
     //special case for testing
     if (tokenId.indexOf("test") !== -1) {
-        user_email = tokenId+"@gmail.com";
+        user_email = tokenId + "@gmail.com";
         //check user's existence
         let userFromDB = await usersDao.getUserByEmail(user_email);
         //if isn't exist the test user in DB
@@ -185,7 +76,7 @@ async function verifyToken(tokenId) {
             let res = await usersDao.insert(user);
         }
         //or never logged in
-        else if(userFromDB.data && userFromDB.data.name !== user.name){
+        else if (userFromDB.data && userFromDB.data.name !== user.name) {
             let res = await usersDao.update(user);
         }
 
@@ -205,7 +96,7 @@ async function verifyToken(tokenId) {
  */
 
 
- async function getCollaboratorByProjectId(user_email, project_id) {
+async function getCollaboratorByProjectId(user_email, project_id) {
 
     //error check for user_email
     errorCheck.isValidGoogleEmail(user_email);
@@ -254,10 +145,10 @@ async function getScreenersByProjectId(user_email, project_id) {
     //extract user_id and create a new array of ids
     let users = support.arrayElementFieldToArray(screenings, "user_id");
 
-    
+
     //call DAO layer
     let res = [];
-    if(users && users.length > 0){ //first I check if there are any users
+    if (users && users.length > 0) { //first I check if there are any users
         res = await usersDao.getUserByArrayIds(users);
     }
 
@@ -268,10 +159,6 @@ async function getScreenersByProjectId(user_email, project_id) {
 
 
 module.exports = {
-    //userLogin,
-    //userLogout,
-    //checkUserByTokenId,
-    //getUserByTokenId,
     verifyToken,
     getCollaboratorByProjectId,
     getScreenersByProjectId,

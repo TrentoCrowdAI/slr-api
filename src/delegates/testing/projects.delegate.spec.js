@@ -1,31 +1,29 @@
 const timeOut = 60 * 1000;
-const delayTime = timeOut/2;
 const db = require(__base + "db/index");
 
 const projectsDelegate = require(__base + 'delegates/projects.delegate');
 
 
-
 /* *
-* project
-* range of usable data n° 31 ~ 45
-* 36~40 for delegate layer
-* */
+ * project
+ * range of usable data n° 31 ~ 45
+ * 36~40 for delegate layer
+ * */
 const index = 36;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
 const index5 = index + 4;
-const validUserEmail = "test"+index+"@gmail.com";
-const validUserEmail2 = "test"+index2+"@gmail.com";
-const validUserEmail3 = "test"+index3+"@gmail.com";
-const validUserEmail4 = "test"+index4+"@gmail.com";
-const validUserEmail5 = "test"+index5+"@gmail.com";
+const validUserEmail = "test" + index + "@gmail.com";
+const validUserEmail2 = "test" + index2 + "@gmail.com";
+const validUserEmail3 = "test" + index3 + "@gmail.com";
+const validUserEmail4 = "test" + index4 + "@gmail.com";
+const validUserEmail5 = "test" + index5 + "@gmail.com";
 
 //object that contains all the error names
 const errorNames = {
-    badRequest : "badRequest",
-    notFound : "notFound",
+    badRequest: "badRequest",
+    notFound: "notFound",
     badImplementation: "badImplementation",
     unauthorized: "unauthorized",
     //to add the other error names
@@ -44,9 +42,8 @@ beforeEach(() => {
 });
 
 
-
 /* good cases=====================================================================================================*/
-let newProjectData ={
+let newProjectData = {
     "name": "aa",
     "description": "aaa"
 };
@@ -54,7 +51,6 @@ let newProjectData ={
 describe('good cases on projects.delegate', () => {
 
     test('insert() adds a new project to the db', async () => {
-        
 
 
         let project = await projectsDelegate.insert(validUserEmail, newProjectData);
@@ -62,7 +58,7 @@ describe('good cases on projects.delegate', () => {
     });
 
     test('updateNameAndDescription()', async () => {
-        
+
 
         let project_id = index;
 
@@ -73,7 +69,7 @@ describe('good cases on projects.delegate', () => {
 
 
     test('deletes()', async () => {
-        
+
 
         let project_id = index5;
 
@@ -84,7 +80,6 @@ describe('good cases on projects.delegate', () => {
 
 
     test('selectById()', async () => {
-        
 
 
         let project_id = index;
@@ -97,9 +92,7 @@ describe('good cases on projects.delegate', () => {
     });
 
 
-
     test('selectByUserId()', async () => {
-        
 
 
         let orderBy = "id";
@@ -117,7 +110,6 @@ describe('good cases on projects.delegate', () => {
 
 
     test('shareProject()', async () => {
-        
 
 
         let project_id = index;
@@ -131,7 +123,6 @@ describe('good cases on projects.delegate', () => {
     });
 
     test('deleteShareProject()', async () => {
-        
 
 
         let project_id = index4;
@@ -155,7 +146,7 @@ describe('bad cases on projects.delegate', () => {
     describe('bad cases on projects.delegate.insert()', () => {
 
         test('insert() it should return error \'badRequest\' if parameters are not valid', async () => {
-            
+
 
             let project = undefined;
 
@@ -163,9 +154,10 @@ describe('bad cases on projects.delegate', () => {
             const notValidExampleForNameMissing = {
                 "description": "aaa"
             };
-            try{
+            try {
                 project = await projectsDelegate.insert(validUserEmail, notValidExampleForNameMissing);
-            }catch(e){
+            }
+            catch (e) {
                 project = e;
             }
             expect(project.name).toBe(errorNames.badRequest);
@@ -174,9 +166,10 @@ describe('bad cases on projects.delegate', () => {
             const notValidExampleForDescriptionMissing = {
                 "name": "aa"
             };
-            try{
+            try {
                 project = await projectsDelegate.insert(validUserEmail, notValidExampleForDescriptionMissing);
-            }catch(e){
+            }
+            catch (e) {
                 project = e;
             }
             expect(project.name).toBe(errorNames.badRequest);
@@ -186,9 +179,10 @@ describe('bad cases on projects.delegate', () => {
                 "name": "",
                 "description": "aaa"
             };
-            try{
+            try {
                 project = await projectsDelegate.insert(validUserEmail, notValidExampleForNameEmpty);
-            }catch(e){
+            }
+            catch (e) {
                 project = e;
             }
             expect(project.name).toBe(errorNames.badRequest);
@@ -198,9 +192,10 @@ describe('bad cases on projects.delegate', () => {
                 "name": "bb",
                 "description": ""
             };
-            try{
+            try {
                 project = await projectsDelegate.insert(validUserEmail, notValidExampleForDescriptionEmpty);
-            }catch(e){
+            }
+            catch (e) {
                 project = e;
             }
             expect(project.name).toBe(errorNames.badRequest);

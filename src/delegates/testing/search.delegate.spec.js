@@ -1,5 +1,4 @@
 const timeOut = 60 * 1000;
-const delayTime = timeOut/2;
 const db = require(__base + "db/index");
 const searchesDelegate = require(__base + 'delegates/searches.delegate');
 

@@ -1,10 +1,6 @@
 // this modules is responsible for allowing to publish HITs in
 // any of the supported platforms. Also to implement any other 
 // functionality related to HITs.
-//library to parse XML string to object
-
-const searchesDelegate = require(__base + 'delegates/searches.delegate');
-const searchesDao = require(__base + 'dao/searches.dao');
 
 //the config file
 const config = require(__base + 'config');
@@ -54,8 +50,6 @@ async function fakeSimilarSearchService(paperData, start, count) {
 
     return response;
 }
-
-
 
 
 /**
@@ -180,7 +174,6 @@ async function scopusSearchWithoutSave(keyword, searchBy, year, orderBy, sort, s
         arrayPapers.push(paper);
         arrayEid.push(arrayResults[i].eid);
     }
-
 
 
     //return the array of papers get from scopus and total number of results
@@ -318,7 +311,7 @@ async function fakeAutomatedSearchService(title, description, arrayFilter, min_c
             sum += randomValue;
             //push filter id & value into array of filter
             response.results[i].metadata.automatedSearch.filters.push(
-                {"id" : arrayFilter[j].id, "filterValue" : randomValue}
+                {"id": arrayFilter[j].id, "filterValue": randomValue}
             );
         }
 
@@ -434,12 +427,12 @@ async function automatedScopusSearch(keyword, searchBy, sort, start = 0, count =
 
 /**
  * fake service for automated evaluation of confidence
-* @param {Object[]}arrayPaper array of post object
+ * @param {Object[]}arrayPaper array of post object
  * @param {Object[]} arrayFilter array of filter object
  * @param {string} project_id
  */
 
-function fakeAutomatedEvaluationService(arrayPaper, arrayFilter, project_id){
+function fakeAutomatedEvaluationService(arrayPaper, arrayFilter, project_id) {
 
     //create response array
     let response = [];
@@ -456,12 +449,12 @@ function fakeAutomatedEvaluationService(arrayPaper, arrayFilter, project_id){
     let range = max_confidence - min_confidence + 0.01;
 
     //for each post
-    for(let i=0; i<arrayPaper.length; i++){
+    for (let i = 0; i < arrayPaper.length; i++) {
 
         //create object for each paper
         //set field id
         //set field filters array
-        element = {id:arrayPaper[i].id, filters: [] };
+        element = {id: arrayPaper[i].id, filters: []};
 
         //initial the sum to 0
         sum = 0;
@@ -474,7 +467,7 @@ function fakeAutomatedEvaluationService(arrayPaper, arrayFilter, project_id){
             //add up the value
             sum += randomValue;
             //create filter object where will storage the filter id and value
-            filter = {"id" : arrayFilter[j].id, "filterValue" : randomValue};
+            filter = {"id": arrayFilter[j].id, "filterValue": randomValue};
             //push the filter object in the array filters of paper object
             element.filters.push(filter);
 
@@ -500,7 +493,7 @@ function fakeAutomatedEvaluationService(arrayPaper, arrayFilter, project_id){
     }
 
     //I set status flag
-    global["project_"+project_id] = true;
+    global["project_" + project_id] = true;
 
     //timeout of 3 seconds
     setTimeout(() => {

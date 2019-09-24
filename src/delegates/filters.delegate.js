@@ -47,7 +47,7 @@ async function insert(user_email, newFilterData, project_id) {
     let nFilters = await filtersDao.countByProject(project_id);
     let newNumberForFilters = parseInt(nFilters) + 1;
     //set name of filter
-    newFilterData.name = "C"+newNumberForFilters;
+    newFilterData.name = "C" + newNumberForFilters;
 
     //call DAO layer to insert the filter data
     let res = await filtersDao.insert(newFilterData, project_id);
@@ -98,8 +98,7 @@ async function update(user_email, filter_id, newFilterData) {
     //call DAO layer
     //copy the name of filter
     newFilterData.name = filter.data.name;
-   await filtersDao.update(filter_id, newFilterData);
-
+    await filtersDao.update(filter_id, newFilterData);
 
 
 }

@@ -1,11 +1,6 @@
 // this modules is responsible for allowing to publish HITs in
 // any of the supported platforms. Also to implement any other 
 // functionality related to HITs.
-//library to parse XML string to object
-const XMLParser = require('fast-xml-parser');
-const parserOptions = {
-    ignoreAttributes: false,
-};
 
 
 const searchesDao = require(__base + 'dao/searches.dao');
@@ -20,97 +15,13 @@ const errHandler = require(__base + 'utils/errors');
 const support = require(__base + 'utils/support');
 const errorCheck = require(__base + 'utils/errorCheck');
 const conn = require(__base + 'utils/conn');
-//the packaged for input validation
-const ajv = require(__base + 'utils/ajv');
-const validationSchemes = require(__base + 'utils/validation.schemes');
 
+//library to parse XML string to object
+const XMLParser = require('fast-xml-parser');
+const parserOptions = {
+    ignoreAttributes: false,
+};
 
-/**
- * insert a paper
- * @param {Object} newPaperData
- * @returns {Object} paper created
- *//*
-async function insert(newPaperData) {
-    //check input format
-    let valid = ajv.validate(validationSchemes.paper, newPaperData);
-    //if is not a valid input
-    if (!valid) {
-        throw errHandler.createBadRequestError('the new paper data is not valid!');
-    }
-    //call DAO layer
-    let res = await searchesDao.insert(newPaperData);
-
-    return res;
-}
-*/
-
-/**
- *  * update a paper
- * @param {string}  paper_id
- * @param {Object} newPaperData
- *//*
-async function update(paper_id, newPaperData) {
-
-    //check validation of paper_id and transform the value in integer
-    paper_id = errorCheck.setAndCheckValidPaperId(paper_id);
-
-    //check input format
-    let valid = ajv.validate(validationSchemes.paper, newPaperData);
-    //if is not a valid input
-    if (!valid) {
-        throw errHandler.createBadRequestError('the new paper data for update is not valid!');
-    }
-
-    //call DAO layer
-    let numberRow = await searchesDao.update(paper_id, newPaperData);
-    //error check
-    if (numberRow === 0) {
-        throw errHandler.createNotFoundError('Paper does not exist!');
-    }
-
-}
-*/
-
-/**
- *  * delete a paper
- * @param {string} paper_id
-
-async function deletes(paper_id) {
-
-
-    //check validation of paper_id and transform the value in integer
-    paper_id = errorCheck.setAndCheckValidPaperId(paper_id);
-
-    //call DAO layer
-    let numberRow = await searchesDao.deletes(paper_id);
-
-    //error check
-    if (numberRow === 0) {
-        throw errHandler.createNotFoundError('Paper does not exist!');
-    }
-}*/
-
-
-/**
- * select a paper
- * @param {string} paper_id
- * @returns {Object} paper found
- *//*
-async function selectById(paper_id) {
-
-    //check validation of paper_id and transform the value in integer
-    paper_id = errorCheck.setAndCheckValidPaperId(paper_id);
-
-    //call DAO layer
-    let res = await searchesDao.selectById(paper_id);
-    //error check
-
-    if (!res) {
-        throw errHandler.createNotFoundError('Paper does not exist!');
-    }
-
-    return res;
-}*/
 
 /**
  * wrapper function for searching
@@ -426,7 +337,7 @@ async function arxivSearch(keyword, searchBy, orderBy, sort, start, count) {
 
         //push element in array
         arrayPapers.push(paper);
-        arrayId.push( paper.eid);
+        arrayId.push(paper.eid);
     }
 
 
@@ -479,8 +390,8 @@ async function similarSearch(paperData, start, count) {
     let response = null;
 
     /*###########################################
-    call the service
-    ###########################################*/
+     call the service
+     ###########################################*/
 
     response = await conn.post(config.search_similar_server, queryData);
 
@@ -489,7 +400,7 @@ async function similarSearch(paperData, start, count) {
     if (response.message == "Not Found") {
         throw errHandler.createNotFoundError(response.message);
     }
-    else if(response.message){
+    else if (response.message) {
         throw errHandler.createBadImplementationError(response.message);
     }
 
@@ -540,8 +451,6 @@ async function similarSearch(paperData, start, count) {
 }
 
 
-
-
 /**
  *
  * automated search on a specific topic
@@ -553,8 +462,7 @@ async function similarSearch(paperData, start, count) {
  * @param {string} count number of papers
  * @returns {Object} array of papers and total number of result
  */
-async function automatedSearch(user_email, project_id, min_confidence, max_confidence, start, count){
-
+async function automatedSearch(user_email, project_id, min_confidence, max_confidence, start, count) {
 
 
     //error check for user_email
@@ -566,7 +474,7 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
     min_confidence = errorCheck.setAndCheckValidMinConfidenceValue(min_confidence);
     max_confidence = errorCheck.setAndCheckValidMaxConfidenceValue(max_confidence);
 
-    if (max_confidence < min_confidence ) {
+    if (max_confidence < min_confidence) {
         throw errHandler.createBadRequestError('the max_confidence cannot be less than min_confidence!');
     }
 
@@ -586,7 +494,6 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
 
     //call DAO layer
     let filters = await filtersDao.selectAllByProject(project_id);
-
 
 
     //prepare the query object
@@ -614,7 +521,7 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
     if (response.message == "Not Found") {
         throw errHandler.createNotFoundError(response.message);
     }
-    else if(response.message){
+    else if (response.message) {
         throw errHandler.createBadImplementationError(response.message);
     }
     //###########################################
@@ -667,18 +574,8 @@ async function automatedSearch(user_email, project_id, min_confidence, max_confi
 }
 
 
-
-
 module.exports = {
-    //insert,
-    //update,
-    //deletes,
-    //selectById,
-    //selectAll,
-    //selectBySingleKeyword,
     search,
-    scopusSearch,
-    arxivSearch,
     similarSearch,
     automatedSearch,
 

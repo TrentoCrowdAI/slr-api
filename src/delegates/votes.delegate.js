@@ -4,7 +4,6 @@
 
 const projectPapersDao = require(__base + 'dao/projectPapers.dao');
 const projectsDao = require(__base + 'dao/projects.dao');
-const filtersDao = require(__base + 'dao/filters.dao');
 const usersDao = require(__base + 'dao/users.dao');
 const votesDao = require(__base + 'dao/votes.dao');
 const screeningsDao = require(__base + 'dao/screenings.dao');
@@ -14,17 +13,15 @@ const screeningsDao = require(__base + 'dao/screenings.dao');
 const config = require(__base + 'config');
 //error handler
 const errHandler = require(__base + 'utils/errors');
-//supply the auxiliary function
-const support = require(__base + 'utils/support');
 //error check function
 const errorCheck = require(__base + 'utils/errorCheck');
-const conn = require(__base + 'utils/conn');
 //the packaged for input validation
 const ajv = require(__base + 'utils/ajv');
 const validationSchemes = require(__base + 'utils/validation.schemes');
 
 //require lodash array library
 const _array = require('lodash/array');
+
 
 /**
  * insert the vote of a exist projectPaper
@@ -49,19 +46,19 @@ async function insert(user_email, voteData, project_paper_id) {
     let valid = ajv.validate(validationSchemes.vote, voteData);
     //if is not a valid input
     if (!valid) {
-        throw errHandler.createBadRequestError('the new vote data is not valid!('+ ajv.errorsText()+')');
+        throw errHandler.createBadRequestError('the new vote data is not valid!(' + ajv.errorsText() + ')');
     }
     // check format of vote's metadata
     let valid2 = ajv.validate(validationSchemes.vote_metadata, voteData.metadata);
     //if is not a valid input
     if (!valid2) {
-        throw errHandler.createBadRequestError('the new vote data.metadata is not valid!('+ ajv.errorsText() +')');
+        throw errHandler.createBadRequestError('the new vote data.metadata is not valid!(' + ajv.errorsText() + ')');
     }
 
     //check validation of answer
     /*if (voteData.answer !== "0" && voteData.answer !== "1" && voteData.answer !== "2") {
-        throw errHandler.createBadRequestError("the answer isn't valid!");
-    }*/
+     throw errHandler.createBadRequestError("the answer isn't valid!");
+     }*/
 
     //count the partial positive and negative votes, the partial votes are stored in the highlights array
     let pNumber = 0;
@@ -71,7 +68,8 @@ async function insert(user_email, voteData, project_paper_id) {
         //count their negative cases and positive cases
         if (voteData.metadata.highlights[i].outcome === "0") {
             nNumber++;
-        } else if (voteData.metadata.highlights[i].outcome === "1"){
+        }
+        else if (voteData.metadata.highlights[i].outcome === "1") {
             pNumber++;
         }
     }
@@ -79,9 +77,11 @@ async function insert(user_email, voteData, project_paper_id) {
     //I check the majority(taking into consideration the 'undecided' votes that I did not count)
     if (pNumber > nNumber && pNumber > (voteData.metadata.highlights.length - nNumber - pNumber)) {
         voteData.answer = "1";
-    }else if(nNumber > (voteData.metadata.highlights.length - nNumber - pNumber)){
+    }
+    else if (nNumber > (voteData.metadata.highlights.length - nNumber - pNumber)) {
         voteData.answer = "0";
-    }else{
+    }
+    else {
         voteData.answer = "2";
     }
 
@@ -122,21 +122,15 @@ async function insert(user_email, voteData, project_paper_id) {
 
 
     //if the project hasn't tags filed
-    if(!project.data.tags){
+    if (!project.data.tags) {
         //create a new array
-        project.data.tags =[];
+        project.data.tags = [];
     }
     //union the tags from vote object to project
-    project.data.tags = _array.union([...(project.data.tags),...(voteData.metadata.tags)]);
+    project.data.tags = _array.union([...(project.data.tags), ...(voteData.metadata.tags)]);
     //update project
     await projectsDao.update(project_id, project.data);
 
-    /*
-
-    ####################################################################
-    #################################################################
-
-     */
 
     //if projectPaper hasn't metadata field in the data
     if (!projectPaper.data.metadata) {
@@ -144,7 +138,7 @@ async function insert(user_email, voteData, project_paper_id) {
         projectPaper.data.metadata = {};
     }
 
-    
+
     //get all votes
     let allVotes = await votesDao.selectByProjectPaperId(project_paper_id);
 
@@ -162,7 +156,8 @@ async function insert(user_email, voteData, project_paper_id) {
             //count their negative cases and positive cases
             if (allVotes[i].data.answer === "0") {
                 negativeNumber++;
-            } else if (allVotes[i].data.answer === "1"){
+            }
+            else if (allVotes[i].data.answer === "1") {
                 positiveNumber++;
             }
         }
@@ -181,7 +176,7 @@ async function insert(user_email, voteData, project_paper_id) {
 
     }
     //if there aren't all votes
-    else{
+    else {
         //set the projectPaper screened status of projectPaper as manual
         projectPaper.data.metadata.screened = config.screening_status.manual;
     }
