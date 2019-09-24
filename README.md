@@ -19,7 +19,7 @@ Under development.
 - clone the repo ```git clone https://github.com/TrentoCrowdAI/slr-api.git && cd slr-api```
 - *checkout on the develop branch  ```git checkout develop```*
 - run ```npm install``` to install its modules
-- rename file ".env.example" to ".env" and modify its variables
+- copy file ".env.example" to ".env" and modify its variables
 
 ### initial database
 - You need to connect an appropriate POSTGRES database by change the variable DATABASE_URL in .env file
@@ -31,3 +31,6 @@ Under development.
 The server will be listening on ```http://localhost:3001/``` and you can find the documentation about the API calls [here](https://ese1.docs.apiary.io/#reference)
 
 
+### testing
+- copy file ".env.example" to ".env.test" and modify its variables
+- run ```npm test``` to test
