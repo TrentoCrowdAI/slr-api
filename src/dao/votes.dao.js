@@ -1,6 +1,4 @@
 const db = require(__base + "db/index");
-//supply the auxiliary function
-const support = require(__base + 'utils/support');
 
 
 /**

@@ -1,23 +1,19 @@
-
 const timeOut = 30 * 1000;
-
 const projectPapersDao = require(__base + 'dao/projectPapers.dao');
-
 const db = require(__base + "db/index");
 
 /* *
-* projectPapers
-* range of usable data n° 46~ 60
-* 56~60 for dao layer
-* */
+ * projectPapers
+ * range of usable data n° 46~ 60
+ * 56~60 for dao layer
+ * */
 
 
 const index = 56;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
-const index5 =  index + 4;
-
+const index5 = index + 4;
 
 
 let newProjectPaperData = {
@@ -53,8 +49,6 @@ describe('test cases on projectPapers.dao ', () => {
     test('insert()', async () => {
 
 
-
-
         let project_id = index;
 
         let res = await projectPapersDao.insert(newProjectPaperData, project_id);
@@ -67,25 +61,24 @@ describe('test cases on projectPapers.dao ', () => {
     test('insertByList()', async () => {
 
 
-
         let arrayProjectPaperData = [
             {
-            "authors": "aa",
-            "title": "aaa",
-            "year": "2099",
-            "date": "2099-12-12",
-            "source_title": "aaa",
-            "link": "https://www.scopus.com/",
-            "abstract": "abc",
-            "document_type": "Article",
-            "source": "Scopus",
-            "eid": "123456",
-            "abstract_structured": "1",
-            "filter_oa_include": "1",
-            "filter_study_include": "0",
-            "notes": "",
-            "manual": "0",
-            "doi": "abcdefg"
+                "authors": "aa",
+                "title": "aaa",
+                "year": "2099",
+                "date": "2099-12-12",
+                "source_title": "aaa",
+                "link": "https://www.scopus.com/",
+                "abstract": "abc",
+                "document_type": "Article",
+                "source": "Scopus",
+                "eid": "123456",
+                "abstract_structured": "1",
+                "filter_oa_include": "1",
+                "filter_study_include": "0",
+                "notes": "",
+                "manual": "0",
+                "doi": "abcdefg"
             },
             {
                 "authors": "aa",
@@ -128,9 +121,7 @@ describe('test cases on projectPapers.dao ', () => {
     });
 
 
-
     test('update()', async () => {
-
 
 
         let projectPaper_id = index;
@@ -145,7 +136,6 @@ describe('test cases on projectPapers.dao ', () => {
     test('deletes()', async () => {
 
 
-
         let projectPaper_id = index5;
 
         let res = await projectPapersDao.deletes(projectPaper_id);
@@ -156,7 +146,6 @@ describe('test cases on projectPapers.dao ', () => {
 
 
     test('selectById()', async () => {
-
 
 
         let projectPaper_id = index;
@@ -173,12 +162,11 @@ describe('test cases on projectPapers.dao ', () => {
     test('selectByProject()', async () => {
 
 
-
-        let project_id=index2;
-        let orderBy="date_created";
-        let sort="ASC";
-        let start=0;
-        let count=10;
+        let project_id = index2;
+        let orderBy = "date_created";
+        let sort = "ASC";
+        let start = 0;
+        let count = 10;
 
 
         let res = await projectPapersDao.selectByProject(project_id, orderBy, sort, start, count);
@@ -191,8 +179,7 @@ describe('test cases on projectPapers.dao ', () => {
     test('selectAllNotEvaluatedAndScreened()', async () => {
 
 
-
-        let project_id=index2;
+        let project_id = index2;
 
         let res = await projectPapersDao.selectAllNotEvaluatedAndScreened(project_id);
 
@@ -201,17 +188,15 @@ describe('test cases on projectPapers.dao ', () => {
     });
 
 
-
     test('selectNotScreenedByProject()', async () => {
 
 
-
-        let project_id=index2;
-        let orderBy="date_created";
-        let sort="ASC";
-        let start=0;
-        let count=10;
-        let min_confidence=0.0;
+        let project_id = index2;
+        let orderBy = "date_created";
+        let sort = "ASC";
+        let start = 0;
+        let count = 10;
+        let min_confidence = 0.0;
         let max_confidence = 1.0;
 
         let res = await projectPapersDao.selectNotScreenedByProject(project_id, orderBy, sort, start, count, min_confidence, max_confidence);
@@ -224,12 +209,11 @@ describe('test cases on projectPapers.dao ', () => {
     test('selectManualByProject()', async () => {
 
 
-
-        let project_id=index3;
-        let orderBy="date_created";
-        let sort="ASC";
-        let start=0;
-        let count=10;
+        let project_id = index3;
+        let orderBy = "date_created";
+        let sort = "ASC";
+        let start = 0;
+        let count = 10;
 
 
         let res = await projectPapersDao.selectManualByProject(project_id, orderBy, sort, start, count);
@@ -243,8 +227,7 @@ describe('test cases on projectPapers.dao ', () => {
     test('countAutoScreenedOutOfTotalPapers()', async () => {
 
 
-
-        let project_id=index2;
+        let project_id = index2;
 
         let res = await projectPapersDao.countAutoScreenedOutOfTotalPapers(project_id);
 
@@ -254,16 +237,14 @@ describe('test cases on projectPapers.dao ', () => {
     });
 
 
-
     test('selectScreenedByProject()', async () => {
 
 
-
-        let project_id=index4;
-        let orderBy="date_created";
-        let sort="ASC";
-        let start=0;
-        let count=10;
+        let project_id = index4;
+        let orderBy = "date_created";
+        let sort = "ASC";
+        let start = 0;
+        let count = 10;
 
 
         let res = await projectPapersDao.selectScreenedByProject(project_id, orderBy, sort, start, count);
@@ -277,8 +258,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
         let user_id = index;
-        let project_id=index;
-
+        let project_id = index;
 
 
         let res = await projectPapersDao.selectOneNotVotedByUserIdAndProjectId(user_id, project_id);
@@ -292,7 +272,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
         let user_id = index2
-        let project_id=index2;
+        let project_id = index2;
 
         let res = await projectPapersDao.manualScreeningProgress(user_id, project_id);
 
@@ -304,8 +284,7 @@ describe('test cases on projectPapers.dao ', () => {
     test('selectAllByProject()', async () => {
 
 
-
-        let project_id=index2;
+        let project_id = index2;
 
         let res = await projectPapersDao.selectAllByProjectId(project_id);
 
@@ -317,7 +296,7 @@ describe('test cases on projectPapers.dao ', () => {
 
 
         let arrayEid = ["1", "2"];
-        let project_id=index2;
+        let project_id = index2;
 
         let res = await projectPapersDao.checkExistenceByEids(arrayEid, project_id);
 

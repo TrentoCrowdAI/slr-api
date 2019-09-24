@@ -1,8 +1,8 @@
-//set environmental variables by env file
+//get environmental variables from env file
 require('dotenv').config();
 
 //the config file
-const config = require(__dirname  + "/" + 'config');
+const config = require(__dirname + "/" + 'config');
 
 const app = require('./app');
 

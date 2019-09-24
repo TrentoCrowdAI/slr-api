@@ -2,16 +2,18 @@
 // as services using express
 
 const express = require('express');
+const router = express.Router();
+
 //library to receive file data
 const multer = require('multer');
 //file system
 const fs = require('fs');
-
 //the config file
 const config = require(__base + 'config');
 
+
 const uploadFileDelegate = require(__base + 'delegates/uploadFile.delegate');
-const router = express.Router();
+
 
 
 //create a temp folder to save the tmp file

@@ -8,10 +8,10 @@ const config = require(__base + 'config');
 
 
 /* *
-* projectPapers
-* range of usable data n° 46~ 60
-* 46~50 for controller layer
-* */
+ * projectPapers
+ * range of usable data n° 46~ 60
+ * 46~50 for controller layer
+ * */
 
 
 const index = 46;

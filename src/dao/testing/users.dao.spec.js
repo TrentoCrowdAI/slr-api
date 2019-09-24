@@ -1,17 +1,13 @@
-
 const timeOut = 30 * 1000;
-
 const usersDao = require(__base + 'dao/users.dao');
-
 const db = require(__base + "db/index");
 
 
 /* *
-* users
-* range of usable data n° 76~ 90
-* 86~90 for dao layer
-* */
-
+ * users
+ * range of usable data n° 76~ 90
+ * 86~90 for dao layer
+ * */
 
 
 const index = 86;
@@ -49,12 +45,11 @@ describe('test cases on users.dao ', () => {
     });
 
 
-
     test('update()', async () => {
 
 
         let putUserData = {
-            email: "test"+index+"@gmail.com",
+            email: "test" + index + "@gmail.com",
             name: "name",
             picture: "picture.jpg",
         };
@@ -69,8 +64,7 @@ describe('test cases on users.dao ', () => {
     test('getUserByEmail()', async () => {
 
 
-
-        let email = "test"+index+"@gmail.com";
+        let email = "test" + index + "@gmail.com";
 
         let res = await usersDao.getUserByEmail(email);
 
@@ -82,8 +76,7 @@ describe('test cases on users.dao ', () => {
     test('getUserByArrayIds()', async () => {
 
 
-
-        let arrayIds = [index,index2,index3];
+        let arrayIds = [index, index2, index3];
 
         let res = await usersDao.getUserByArrayIds(arrayIds);
 
@@ -92,7 +85,6 @@ describe('test cases on users.dao ', () => {
     });
 
     test('getUserById()', async () => {
-
 
 
         let id = index;

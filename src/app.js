@@ -1,7 +1,6 @@
 global.__base = __dirname + '/';
 
 const express = require('express');
-
 const bodyParser = require('body-parser');
 //HTTP-friendly error objects
 const Boom = require('boom');
@@ -28,9 +27,8 @@ const votesController = require('./controllers/votes.controller');
 //controller for fake external service
 const externalServicesController = require('./controllers/external.services.controller');
 
+
 const app = express();
-
-
 app.use(bodyParser.json({limit: '50mb'}));
 app.use(bodyParser.urlencoded({extended: true, limit: '50mb', parameterLimit: 1000000}));
 
@@ -38,7 +36,6 @@ app.use(bodyParser.urlencoded({extended: true, limit: '50mb', parameterLimit: 10
 app.get('/', (req, res) => {
     res.json({msg: 'Hello world!'});
 });
-
 
 //enabling CORS for all request from any domain
 app.all('*', function (req, res, next) {
@@ -58,22 +55,18 @@ app.all('*', function (req, res, next) {
 });
 
 
-
 //fake external services
 app.use(externalServicesController);
 
 // define routes here
 app.use(usersController);
 app.use(papersController);
-
 app.use(projectsController);
 app.use(projectPapersController);
 app.use(filtersController);
 app.use(uploadFileController);
 app.use(screeningsController);
 app.use(votesController);
-
-
 
 
 //manages the object error threw by level delegate

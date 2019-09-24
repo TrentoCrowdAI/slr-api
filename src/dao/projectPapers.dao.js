@@ -197,7 +197,7 @@ async function selectNotScreenedByProject(project_id, orderBy, sort, start, coun
 
         res = await db.query(
             "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  ( (NOT(P.data ? 'metadata')) OR (P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screened') AND (  NOT(P.data->'metadata' ? 'automatedScreening') OR P.data->'metadata'->'automatedScreening'->>'value' <= $2)   ) )   ORDER BY  " + orderBy + "   " + sort + " LIMIT $3 OFFSET $4",
-            [project_id, max_confidence,count, start]
+            [project_id, max_confidence, count, start]
         );
 
         //query to get total number of result
@@ -207,7 +207,7 @@ async function selectNotScreenedByProject(project_id, orderBy, sort, start, coun
         );
 
     }
-    else{
+    else {
         res = await db.query(
             "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screened') AND   P.data->'metadata' ? 'automatedScreening' AND P.data->'metadata'->'automatedScreening'->>'value' >= $2 AND P.data->'metadata'->'automatedScreening'->>'value' <=  $3       ORDER BY  " + orderBy + "   " + sort + " LIMIT $4 OFFSET $5",
             [project_id, min_confidence, max_confidence, count, start]
@@ -216,10 +216,9 @@ async function selectNotScreenedByProject(project_id, orderBy, sort, start, coun
         //query to get total number of result
         resForTotalNumber = await db.query(
             "SELECT * FROM public." + db.TABLES.projectPapers + " P WHERE P.project_id = $1  AND  P.data ? 'metadata'  AND NOT(P.data->'metadata' ? 'screened') AND   P.data->'metadata' ? 'automatedScreening' AND P.data->'metadata'->'automatedScreening'->>'value' >= $2 AND P.data->'metadata'->'automatedScreening'->>'value' <=  $3  ",
-            [project_id, min_confidence,max_confidence]
+            [project_id, min_confidence, max_confidence]
         );
     }
-
 
 
     return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
@@ -329,57 +328,6 @@ async function selectScreenedByProject(project_id, orderBy, sort, start, count) 
 
 
 /**
- * search papers belonging to a project
- * @param {string} keyword to search
- * @param {int} project_id
- * @param {string} searchBy [all, author, content] "content" means title+description
- * @param {string} year specific year to search
- * @param {string} orderBy each paper data.propriety
- * @param {string} sort {ASC or DESC}
- * @param {int} start offset position where we begin to get
- * @param {int} count number of papers
- * @returns {Object} array of projectPapers and total number of result
- *//*
-async function searchPaperByProject(keyword, project_id, searchBy, year, orderBy, sort, start, count) {
-
-    //set first sql condition by searchBy value
-    let condition;
-    switch (searchBy) {
-        case "all":
-            condition = " AND ( data->>'authors' LIKE '%" + keyword + "%' OR data->>'title' LIKE '%" + keyword + "%' OR data->>'year' LIKE '%" + keyword + "%' OR data->>'source_title' LIKE '%" + keyword + "%' OR data->>'link' LIKE '%" + keyword + "%' OR data->>'abstract' LIKE '%" + keyword + "%' OR data->>'document_type' LIKE '%" + keyword + "%' OR data->>'source' LIKE '%" + keyword + "%' OR data->>'eid' LIKE '%" + keyword + "%' OR data->>'abstract_structured' LIKE '%" + keyword + "%' OR data->>'filter_study_include' LIKE '%" + keyword + "%' OR data->>'notes' LIKE '%" + keyword + "%' ) ";
-            break;
-        case "author":
-            condition = " AND ( data->>'authors' LIKE '%" + keyword + "%' ) ";
-            break;
-        case "content":
-            condition = " AND ( data->>'title' LIKE '%" + keyword + "%' OR  data->>'abstract' LIKE '%" + keyword + "%' ) ";
-            break;
-    }
-
-    //set second sql condition by year
-    let conditionOnYear = "";
-    //if year isn't empty, set sql condition on year
-    if (year !== "") {
-        conditionOnYear = " AND ( data->>'year' = '" + year + "' )";
-    }
-
-    //query to get progetPapers
-    let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE  project_id = $1 ' + condition + ' ' + conditionOnYear + '  ORDER BY data->>$2 ' + sort + ' LIMIT $3 OFFSET $4',
-        [project_id, orderBy, count, start]
-    );
-    //query to get total number of result
-    let resForTotalNumber = await db.query(
-        'SELECT COUNT(*) FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1 ' + condition + ' ' + conditionOnYear + ' ',
-        [project_id]
-    );
-
-
-    return {"results": res.rows, "totalResults": resForTotalNumber.rows[0].count};
-}
-*/
-
-/**
  * select a not voted projectPaper by UserId and projectId
  * @param {int} user_id
  * @param {int} project_id
@@ -438,7 +386,7 @@ async function manualScreeningProgress(user_id, project_id) {
  * @param {int} project_id
  * @returns {Object[]} array of paper object
  */
-async function selectAllByProjectId(project_id){
+async function selectAllByProjectId(project_id) {
 
     let res = await db.query(
         'SELECT * FROM public.' + db.TABLES.projectPapers + ' WHERE project_id = $1',
@@ -493,10 +441,7 @@ module.exports = {
     selectScreenedByProject,
     selectOneNotVotedByUserIdAndProjectId,
     manualScreeningProgress,
-
     selectAllByProjectId,
     checkExistenceByEids,
-
     countAutoScreenedOutOfTotalPapers,
-    //searchPaperByProject,
 };

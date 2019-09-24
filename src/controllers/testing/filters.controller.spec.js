@@ -2,23 +2,24 @@ const request = require('supertest');
 const app = require(__base + 'app');
 const timeOut = 30 * 1000;
 const db = require(__base + "db/index");
+
 /* *
-* filters
-* range of usable data n° 1 ~ 15
-* 1~5 for controller layer
-* */
+ * filters
+ * range of usable data n° 1 ~ 15
+ * 1~5 for controller layer
+ * */
 
 
 const index = 1;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
-const index5 =  index + 4;
-const validTokenId = "test"+index;
-const validTokenId2 = "test"+index2;
-const validTokenId3 = "test"+index3;
-const validTokenId4 = "test"+index4;
-const validTokenId5 = "test"+index5;
+const index5 = index + 4;
+const validTokenId = "test" + index;
+const validTokenId2 = "test" + index2;
+const validTokenId3 = "test" + index3;
+const validTokenId4 = "test" + index4;
+const validTokenId5 = "test" + index5;
 
 
 beforeEach(() => {
@@ -89,16 +90,6 @@ describe('good cases on filters ', () => {
 });
 
 /* bad cases==============================================================================================================*/
-
-
-
-
-
-
-
-
-
-
 
 
 /*bad cases*/
@@ -261,8 +252,8 @@ describe('bad cases on filters ', () => {
 
             //the mandatory field  "exclusion_description" is missing
             let notValidExampleForExclusionDescription = {
-                    "predicate": "aaa",
-                    "inclusion_description": "bbb",
+                "predicate": "aaa",
+                "inclusion_description": "bbb",
             };
             response = await request(app).put('/filters/' + index).send(notValidExampleForExclusionDescription).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);

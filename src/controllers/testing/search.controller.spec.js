@@ -2,12 +2,13 @@ const request = require('supertest');
 const app = require(__base + 'app');
 const timeOut = 30 * 1000;
 const db = require(__base + "db/index");
-/* *
-* search papers
-* range of usable data n° 16~ 30
-* 16~20 for controller layer
-* */
 
+
+/* *
+ * search papers
+ * range of usable data n° 16~ 30
+ * 16~20 for controller layer
+ * */
 
 const index = 16;
 const index2 = index + 1;
@@ -45,18 +46,6 @@ describe('good cases on papers', () => {
         let response = await request(app).get('/search?query=2015&arXiv=true').set('Authorization', validTokenId);
         expect(response.status).toBe(200);
     });
-
-    /*
-     //update travis calls to api endpoint
-     test('POST /search/automated should return 200 if find any papers and the user is owner of give project', async () => {
-     response = await request(app).post('/search/automated').send({"project_id": 1}).set('Authorization', validTokenId);
-     expect(response.status).toBe(200);
-     });
-     test('POST /search/similar should return 200 if find any papers', async () => {
-
-     let response = await request(app).post('/search/similar').send({"paperData" : {"title" : "Crowdsourcing developement"}}).set('Authorization', validTokenId).set('Content-Type', "application/json");
-     expect(response.status).toBe(200);
-     });*/
 
 
 });
@@ -268,7 +257,6 @@ describe('bad cases on papers', () => {
         });
 
     });
-
 
 
 });

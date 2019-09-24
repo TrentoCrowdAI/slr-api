@@ -3,28 +3,24 @@ const app = require(__base + 'app');
 const timeOut = 30 * 1000;
 const db = require(__base + "db/index");
 
-//the config file
-const config = require(__base + 'config');
-
 
 /* *
-* projects
-* range of usable data n° 31~ 45
-* 31~36 for controller layer
-* */
+ * projects
+ * range of usable data n° 31~ 45
+ * 31~36 for controller layer
+ * */
 
 
 const index = 31;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
-const index5 =  index + 4;
-const validTokenId = "test"+index;
-const validTokenId2 = "test"+index2;
-const validTokenId3 = "test"+index3;
-const validTokenId4 = "test"+index4;
-const validTokenId5 = "test"+index5;
-
+const index5 = index + 4;
+const validTokenId = "test" + index;
+const validTokenId2 = "test" + index2;
+const validTokenId3 = "test" + index3;
+const validTokenId4 = "test" + index4;
+const validTokenId5 = "test" + index5;
 
 
 beforeEach(() => {
@@ -43,7 +39,6 @@ const validExample = {
     "name": "aa",
     "description": "aaa"
 };
-
 
 
 describe('good cases on projects', () => {
@@ -83,7 +78,6 @@ describe('good cases on projects', () => {
     });
 
 
-
 });
 
 
@@ -106,7 +100,6 @@ const notValidExampleForDescriptionEmpty = {
     "name": "bb",
     "description": ""
 };
-
 
 
 describe('bad cases on projects', () => {
@@ -183,20 +176,20 @@ describe('bad cases on projects', () => {
             let response = await request(app).put('/projects/abc').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the project id is not a integer
-            response = await request(app).put('/projects/'+index+'.5').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
+            response = await request(app).put('/projects/' + index + '.5').send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
             //the name missing
-            response = await request(app).put('/projects/'+index).send(notValidExampleForNameMissing).set('Accept', 'application/json').set('Authorization', validTokenId);
+            response = await request(app).put('/projects/' + index).send(notValidExampleForNameMissing).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the description missing
-            response = await request(app).put('/projects/'+index).send(notValidExampleForDescriptionMissing).set('Accept', 'application/json').set('Authorization', validTokenId);
+            response = await request(app).put('/projects/' + index).send(notValidExampleForDescriptionMissing).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the name empty
-            response = await request(app).put('/projects/'+index).send(notValidExampleForNameEmpty).set('Accept', 'application/json').set('Authorization', validTokenId);
+            response = await request(app).put('/projects/' + index).send(notValidExampleForNameEmpty).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the description empty
-            response = await request(app).put('/projects/'+index).send(notValidExampleForDescriptionEmpty).set('Accept', 'application/json').set('Authorization', validTokenId);
+            response = await request(app).put('/projects/' + index).send(notValidExampleForDescriptionEmpty).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
 
@@ -212,7 +205,7 @@ describe('bad cases on projects', () => {
 
         test('PUT /projects/:id should return 401 if user hasn\'t permission', async () => {
 
-            let response = await request(app).put('/projects/'+index2).send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
+            let response = await request(app).put('/projects/' + index2).send(validExample).set('Accept', 'application/json').set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
@@ -227,7 +220,7 @@ describe('bad cases on projects', () => {
             let response = await request(app).delete('/projects/abc').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the project id is not a integer
-            response = await request(app).delete('/projects/'+index+'.5').set('Authorization', validTokenId);
+            response = await request(app).delete('/projects/' + index + '.5').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
         });
 
@@ -240,7 +233,7 @@ describe('bad cases on projects', () => {
 
         test('DELETE /projects/:id should return 401 if user hasn\'t permission', async () => {
 
-            let response = await request(app).delete('/projects/'+index2).set('Authorization', validTokenId);
+            let response = await request(app).delete('/projects/' + index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
@@ -251,12 +244,11 @@ describe('bad cases on projects', () => {
         test('GET /projects/:id should return 400 if parameters are not valid', async () => {
 
 
-
             //the project id is not a number
             let response = await request(app).get('/projects/abc').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the project id is not a integer
-            response = await request(app).get('/projects/'+index+'.5').set('Authorization', validTokenId);
+            response = await request(app).get('/projects/' + index + '.5').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
         });
@@ -270,11 +262,10 @@ describe('bad cases on projects', () => {
 
         test('GET /projects/:id should return 401 if user hasn\'t permission', async () => {
 
-            let response = await request(app).get('/projects/'+index2).set('Authorization', validTokenId);
+            let response = await request(app).get('/projects/' + index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
     });
-
 
 
 });

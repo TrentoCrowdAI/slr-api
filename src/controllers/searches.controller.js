@@ -56,18 +56,18 @@ router.post('/search/similar', async (req, res, next) => {
 router.post('/search/automated', async (req, res, next) => {
     try {
 
-       let user_email = res.locals.user_email;
-       let project_id = req.body.project_id;
+        let user_email = res.locals.user_email;
+        let project_id = req.body.project_id;
 
-       //confidence range
-        let min_confidence =req.body.min_confidence;
-        let max_confidence =req.body.max_confidence;
+        //confidence range
+        let min_confidence = req.body.min_confidence;
+        let max_confidence = req.body.max_confidence;
 
-       //pagination parameters
-       let start = req.body.start;
-       let count = req.body.count;
+        //pagination parameters
+        let start = req.body.start;
+        let count = req.body.count;
 
-       let papers = await searchesDelegate.automatedSearch(user_email, project_id, min_confidence, max_confidence,start, count);
+        let papers = await searchesDelegate.automatedSearch(user_email, project_id, min_confidence, max_confidence, start, count);
 
         res.status(200).json(papers);
     }
@@ -76,9 +76,6 @@ router.post('/search/automated', async (req, res, next) => {
         next(e);
     }
 });
-
-
-
 
 
 module.exports = router;

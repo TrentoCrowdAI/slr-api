@@ -1,8 +1,8 @@
-//set environmental variables by env.test file
+//set root path
 global.__base = __dirname + '/src/';
+//get environmental variables from env.test file
 const path = require('path');
 require('dotenv').config({path: path.resolve(process.cwd(), '.env.test')});
-
 
 
 module.exports = {

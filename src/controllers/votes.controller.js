@@ -1,12 +1,10 @@
-// this file exposes the logic implemented in projectPapers.delegate.js
+// this file exposes the logic implemented in votes.delegate.js
 // as services using express
 
 const express = require('express');
-
+const router = express.Router();
 
 const votesDelegate = require(__base + 'delegates/votes.delegate');
-
-const router = express.Router();
 
 
 /**
@@ -20,7 +18,7 @@ router.post('/votes', async (req, res, next) => {
         let project_paper_id = req.body.project_paper_id;
 
         let voteData = req.body.vote;
-        
+
         let voteCreated = await votesDelegate.insert(user_email, voteData, project_paper_id);
 
         res.status(201).json(voteCreated);
@@ -53,9 +51,6 @@ router.get('/votes', async (req, res, next) => {
         next(e);
     }
 });
-
-
-
 
 
 module.exports = router;

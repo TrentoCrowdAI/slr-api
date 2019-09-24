@@ -22,7 +22,7 @@ function read(dir) {
 }
 
 /*
- * easy function that return the input received
+ * wrapper function that return the input received
  * @param {string} data
  * @returns {string}
  */
@@ -32,10 +32,9 @@ function returnData(data) {
 
 /**
  * function to create the DB tmp and insert the data for test
-
  */
 async function createDB() {
-
+    //set path of sql file
     let path = "src/db/";
     //get destroy sql
     let destroySql = await read(path+'destroy.sql').then(returnData);
@@ -43,8 +42,9 @@ async function createDB() {
     let initSql = await read(path+'init.sql').then(returnData);
 
 
-    //get data sql
+    //create a array to save all data sql
     let dataSql = [];
+    //get data sql
     dataSql.push(await read(path+'test.data.fake.papers.sql').then(returnData));
     dataSql.push(await read(path+'test.data.projects.sql').then(returnData));
     dataSql.push(await read(path+'test.data.projects.papers.sql').then(returnData));
@@ -54,29 +54,25 @@ async function createDB() {
     dataSql.push(await read(path+'test.data.votes.sql').then(returnData));
 
 
-    //destroy db
+    //destroys db
     await db.queryNotParameter(destroySql).catch(function (error) {
         console.error(error);
     });
     console.log("=====database destroyed=====");
 
-    //init db
+    //creates db
     await db.queryNotParameter(initSql).catch(function (error) {
         console.error(error);
     });
     console.log("=====database created=====");
 
-    //execute test data sql
+    //inserts data
+    //for each data sql
     for(let i=0; i<dataSql.length; i++){
-
         await db.queryNotParameter(dataSql[i]).catch(function (error) {
             console.error(error);
-
         });
-
     }
-
-
     console.log("=====database loaded with test data=====");
 
 }

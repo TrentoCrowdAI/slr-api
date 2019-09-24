@@ -2,10 +2,9 @@
 // as services using express
 
 const express = require('express');
+const router = express.Router();
 
 const filtersDelegate = require(__base + 'delegates/filters.delegate');
-
-const router = express.Router();
 
 
 /*get a list of filters associated with a project*/

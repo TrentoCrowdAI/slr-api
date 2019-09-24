@@ -1,6 +1,4 @@
-
 const timeOut = 30 * 1000;
-
 const screeningsDao = require(__base + 'dao/screenings.dao');
 //the config file
 const config = require(__base + 'config');
@@ -8,10 +6,10 @@ const db = require(__base + "db/index");
 
 
 /* *
-* screenings
-* range of usable data n° 106~ 120
-* 116~120 for dao layer
-* */
+ * screenings
+ * range of usable data n° 106~ 120
+ * 116~120 for dao layer
+ * */
 
 
 const index = 116;
@@ -74,7 +72,6 @@ describe('test cases on screenings.dao ', () => {
     test('deleteByUserIdAndProjectId()', async () => {
 
 
-
         let user_id = index;
         let project_id = index2;
 
@@ -86,7 +83,6 @@ describe('test cases on screenings.dao ', () => {
 
 
     test('selectById()', async () => {
-
 
 
         let screening_id = index;
@@ -123,7 +119,6 @@ describe('test cases on screenings.dao ', () => {
     });
 
     test('selectByUserIdAndProjectId()', async () => {
-
 
 
         let user_id = index;

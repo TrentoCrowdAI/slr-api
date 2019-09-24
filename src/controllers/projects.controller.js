@@ -2,11 +2,13 @@
 // as services using express
 
 const express = require('express');
+const router = express.Router();
+
 const projectsDelegate = require(__base + 'delegates/projects.delegate');
 const usersDelegate = require(__base + 'delegates/users.delegate');
 const screeningsDelegate = require(__base + 'delegates/screenings.delegate');
 
-const router = express.Router();
+
 
 
 //get a list of projects

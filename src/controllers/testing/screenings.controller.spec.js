@@ -3,29 +3,24 @@ const app = require(__base + 'app');
 const timeOut = 30 * 1000;
 const db = require(__base + "db/index");
 
-//the config file
-const config = require(__base + 'config');
-
 
 /* *
-* screenings
-* range of usable data n° 106~ 120
-* 106~110 for controller layer
-* */
+ * screenings
+ * range of usable data n° 106~ 120
+ * 106~110 for controller layer
+ * */
 
 
 const index = 106;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
-const index5 =  index + 4;
-const validTokenId = "test"+index;
-const validTokenId2 = "test"+index2;
-const validTokenId3 = "test"+index3;
-const validTokenId4 = "test"+index4;
-const validTokenId5 = "test"+index5;
-
-
+const index5 = index + 4;
+const validTokenId = "test" + index;
+const validTokenId2 = "test" + index2;
+const validTokenId3 = "test" + index3;
+const validTokenId4 = "test" + index4;
+const validTokenId5 = "test" + index5;
 
 
 beforeEach(() => {
@@ -38,12 +33,6 @@ afterAll(() => {
 });
 
 /* good cases=====================================================================================================*/
-
-
-
-
-
-
 
 
 describe('good cases on screenings', () => {
@@ -73,7 +62,6 @@ describe('good cases on screenings', () => {
     });
 
 
-
     test('GET /screenings/:screening_id should return 200', async () => {
 
         response = await request(app).get('/screenings/' + index).set('Authorization', validTokenId);
@@ -82,18 +70,15 @@ describe('good cases on screenings', () => {
 
     test('GET /screenings/:screening_id/next should return 200', async () => {
 
-        response = await request(app).get('/screenings/' + index2+'/next').set('Authorization', validTokenId2);
+        response = await request(app).get('/screenings/' + index2 + '/next').set('Authorization', validTokenId2);
         expect(response.status).toBe(200);
     });
-
-
 
 
 });
 
 
 /* bad cases==============================================================================================================*/
-
 
 
 describe('bad cases on screenings', () => {
@@ -138,8 +123,6 @@ describe('bad cases on screenings', () => {
         });
 
 
-
-
     });
 
     describe('bad cases on POST /screenings/automated', () => {
@@ -151,22 +134,32 @@ describe('bad cases on screenings', () => {
             let response = await request(app).post('/screenings/automated').send({"threshold": "0.5"}).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the project id is not a number
-            response = await request(app).post('/screenings/automated').send({"project_id": "abc", "threshold": "0.5"}).set('Authorization', validTokenId);
+            response = await request(app).post('/screenings/automated').send({
+                "project_id": "abc", "threshold": "0.5"
+            }).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the project id is not a integer
-            response = await request(app).post('/screenings/automated').send({"project_id": index+".5", "threshold": "0.5"}).set('Authorization', validTokenId);
+            response = await request(app).post('/screenings/automated').send({
+                "project_id": index + ".5", "threshold": "0.5"
+            }).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the threshold is not exist
             response = await request(app).post('/screenings/automated').send({"project_id": index}).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the threshold is not a number
-            response = await request(app).post('/screenings/automated').send({"project_id": index, "threshold": "abc"}).set('Authorization', validTokenId);
+            response = await request(app).post('/screenings/automated').send({
+                "project_id": index, "threshold": "abc"
+            }).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the threshold is greater than 1
-            response = await request(app).post('/screenings/automated').send({"project_id": index, "threshold": "1.1"}).set('Authorization', validTokenId);
+            response = await request(app).post('/screenings/automated').send({
+                "project_id": index, "threshold": "1.1"
+            }).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //the threshold is less than 0
-            response = await request(app).post('/screenings/automated').send({"project_id": index, "threshold": "-0.1"}).set('Authorization', validTokenId);
+            response = await request(app).post('/screenings/automated').send({
+                "project_id": index, "threshold": "-0.1"
+            }).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
         });
@@ -174,17 +167,20 @@ describe('bad cases on screenings', () => {
 
         test('POST /screenings/automated should return 401 if it finds nothing', async () => {
 
-            let response = await request(app).post('/screenings/automated').send({"project_id": "9999", "threshold": "0.5"}).set('Authorization', validTokenId);
+            let response = await request(app).post('/screenings/automated').send({
+                "project_id": "9999", "threshold": "0.5"
+            }).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
 
         });
 
         test('POST /screenings/automated should return 401 if user hasn\'t permission', async () => {
 
-            let response = await request(app).post('/screenings/automated').send({"project_id": index2, "threshold": "0.5"}).set('Authorization', validTokenId);
+            let response = await request(app).post('/screenings/automated').send({
+                "project_id": index2, "threshold": "0.5"
+            }).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
-
 
 
     });
@@ -218,7 +214,7 @@ describe('bad cases on screenings', () => {
             let response = await request(app).get('/screenings/abc').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //screening id is not integer
-            response = await request(app).get('/screenings/'+index+'.55').set('Authorization', validTokenId);
+            response = await request(app).get('/screenings/' + index + '.55').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
         });
@@ -231,11 +227,9 @@ describe('bad cases on screenings', () => {
 
         test('GET /screenings/:screening_id should return 401 if user isn\'t owner of screenings', async () => {
 
-            let response = await request(app).get('/screenings/'+index2).set('Authorization', validTokenId);
+            let response = await request(app).get('/screenings/' + index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
-
-
 
 
     });
@@ -250,7 +244,7 @@ describe('bad cases on screenings', () => {
             let response = await request(app).get('/screenings/abc/next').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
             //screening id is not integer
-            response = await request(app).get('/screenings/'+index+'.55/next').set('Authorization', validTokenId);
+            response = await request(app).get('/screenings/' + index + '.55/next').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
         });
@@ -263,16 +257,15 @@ describe('bad cases on screenings', () => {
 
         test('GET /screenings/:screening_id/next should return 401 if user isn\'t owner of screenings', async () => {
 
-            let response = await request(app).get('/screenings/'+index2+'/next').set('Authorization', validTokenId);
+            let response = await request(app).get('/screenings/' + index2 + '/next').set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
         test('GET /screenings/:screening_id should return 404 if there isn\'t the projectPaper to vote in this screening', async () => {
 
-            let response = await request(app).get('/screenings/'+index+'/next').set('Authorization', validTokenId);
+            let response = await request(app).get('/screenings/' + index + '/next').set('Authorization', validTokenId);
             expect(response.status).toBe(404);
         });
-
 
 
     });

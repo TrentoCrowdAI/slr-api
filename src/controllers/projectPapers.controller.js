@@ -2,10 +2,9 @@
 // as services using express
 
 const express = require('express');
+const router = express.Router();
 
 const projectPapersDelegate = require(__base + 'delegates/projectPapers.delegate');
-
-const router = express.Router();
 
 
 /*get a list of projectPapers associated with a project*/
@@ -21,12 +20,13 @@ router.get('/papers', async (req, res, next) => {
         let sort = req.query.sort;
         let start = req.query.start;
         let count = req.query.count;
-        //let searchBy = req.query.searchBy;
-        //let year = req.query.year;
-        //let query = req.query.query;
         let type = req.query.type;
         let min_confidence = req.query.min_confidence;
         let max_confidence = req.query.max_confidence;
+
+        //let searchBy = req.query.searchBy;
+        //let year = req.query.year;
+        //let query = req.query.query;
 
         projectPapers = await projectPapersDelegate.selectByProject(user_email, project_id, type, orderBy, sort, start, count, min_confidence, max_confidence);
 
@@ -74,21 +74,6 @@ router.post('/customPapers', async (req, res, next) => {
     }
 });
 
-
-/*
- //get a projectPaper
- router.get('/papers/:projectPaper_id', async (req, res, next) => {
- try {
-
- let projectPaper_id = req.params.projectPaper_id;
- let projectPaper = await projectPapersDelegate.selectById(projectPaper_id);
- res.status(200).json(projectPaper);
- }
- catch (e) {
- // catch the error threw from delegate and we delegate to the error-handling middleware
- next(e);
- }
- });*/
 
 //update a projectPaper
 router.put('/papers/:projectPaper_id', async (req, res, next) => {

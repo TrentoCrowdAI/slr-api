@@ -1,11 +1,10 @@
-// this file exposes the logic implemented in searches.delegate.js
+// this file exposes the logic implemented in external.services.delegate.js
 // as services using express
 
 const express = require('express');
-const externalServicesDelegate = require(__base + 'delegates/external.services.delegate');
-
 const router = express.Router();
 
+const externalServicesDelegate = require(__base + 'delegates/external.services.delegate');
 
 
 /*fake service for searching of similar paper*/
@@ -39,14 +38,14 @@ router.post('/external/automatedSearch', async (req, res, next) => {
         let arrayFilter = req.body.arrayFilter;
 
         //confidence range
-        let min_confidence =req.body.min_confidence;
-        let max_confidence =req.body.max_confidence;
+        let min_confidence = req.body.min_confidence;
+        let max_confidence = req.body.max_confidence;
 
         //pagination parameters
         let start = req.body.start;
         let count = req.body.count;
 
-        let papers = await externalServicesDelegate.fakeAutomatedSearchService(title, description, arrayFilter, min_confidence, max_confidence,start, count);
+        let papers = await externalServicesDelegate.fakeAutomatedSearchService(title, description, arrayFilter, min_confidence, max_confidence, start, count);
 
         res.status(200).json(papers);
     }

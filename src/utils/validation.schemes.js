@@ -1,4 +1,4 @@
-//scheme of paper, has 13 attributes, it is used only for the validation of the custom paper
+//scheme of paper, it is used only for the validation of the custom paper
 const paper = {
     "type": "object",
     "properties": {
@@ -14,7 +14,7 @@ const paper = {
             "type": "string",
             "isNotEmpty": true
         },
-        "date": { /* temporarly unused */
+        "date": {
             "type": "string"
         },
         "source_title": {
@@ -145,8 +145,8 @@ const project = {
     "required": ["name", "description"]
 };
 
-//scheme filtes
-const filter={
+//scheme filters
+const filter = {
     "type": "object",
     "properties": {
 
@@ -164,20 +164,19 @@ const filter={
         }
     },
 
-    "required": ["predicate",  "inclusion_description", "exclusion_description"]
+    "required": ["predicate", "inclusion_description", "exclusion_description"]
 }
 
 
-
 //scheme vote
-const vote={
+const vote = {
     "type": "object",
     "properties": {
 
         /*"answer": {
-            "type": "string",
-            "isNotEmpty": true
-        },*/
+         "type": "string",
+         "isNotEmpty": true
+         },*/
         "metadata": {
             "type": "object",
             "isNotEmpty": true
@@ -188,7 +187,7 @@ const vote={
 };
 
 //scheme metadata of vote
-const vote_metadata={
+const vote_metadata = {
     "type": "object",
     "properties": {
 
@@ -205,11 +204,8 @@ const vote_metadata={
         },
 
     },
-    "required": ["type","highlights", "tags"]
+    "required": ["type", "highlights", "tags"]
 };
-
-
-
 
 
 module.exports = {

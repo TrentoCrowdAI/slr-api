@@ -1,16 +1,14 @@
-
 const timeOut = 30 * 1000;
-
 const votesDao = require(__base + 'dao/votes.dao');
 //the config file
 const config = require(__base + 'config');
 const db = require(__base + "db/index");
 
 /* *
-* votes
-* range of usable data n° 121~ 135
-* 131~135 for dao layer
-* */
+ * votes
+ * range of usable data n° 121~ 135
+ * 131~135 for dao layer
+ * */
 
 
 const index = 131;
@@ -22,15 +20,15 @@ const index5 = index + 4;
 
 // valid examples
 const newVoteData = {
-        "answer": 1,
-        "metadata": {
-            "type": "multi-predicate",
-            "highlights": [
-                {
-                    "outcome": "0"
-                }
-            ],
-        }
+    "answer": 1,
+    "metadata": {
+        "type": "multi-predicate",
+        "highlights": [
+            {
+                "outcome": "0"
+            }
+        ],
+    }
 };
 
 beforeEach(async () => {
@@ -83,7 +81,6 @@ describe('test cases on votes.dao ', () => {
     test('deleteByProjectIdAndUserId()', async () => {
 
 
-
         let user_id = index;
         let project_id = index2;
 
@@ -95,7 +92,6 @@ describe('test cases on votes.dao ', () => {
 
 
     test('selectById()', async () => {
-
 
 
         let vote_id = index;
@@ -142,7 +138,6 @@ describe('test cases on votes.dao ', () => {
 
 
     });
-
 
 
     test('selectByProjectPaperIdAndUserId()', async () => {

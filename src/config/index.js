@@ -1,16 +1,24 @@
 module.exports = {
+
+    //local port to start the service
+    "listening_port": 3001,
+
+    //the url of home
     "home_url": process.env.HOME_URL,
 
     "db": {
+        // heroku postgres adds automatically DATABASE_URL.
+        url: process.env.DATABASE_URL,
+
         // were not used
         user: process.env.PGUSER,
         password: process.env.PGPASSWORD,
         host: process.env.PGHOST,
         port: process.env.PGPORT,
-        database: process.env.PGDATABASE,
-        // heroku postgres adds automatically DATABASE_URL.
-        url: process.env.DATABASE_URL
+        database: process.env.PGDATABASE
     },
+
+    //the name of db tables in DB
     "db_tables": {
         searches: 'searches',
         projects: 'projects',
@@ -21,33 +29,33 @@ module.exports = {
         screenings: 'screenings',
     },
 
-    //local port to start the service
-    "listening_port": 3001,
     //the number of element for each page
     "pagination": {
         defaultCount: 10
     },
 
-
+    //the google authentication service
     "google": {
-        //the google authentication service
         "google_login_client_id": process.env.GOOGLE_LOGIN_CLIENT_ID,
         "google_gmail": process.env.GOOGLE_GMAIL,
         "google_gmail_pwd": process.env.GOOGLE_GMAIL_PWD
     },
 
-    //valid keywords for searchBy
-    validSearchBy: ["all", "author", "content", "advanced"],
-    //the arXiv parameters
+
+    //the arXiv search service
     "arxiv": {
         url: "http://export.arxiv.org/api/query"
     },
-    //the scopus parameters
+    //the scopus search service
     "scopus": {
         apiKey: process.env.SCOPUS_APIKEY,
         url: "https://api.elsevier.com/content/search/scopus",
     },
 
+    //valid keywords for searchBy
+    validSearchBy: ["all", "author", "content", "advanced"],
+
+    //the variable to save the file
     "file": {
         //the directory to save the uploaded file
         "tmp_directory": "./tmp/",
@@ -55,11 +63,8 @@ module.exports = {
         "max_number": 20
     },
 
-    "screening_source": {
-        "manual_screening": "manual screening",
-        "automated_screening": "automated screening"
-    },
 
+    //the variable to indicate the status of screening
     "screening_status": {
         "manual": "manual",
         "screened": "screened",
@@ -67,6 +72,14 @@ module.exports = {
         "all": "all"
 
     },
+
+    //the variable to indicate the type of screening
+    "screening_source": {
+        "manual_screening": "manual screening",
+        "automated_screening": "automated screening"
+    },
+
+    //the variable to indicate the sub-type of manual screening
     "manual_screening_type": {
         "single_predicate": "single-predicate",
         "multi_predicate": "multi-predicate",
@@ -74,11 +87,13 @@ module.exports = {
     },
 
 
-    /*external service================================*/
+    /*================================path of external service================================*/
+    /*to change in the future*/
+
     //the pdf parse service
     "pdf_parse_server": "http://scienceparse.allenai.org/v1",
+
     //the similar paper service
-    //here you can put the url of the remote(or local) service url that will search for similar papers
     "search_similar_server": process.env.BACKEND_URL + "external/similarSearch",
 
     //automated search service

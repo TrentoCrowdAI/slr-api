@@ -1,14 +1,11 @@
 const fetch = require("node-fetch");
 const AbortController = require("abort-controller");
 const Headers = require('fetch-headers');
-const fs= require('fs');
 
 /*this is the file to create fetch request*/
 
-
-//10seconds for timeout
+//10 seconds for timeout
 const timeOutTime = 10 * 1000;
-
 
 
 /**
@@ -21,7 +18,6 @@ const timeOutTime = 10 * 1000;
 async function request(url, options, timeOutTime) {
     try {
 
-
         //create a new abortController for this request
         let abortController = new AbortController();
         let signal = abortController.signal;
@@ -29,7 +25,7 @@ async function request(url, options, timeOutTime) {
         let requestOptions = Object.assign(
             {
                 //enable the  sending of cookie
-             //   credentials: 'include',
+                // credentials: 'include',
                 "mode": 'cors',
                 "signal": signal
             },
@@ -37,7 +33,7 @@ async function request(url, options, timeOutTime) {
         );
 
         //set timeout clock
-        let timer = setTimeout(() => abortController.abort() , timeOutTime);
+        let timer = setTimeout(() => abortController.abort(), timeOutTime);
 
         let response = await fetch(url, requestOptions);
 
@@ -47,15 +43,15 @@ async function request(url, options, timeOutTime) {
         //parse response data
         let data = await parseResponseData(response);
         //response error check
-        checkResponseStatus(response,data);
+        checkResponseStatus(response, data);
 
 
-        return  data;
+        return data;
 
     }
     catch (error) {
 
-       // console.dir(error.message);
+        // console.dir(error.message);
         return error;
 
     }
@@ -148,34 +144,6 @@ async function post(url, bodyData = "") {
 }
 
 /**
- * post for similar paper
- * @param url
- * @param bodyData
- * @return {object } response data
- *//*
-async function postSimilarPaper(url, bodyData = "") {
-
-    //create a header
-    let jsonHeaders = new Headers();
-    jsonHeaders.append('Accept', 'application/json');
-    jsonHeaders.append('Content-Type', 'application/json;charset=UTF-8');
-    //set only for fake service
-    jsonHeaders.append('Authorization', 'test');
-
-    let body = JSON.stringify(bodyData, null, 2);
-
-    let options = {
-        "method": 'POST',
-        "headers": jsonHeaders,
-        "encoding": null,
-        "body": body,
-    };
-
-    return await request(url, options, timeOutTime);
-}
-*/
-
-/**
  * post pdf method
  * @param url
  * @param fsStream read stream of file
@@ -184,7 +152,7 @@ async function postSimilarPaper(url, bodyData = "") {
 async function postPdf(url, fsStream) {
 
     //custom timeout for request
-    let customTimeOutTime= 60 * 1000;
+    let customTimeOutTime = 60 * 1000;
 
     //create a header
     let jsonHeaders = new Headers();
@@ -204,9 +172,8 @@ async function postPdf(url, fsStream) {
 }
 
 
-
 /**
- *  * check response status
+ * internal function to check response status
  * @param response to check
  * @param data data received
  * @throws {Error} if  status code < 200 or status code >= 300
@@ -218,9 +185,9 @@ function checkResponseStatus(response, data) {
         error.data = response;
 
         //if is a scopus error
-        if(data["service-error"]){
+        if (data["service-error"]) {
             let scopusErrorStatus = data["service-error"].status;
-            error.message = scopusErrorStatus.statusCode+" : "+scopusErrorStatus.statusText;
+            error.message = scopusErrorStatus.statusCode + " : " + scopusErrorStatus.statusText;
         }
         throw error;
     }
@@ -229,7 +196,7 @@ function checkResponseStatus(response, data) {
 
 
 /**
- * parse the response of  http request
+ * internal function to parse the response of  http request
  * @param response response object
  * @return {Object} data parsed
  */
@@ -250,7 +217,7 @@ async function parseResponseData(response) {
         else if (contentType.indexOf('json') > -1) {
             data = await response.json();
         }
-        else{
+        else {
             data = await response.text();
         }
     }
@@ -266,7 +233,6 @@ const http = {
     get,
     getRaw,
     post,
-    //postSimilarPaper,
     postPdf,
 };
 

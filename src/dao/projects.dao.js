@@ -87,30 +87,8 @@ async function selectByIdAndUserId(project_id, user_id) {
     return res.rows[0];
 }
 
-/**
- * select all project
- * @param {string} orderBy [id, date_created, date_last_modified, date_deleted}
- * @param {string} sort [ASC or DESC]
- * @param {int} start offset position where we begin to get
- * @param {int} count number of projects
- * @returns {Object} array of projects and total number of result
- *//*
-async function selectAll(orderBy, sort, start, count) {
 
-    //query to get projects
-    let res = await db.query(
-        'SELECT * FROM public.' + db.TABLES.projects + '  ORDER BY ' + orderBy + ' ' + sort + ' LIMIT $1 OFFSET $2',
-        [count, start]
-    );
-
-    //query to get total number of result
-    let resForTotalNumber = await db.query(
-        'SELECT COUNT(*) FROM public.' + db.TABLES.projects);
-
-    return {"results": res.rows, "totalResults": resForTotalNumber.rowCount};
-}
-
-/**
+ /**
  * select the project by a specific user
  * @param {int} user_id
  * @param {string} orderBy [id, date_created, date_last_modified, date_deleted]
@@ -168,9 +146,7 @@ module.exports = {
     updateLastModifiedDate,
     deletes,
     selectById,
-    //selectAll,
     selectByUserId,
     selectByIdAndUserId,
-    //selectBySingleKeyword
     selectByScreeningUser,
 };

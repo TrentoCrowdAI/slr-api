@@ -1,22 +1,19 @@
-
 const timeOut = 30 * 1000;
-
 const filtersDao = require(__base + 'dao/filters.dao');
-
 const db = require(__base + "db/index");
 
 /* *
-* filters
-* range of usable data n° 1 ~ 15
-* 11~15 for dao layer
-* */
+ * filters
+ * range of usable data n° 1 ~ 15
+ * 11~15 for dao layer
+ * */
 
 
 const index = 11;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
-const index5 =  index + 4;
+const index5 = index + 4;
 
 beforeEach(async () => {
     jest.setTimeout(timeOut)
@@ -32,7 +29,6 @@ afterAll(() => {
 describe('test cases on filters.dao ', () => {
 
     test('insert()', async () => {
-
 
 
         let newFilterData = {
@@ -53,7 +49,6 @@ describe('test cases on filters.dao ', () => {
     test('update()', async () => {
 
 
-
         let newFilterData = {
             "name": "abc",
             "predicate": "abc",
@@ -72,7 +67,6 @@ describe('test cases on filters.dao ', () => {
     test('deletes()', async () => {
 
 
-
         let filter_id = index5;
 
         let res = await filtersDao.deletes(filter_id);
@@ -83,7 +77,6 @@ describe('test cases on filters.dao ', () => {
 
 
     test('selectById()', async () => {
-
 
 
         let filter_id = index;
@@ -104,8 +97,7 @@ describe('test cases on filters.dao ', () => {
     test('selectByArrayId()', async () => {
 
 
-
-        let arrayFilterId = [index,index2];
+        let arrayFilterId = [index, index2];
 
         let res = await filtersDao.selectByArrayId(arrayFilterId);
 
@@ -116,12 +108,11 @@ describe('test cases on filters.dao ', () => {
     test('selectByProject()', async () => {
 
 
-
-        let project_id=index2;
-        let orderBy="id";
-        let sort="ASC";
-        let start=0;
-        let count=10;
+        let project_id = index2;
+        let orderBy = "id";
+        let sort = "ASC";
+        let start = 0;
+        let count = 10;
 
 
         let res = await filtersDao.selectByProject(project_id, orderBy, sort, start, count);
@@ -134,7 +125,7 @@ describe('test cases on filters.dao ', () => {
     test('selectAllByProject()', async () => {
 
 
-        let project_id=index2;
+        let project_id = index2;
 
         let res = await filtersDao.selectAllByProject(project_id);
 
@@ -145,8 +136,7 @@ describe('test cases on filters.dao ', () => {
     test('countByProject()', async () => {
 
 
-
-        let project_id=index2;
+        let project_id = index2;
 
         let res = await filtersDao.countByProject(project_id);
 

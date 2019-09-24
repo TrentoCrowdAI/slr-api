@@ -28,10 +28,12 @@ searches = {
                     value: 0.50, //average value of confidence
                     filters: [
                         {
-                            filters_id1: filter_value1 //tuple of filter id and its confidence value
+                            id: 1,
+                            filterValue: 0.75
                         },
                         {
-                            filters_id2: filter_value2 //tuple of filter id and its confidence value
+                            id: 2,
+                            filterValue: 0.25
                         }
                     ]
                 }
@@ -88,10 +90,12 @@ project_papers = {
                     value: 0.50, //average value of confidence
                     filters: [
                         {
-                            filters_id1: filter_value1 //tuple of filter id and its confidence value
+                            id: 1,
+                            filterValue: 0.75
                         },
                         {
-                            filters_id2: filter_value2 //tuple of filter id and its confidence value
+                            id: 2,
+                            filterValue: 0.25
                         }
                     ]
                 },
@@ -99,10 +103,12 @@ project_papers = {
                     value: 0.50, //average value of confidence
                     filters: [
                         {
-                            filters_id1: filter_value1 //tuple of filter id and its confidence value
+                            id: 1,
+                            filterValue: 0.75
                         },
                         {
-                            filters_id2: filter_value2 //tuple of filter id and its confidence value
+                            id: 2,
+                            filterValue: 0.25
                         }
                     ]
                 },

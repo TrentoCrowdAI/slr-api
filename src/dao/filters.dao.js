@@ -20,8 +20,6 @@ async function insert(newFilterData, project_id) {
 }
 
 
-
-
 /**
  *  * update a filter
  * @param {int} filter_id
@@ -87,7 +85,7 @@ async function selectByArrayId(arrayFilterId) {
     }
 
     let res = await db.query(
-        "SELECT * FROM public." + db.TABLES.filters + " WHERE id IN ("+joinString+")"
+        "SELECT * FROM public." + db.TABLES.filters + " WHERE id IN (" + joinString + ")"
     );
 
     return res.rows;
@@ -121,7 +119,6 @@ async function selectByProject(project_id, orderBy, sort, start, count) {
 }
 
 
-
 /**
  * select all filters associated with a project
  * @param {int} project_id
@@ -135,7 +132,7 @@ async function selectAllByProject(project_id) {
         [project_id]
     );
 
-    return  res.rows;
+    return res.rows;
 }
 
 
@@ -153,11 +150,9 @@ async function countByProject(project_id) {
         [project_id]
     );
 
-    return  res.rows[0].count;
+    return res.rows[0].count;
 
 }
-
-
 
 
 module.exports = {

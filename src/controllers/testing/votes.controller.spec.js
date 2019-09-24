@@ -3,14 +3,11 @@ const app = require(__base + 'app');
 const timeOut = 30 * 1000;
 const db = require(__base + "db/index");
 
-//the config file
-const config = require(__base + 'config');
-
 /* *
-* votes
-* range of usable data n° 121~ 135
-* 121~125 for controller layer
-* */
+ * votes
+ * range of usable data n° 121~ 135
+ * 121~125 for controller layer
+ * */
 
 const index = 121;
 const index2 = index + 1;
@@ -22,7 +19,6 @@ const validTokenId2 = "test" + index2;
 const validTokenId3 = "test" + index3;
 const validTokenId4 = "test" + index4;
 const validTokenId5 = "test" + index5;
-
 
 
 beforeEach(() => {
@@ -81,7 +77,6 @@ describe('bad cases on votes', () => {
     describe('bad cases on POST /votes', () => {
 
         test('POST /votes should return 400 if parameters aren\'t valid', async () => {
-
 
 
             //the project i paper id is not a number

@@ -5,25 +5,6 @@ const config = require(__base + 'config');
 const validationSchemes = require(__base + 'utils/validation.schemes');
 
 
-/**
- * check validation of paper id and transform the value in integer
- * @param {number} paper_id
- * @return {int} paper_id
- */
-function setAndCheckValidPaperId(paper_id) {
-    //error check
-    if (paper_id === undefined || paper_id === null) {
-        throw errHandler.createBadRequestError('paper_id is not defined!');
-    }
-    //cast paper_id to integer type
-    paper_id = Number(paper_id);
-    //error check
-    if (!Number.isInteger(paper_id)) {
-        throw errHandler.createBadRequestError('paper_id is not a integer!');
-    }
-    return paper_id;
-}
-
 
 /**
  * check validation of project id and transform the value in integer
@@ -391,27 +372,7 @@ function setAndCheckValidScreenersId(id) {
 
 }
 
-/**
- * check if the id is a valid integer
- * convert the value from string type to integer
- * @param {string} id
- */
-function setAndCheckValidUserId(id) {
 
-    //error check
-    if (id === undefined || id === null) {
-        throw errHandler.createBadRequestError("the user's id is empty!");
-    }
-    //cast id to integer type
-    id = Number(id);
-    //error check
-    if (!Number.isInteger(id)) {
-        throw errHandler.createBadRequestError("the user's id is not a integer!");
-    }
-    return id;
-
-
-}
 
 /**
  * check if the type has a valid value
@@ -422,7 +383,7 @@ function setAndCheckValidProjectPaperType(type) {
 
     type = type || config.screening_status.all;
     //error check
-    if (type !== config.screening_status.all && type !== config.screening_status.manual && type !== config.screening_status.screened && type !== config.screening_status.backlog ) {
+    if (type !== config.screening_status.all && type !== config.screening_status.manual && type !== config.screening_status.screened && type !== config.screening_status.backlog) {
         throw errHandler.createBadRequestError("the type is not valid!");
     }
 
@@ -430,10 +391,6 @@ function setAndCheckValidProjectPaperType(type) {
 
 
 }
-
-
-
-
 
 
 /**
@@ -508,19 +465,6 @@ function isValidTokenId(tokenId) {
     //if it is empty or a "null" string
     if (!tokenId || tokenId === 'null') {
         throw errHandler.createBadRequestError("empty token id in header, the user must first login!");
-    }
-
-}
-
-/**
- * check the validation of google_id
- * @param {String} google_id
- */
-function isValidGoogleId(google_id) {
-
-    //if it is empty or a "null" string
-    if (!google_id) {
-        throw errHandler.createBadRequestError("empty google id");
     }
 
 }
@@ -602,11 +546,7 @@ function isValidCollaboratorId(id) {
 }
 
 
-
-
-
 module.exports = {
-    setAndCheckValidPaperId,
     setAndCheckValidProjectId,
     setAndCheckValidProjectOrderBy,
     setAndCheckValidProjectPaperId,
@@ -622,20 +562,16 @@ module.exports = {
     setAndCheckValidMinConfidenceValue,
     setAndCheckValidThresholdValue,
     setAndCheckValidScreenersId,
-    setAndCheckValidUserId,
     setAndCheckValidProjectPaperType,
     setAndCheckValidScreeningId,
     isValidKeyword,
     isValidArray,
     isValidArrayInteger,
     isValidTokenId,
-    isValidGoogleId,
     isValidProjectOwner,
     isValidProjectPaper,
     isValidFilter,
     isValidGoogleEmail,
     isValidCollaboratorId,
-
-
 
 };

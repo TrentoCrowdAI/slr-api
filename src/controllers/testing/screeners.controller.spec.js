@@ -8,10 +8,10 @@ const config = require(__base + 'config');
 
 
 /* *
-* screeners
-* range of usable data n° 136~ 150
-* 136~140 for controller layer
-* */
+ * screeners
+ * range of usable data n° 136~ 150
+ * 136~140 for controller layer
+ * */
 
 
 const index = 136;
@@ -24,7 +24,6 @@ const validTokenId2 = "test" + index2;
 const validTokenId3 = "test" + index3;
 const validTokenId4 = "test" + index4;
 const validTokenId5 = "test" + index5;
-
 
 
 beforeEach(() => {
@@ -176,7 +175,7 @@ describe('bad cases on projects', () => {
 
 
             let response = await request(app).post('/projects/' + index2 + '/screeners').send(validExampleForPost).set('Authorization', validTokenId5);
-            
+
             expect(response.status).toBe(401);
         });
 
@@ -219,8 +218,6 @@ describe('bad cases on projects', () => {
     describe('bad cases on PUT /projects/:project_id/screeners', () => {
 
         test('PUT /projects/:project_id/screeners should return 400 if parameters aren\'t valid', async () => {
-
-
 
 
             //the project id is not a number

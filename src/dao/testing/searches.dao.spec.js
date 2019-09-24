@@ -1,6 +1,4 @@
-
 const timeOut = 30 * 1000;
-
 const searchesDao = require(__base + 'dao/searches.dao');
 //the config file
 const config = require(__base + 'config');
@@ -8,11 +6,10 @@ const db = require(__base + "db/index");
 
 
 /* *
-* search papers
-* range of usable data n° 16~ 30
-* 26~30 for dao layer
-* */
-
+ * search papers
+ * range of usable data n° 16~ 30
+ * 26~30 for dao layer
+ * */
 
 
 const index = 26;
@@ -66,7 +63,7 @@ describe('test cases on searches.dao ', () => {
     test('insertByList()', async () => {
 
 
-        let arrayPaperData = [newPaperData,newPaperData];
+        let arrayPaperData = [newPaperData, newPaperData];
 
         let res = await searchesDao.insertByList(arrayPaperData);
 
@@ -101,7 +98,6 @@ describe('test cases on searches.dao ', () => {
     test('selectById()', async () => {
 
 
-
         let paper_id = index;
 
         let res = await searchesDao.selectById(paper_id);
@@ -114,7 +110,7 @@ describe('test cases on searches.dao ', () => {
     test('checkExistenceByEids()', async () => {
 
 
-        let arrayEid = ["gfa","ggg"];
+        let arrayEid = ["gfa", "ggg"];
 
         let res = await searchesDao.checkExistenceByEids(arrayEid);
 

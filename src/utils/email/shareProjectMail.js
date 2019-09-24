@@ -1,4 +1,4 @@
-
+//the function to send email
 const sendMail = require(__base + 'utils/email/sender');
 //the config file
 const config = require(__base + 'config');
@@ -9,22 +9,22 @@ const config = require(__base + 'config');
  * @param {Object} sender user object
  * @param {Object} project object
  */
-async function shareProjectMail(recipient_email ,sender , project) {
+async function shareProjectMail(recipient_email, sender, project) {
 
     //subject of email
-    let subject = sender.data.name +" shared the project "+project.data.name + " with you";
+    let subject = sender.data.name + " shared the project " + project.data.name + " with you";
 
     //body of email
     let htmlText = "" +
         "<div>" +
         "   <div class=\"picture\">" +
-        "       <img src=\""+sender.data.picture+"\"/>" +
+        "       <img src=\"" + sender.data.picture + "\"/>" +
         "   </div>" +
         "   <div class=\"title\">" +
-        "       <h2>@"+sender.data.name+" has shared the project: "+project.data.name+" with you</h2>" +
+        "       <h2>@" + sender.data.name + " has shared the project: " + project.data.name + " with you</h2>" +
         "   </div>" +
         "   <div class=\"link\">" +
-        "       <a href=\""+config.home_url+"projects/"+project.id+"\">View the project</a>" +
+        "       <a href=\"" + config.home_url + "projects/" + project.id + "\">View the project</a>" +
         "   </div>" +
         "</div>";
 

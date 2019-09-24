@@ -22,7 +22,7 @@ function read(dir) {
 }
 
 /*
- * easy function that return the input received
+ * wrapper function that return the input received
  * @param {string} data
  * @returns {string}
  */
@@ -43,7 +43,7 @@ async function destroyDB() {
     });
     //close db connection;
     await db.end();
-    console.log("database destroyed-------------------------------------------");
+    console.log("=====database destroyed=====");
 
 }
 

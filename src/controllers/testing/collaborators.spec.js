@@ -2,22 +2,23 @@ const request = require('supertest');
 const app = require(__base + 'app');
 const timeOut = 30 * 1000;
 const db = require(__base + "db/index");
+
 /* *
-* collaborators
-* range of usable data n° 91 ~ 105
-* 91~95 for controller layer
-* */
+ * collaborators
+ * range of usable data n° 91 ~ 105
+ * 91~95 for controller layer
+ * */
 
 const index = 91;
 const index2 = index + 1;
 const index3 = index + 2;
 const index4 = index + 3;
-const index5 =  index + 4;
-const validTokenId = "test"+index;
-const validTokenId2 = "test"+index2;
-const validTokenId3 = "test"+index3;
-const validTokenId4 = "test"+index4;
-const validTokenId5 = "test"+index5;
+const index5 = index + 4;
+const validTokenId = "test" + index;
+const validTokenId2 = "test" + index2;
+const validTokenId3 = "test" + index3;
+const validTokenId4 = "test" + index4;
+const validTokenId5 = "test" + index5;
 
 
 beforeEach(() => {
@@ -123,19 +124,19 @@ describe('bad cases on collaborators', () => {
 
 
             //project id is not number
-            let response = await request(app).delete('/projects/abc/collaborators/'+index).set('Authorization', validTokenId);
+            let response = await request(app).delete('/projects/abc/collaborators/' + index).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
             //project id is not integer
-            response = await request(app).delete('/projects/'+index+'.5/collaborators/'+index).set('Authorization', validTokenId);
+            response = await request(app).delete('/projects/' + index + '.5/collaborators/' + index).set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
             //user id is not number
-            response = await request(app).delete('/projects/'+index+'/collaborators/abc').set('Authorization', validTokenId);
+            response = await request(app).delete('/projects/' + index + '/collaborators/abc').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
             //user id is not integer
-            response = await request(app).delete('/projects/1/collaborators/'+index+'.5').set('Authorization', validTokenId);
+            response = await request(app).delete('/projects/1/collaborators/' + index + '.5').set('Authorization', validTokenId);
             expect(response.status).toBe(400);
 
         });
@@ -143,21 +144,21 @@ describe('bad cases on collaborators', () => {
 
         test('DELETE /projects/:id/collaborators/:user_id should return 401 if it finds nothing', async () => {
 
-            let response = await request(app).delete('/projects/9999/collaborators/'+index).set('Authorization', validTokenId);
+            let response = await request(app).delete('/projects/9999/collaborators/' + index).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
         test('DELETE /projects/:id/collaborators/:user_id should return 401 if user hasn\'t permission', async () => {
 
-            let response = await request(app).delete('/projects/'+index2+'/collaborators/'+index2).set('Authorization', validTokenId);
+            let response = await request(app).delete('/projects/' + index2 + '/collaborators/' + index2).set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 
 
         test('DELETE /projects/:id/collaborators/:user_id should return 400 if the user_id isn\'t among the collaborators', async () => {
 
-            response = await request(app).delete('/projects/'+index+'/collaborators/'+index2).set('Authorization', validTokenId);
-            
+            response = await request(app).delete('/projects/' + index + '/collaborators/' + index2).set('Authorization', validTokenId);
+
             expect(response.status).toBe(400);
         });
 
@@ -187,7 +188,7 @@ describe('bad cases on collaborators', () => {
 
         test('GET /projects/:id/collaborators should return 401 if user hasn\'t permission', async () => {
 
-            let response = await request(app).get('/projects/'+index3+'/collaborators').set('Authorization', validTokenId);
+            let response = await request(app).get('/projects/' + index3 + '/collaborators').set('Authorization', validTokenId);
             expect(response.status).toBe(401);
         });
 

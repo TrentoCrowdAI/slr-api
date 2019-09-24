@@ -1,15 +1,12 @@
-
 const timeOut = 30 * 1000;
-
 const projectsDao = require(__base + 'dao/projects.dao');
-
 const db = require(__base + "db/index");
 
 /* *
-* projects
-* range of usable data n° 31~ 45
-* 41~45 for dao layer
-* */
+ * projects
+ * range of usable data n° 31~ 45
+ * 41~45 for dao layer
+ * */
 
 
 const index = 41;
@@ -71,7 +68,6 @@ describe('test cases on projects.dao ', () => {
     test('deletes()', async () => {
 
 
-
         let project_id = index5;
 
         let res = await projectsDao.deletes(project_id);
@@ -82,7 +78,6 @@ describe('test cases on projects.dao ', () => {
 
 
     test('selectById()', async () => {
-
 
 
         let project_id = index;
@@ -97,7 +92,6 @@ describe('test cases on projects.dao ', () => {
     test('selectByIdAndUserId()', async () => {
 
 
-
         let project_id = index3;
         let user_id = index3;
 
@@ -110,7 +104,6 @@ describe('test cases on projects.dao ', () => {
 
 
     test('selectByUserId()', async () => {
-
 
 
         let user_id = index2;
@@ -129,7 +122,6 @@ describe('test cases on projects.dao ', () => {
 
 
     test('selectByScreeningUser()', async () => {
-
 
 
         let user_id = index2;

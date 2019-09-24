@@ -51,7 +51,6 @@ function arrayOfObjectToString(arraySource, fieldName, separator, surroundedBy) 
 }
 
 
-
 /**
  * difference operation of two arrays A - B
  * @param {Object[]} arrayA
@@ -88,9 +87,6 @@ function differenceOperationByField(arrayA, arrayB, fieldName) {
     let newArray = arrayA.filter(checkExistenceOfElement);
     return newArray;
 }
-
-
-
 
 
 /**
@@ -139,17 +135,16 @@ function removeElementFromArray(arraySource, elementToRemove) {
  * @param fieldName
  * @return {Array}
  */
-function arrayElementFieldToArray(arraySource, fieldName){
+function arrayElementFieldToArray(arraySource, fieldName) {
 
     let outputArray = [];
-    for(let i=0; i<arraySource.length; i++){
+    for (let i = 0; i < arraySource.length; i++) {
         outputArray.push(arraySource[i][fieldName]);
     }
 
     return outputArray;
 
 }
-
 
 
 module.exports = {

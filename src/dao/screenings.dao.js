@@ -1,6 +1,4 @@
 const db = require(__base + "db/index");
-//supply the auxiliary function
-const support = require(__base + 'utils/support');
 
 
 /**
@@ -129,7 +127,7 @@ async function selectByProjectId(project_id) {
 
 async function selectByUserIdAndProjectId(user_id, project_id) {
     let res = await db.query(
-        "SELECT * FROM public."+ db.TABLES.screenings + " WHERE user_id = $1 AND project_id = $2",
+        "SELECT * FROM public." + db.TABLES.screenings + " WHERE user_id = $1 AND project_id = $2",
         [user_id, project_id]
     );
 
@@ -151,7 +149,7 @@ async function countByProject(project_id) {
         [project_id]
     );
 
-    return  res.rows[0].count;
+    return res.rows[0].count;
 
 }
 
