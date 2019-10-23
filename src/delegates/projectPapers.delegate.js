@@ -261,6 +261,21 @@ async function selectByProject(user_email, project_id, type, orderBy, sort, star
             break;
         case config.screening_status.screened:
             res = await projectPapersDao.selectScreenedByProject(project_id, orderBy, sort, start, count);
+            for (let i = 0; i < res.results.length; i++) {
+
+                let allVotes = await votesDao.selectByProjectPaperId(res.results[i].id);
+
+                res.results[i].data.metadata.votes = [];
+                for (let j = 0; j < allVotes.length; j++) {
+
+                    let userx = await usersDao.getUserById(allVotes[j].user_id);
+                    res.results[i].data.metadata.votes.push({
+                        user: {name: userx.data.name, picture: userx.data.picture}, answer: allVotes[j].data.answer
+                    });
+
+                }
+
+            }
             break;
     }
 
