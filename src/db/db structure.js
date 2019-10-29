@@ -181,7 +181,6 @@ let screenings = {
     project_id,
     user_id,
     data: {
-        tags: [], //all the tags the user used for the papers in the screeening
         manual_screening_type //can be 'single-predicate' or 'multi-predicate'
     }
 }
