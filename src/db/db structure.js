@@ -52,7 +52,7 @@ projects = {
             name,
             description,
             user_id: [], //where will save the user_id for collaborator management
-            //screeners_id: [], //where will save the user_id for screener management (not present)
+            tags, //will save the tags inserted by screeners during the vote
             manual_screening_type //will appear once the project will start being manually screened 
                                   //as multi-predicate or single-predicate
         }
@@ -112,16 +112,6 @@ project_papers = {
                         }
                     ]
                 },
-                votes: [ //array with minimal info about manual votes received by the paper
-                         //so we can display the list of papers correlated with their own votes
-                    {
-                        answer: "0", //can be 0=no/1=yes/2=undecided
-                        user : { //data about the user
-                            name,
-                            picture
-                        }
-                    }
-                ],
                 screening: { //if the paper is already screened by automated screening or manual screening
                     result: "0", //1 means in, 0 means out
                     source: "automated screening" //provenance of result
