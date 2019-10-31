@@ -624,7 +624,7 @@ paths:
           $ref: '#/responses/500_internal_server_error'
 
 
-  '/filter/{filter_id}':
+  '/filters/{filter_id}':
     get:
       summary: select a filter
       description: This works only with internals id
