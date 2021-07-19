@@ -1,6 +1,6 @@
 # slr-api
 
-
+SLR, a system for supporting the search phase of systematic literature reviews. Backend layer. Frontend [here](https://github.com/TrentoCrowdAI/slr-web).
 
 
 
@@ -9,9 +9,6 @@
 | [![Build Status](https://travis-ci.com/TrentoCrowdAI/slr-api.svg?branch=master)](https://travis-ci.com/TrentoCrowdAI/slr-api)    | [![Build Status](https://travis-ci.com/TrentoCrowdAI/slr-api.svg?branch=develop)](https://travis-ci.com/TrentoCrowdAI/slr-api) |
 
 
-## status
-
-Under development.
 
 ## deployment
 
