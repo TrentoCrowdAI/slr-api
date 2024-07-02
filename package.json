@@ -30,7 +30,7 @@
     "fetch-headers": "^2.0.0",
     "filereader": "^0.10.3",
     "fs": "0.0.1-security",
-    "gmail-send": "^1.2.14",
+    "gmail-send": "^1.8.14",
     "google-auth-library": "^4.0.0",
     "jest": "^24.3.1",
     "multer": "^1.4.1",
